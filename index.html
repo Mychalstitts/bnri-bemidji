@@ -224,6 +224,10 @@
             font-weight: 700;
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
+        @keyframes stormKenBurns {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.15) translate(-3%, -2%); }
+        }
         @keyframes pulseZone {
             0%, 100% { stroke-opacity: 1; }
             50% { stroke-opacity: 0.4; }
@@ -567,11 +571,13 @@
             <!-- Before / After Rendering -->
             <div class="grid md:grid-cols-2 gap-8 reveal">
                 <div class="bg-zinc-900 rounded-3xl overflow-hidden">
-                    <div class="h-64 bg-gradient-to-br from-red-950/50 to-zinc-900 flex items-center justify-center">
-                        <div class="text-center px-8">
-                            <i class="fa-solid fa-house-crack text-6xl text-red-400/50 mb-4"></i>
-                            <div class="text-xl font-medium text-white/60">Storm-damaged Bemidji neighborhood</div>
-                            <div class="text-sm text-white/40 mt-2">Photo placeholder — add real storm damage photos here</div>
+                    <div class="h-64 relative overflow-hidden">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/June_2025_derecho_wind_damage_near_Bemidji%2C_MN.jpg"
+                             alt="Storm damage near Bemidji from June 2025 derecho"
+                             style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; animation: stormKenBurns 12s ease-in-out infinite alternate;" loading="lazy" />
+                        <div style="position:absolute; inset:0; background: linear-gradient(transparent 30%, rgba(0,0,0,0.75)); z-index:1;"></div>
+                        <div style="position:absolute; bottom:12px; left:16px; z-index:2;">
+                            <div class="text-xs text-white/60 flex items-center gap-1"><i class="fa-solid fa-camera text-red-400"></i> June 2025 derecho — 106 MPH winds</div>
                         </div>
                     </div>
                     <div class="p-6">
@@ -582,11 +588,11 @@
                 </div>
 
                 <div class="bg-zinc-900 rounded-3xl overflow-hidden">
-                    <div class="h-64 bg-gradient-to-br from-emerald-950/50 to-zinc-900 flex items-center justify-center">
-                        <div class="text-center px-8">
-                            <i class="fa-solid fa-house-chimney text-6xl text-emerald-400/50 mb-4"></i>
-                            <div class="text-xl font-medium text-white/60">AI rendering — renewed neighborhood</div>
-                            <div class="text-sm text-white/40 mt-2">Photo placeholder — add Grok Imagine AI rendering here</div>
+                    <div class="h-64 relative overflow-hidden">
+                        <img src="https://design.canva.ai/nq8l_X7e7Ak2eGN" alt="AI rendering of renewed Bemidji neighborhood with charming craftsman homes at golden hour" style="width:100%; height:100%; object-fit:cover;" loading="lazy" />
+                        <div style="position:absolute; inset:0; background: linear-gradient(transparent 40%, rgba(0,0,0,0.7)); z-index:1;"></div>
+                        <div style="position:absolute; bottom:12px; left:16px; z-index:2;">
+                            <div class="text-xs text-white/60 flex items-center gap-1"><i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> AI rendering — BNRI vision</div>
                         </div>
                     </div>
                     <div class="p-6">
@@ -1864,70 +1870,76 @@
         }
 
         // Application form submission — collects data and stores locally
-        async function submitApplication(event, formType) {
-    event.preventDefault();
-    const form = event.target;
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn ? submitBtn.innerHTML : '';
-    
-    // Create or find message div
-    let messageDiv = form.querySelector('.form-message');
-    if (!messageDiv) {
-        messageDiv = document.createElement('div');
-        messageDiv.className = 'form-message';
-        form.appendChild(messageDiv);
-    }
-    messageDiv.style.display = 'none';
-    
-    // Show loading state
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '⏳ Sending...';
-    }
-    
-    try {
-        const formData = new FormData(form);
-        formData.append('_subject', 'New ' + formType + ' Application from BNRI Site');
-        
-        const response = await fetch('https://formspree.io/f/xkopyneo', {
-            method: 'POST',
-            body: formData,
-            headers: { 'Accept': 'application/json' }
-        });
-        
-        if (response.ok) {
-            messageDiv.innerHTML = '\u2705 Thank you! Your application has been submitted successfully. Mychal will be in touch soon.';
-            messageDiv.style.cssText = 'color:#155724;background:#d4edda;padding:14px;border-radius:8px;margin-top:12px;font-weight:500;display:block;';
-            form.reset();
-            setTimeout(() => { messageDiv.style.display = 'none'; }, 5000);
-        } else {
-            throw new Error('Submission failed');
-        }
-    } catch (error) {
-        messageDiv.innerHTML = '\u274C Sorry, there was an error submitting your form. Please try emailing mychal@renewmyblock.com directly.';
-        messageDiv.style.cssText = 'color:#721c24;background:#f8d7da;padding:14px;border-radius:8px;margin-top:12px;font-weight:500;display:block;';
-        console.error(error);
-    } finally {
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-        }
-    }
-}
-
-        // Form handler
-        function handleSubmit(e) {
+        async function submitApplication(e, type) {
             e.preventDefault();
-            const btn = e.target.querySelector('button');
-            const originalText = btn.textContent;
-            btn.textContent = "MESSAGE SENT — THANK YOU!";
-            btn.style.backgroundColor = "#10b981";
+            const form = e.target;
+            const btn = form.querySelector('button');
+            const originalText = btn.innerHTML;
 
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.backgroundColor = "";
-                e.target.reset();
-            }, 2800);
+            // Show sending state
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>SENDING...';
+            btn.disabled = true;
+
+            const formData = new FormData(form);
+            formData.append('_form_type', type);
+            formData.append('_submitted_at', new Date().toISOString());
+
+            try {
+                const res = await fetch('https://formspree.io/f/xkopyneo', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (res.ok) {
+                    btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>APPLICATION SUBMITTED — THANK YOU!';
+                    btn.style.backgroundColor = '#10b981';
+                    form.reset();
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.style.backgroundColor = '';
+                        btn.disabled = false;
+                    }, 4000);
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch (err) {
+                btn.innerHTML = '<i class="fa-solid fa-exclamation-triangle mr-2"></i>ERROR — PLEASE TRY AGAIN';
+                btn.style.backgroundColor = '#ef4444';
+                btn.disabled = false;
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.backgroundColor = '';
+                }, 3000);
+            }
+        }
+
+        // Generic form handler (also uses Formspree)
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>SENDING...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('https://formspree.io/f/xkopyneo', {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (res.ok) {
+                    btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>MESSAGE SENT — THANK YOU!';
+                    btn.style.backgroundColor = '#10b981';
+                    form.reset();
+                } else { throw new Error(); }
+            } catch {
+                btn.innerHTML = '<i class="fa-solid fa-exclamation-triangle mr-2"></i>ERROR — TRY AGAIN';
+                btn.style.backgroundColor = '#ef4444';
+            }
+            btn.disabled = false;
+            setTimeout(() => { btn.innerHTML = originalText; btn.style.backgroundColor = ''; }, 3000);
         }
 
         // Keyboard escape for mobile menu
@@ -2058,6 +2070,20 @@
                 dashArray: '6, 8'
             }).addTo(bnriMap);
 
+            // Future expansion zone EAST — Irvine Ave to Bemidji Ave, 5th–15th St
+            const futureEast = L.polygon([
+                [47.4875, -94.8855],
+                [47.4875, -94.8740],
+                [47.4735, -94.8740],
+                [47.4735, -94.8855],
+            ], {
+                color: '#fbbf24',
+                weight: 2,
+                fillColor: '#fbbf24',
+                fillOpacity: 0.08,
+                dashArray: '6, 8'
+            }).addTo(bnriMap);
+
             // ── Popup for pilot zone ──
             pilotZone.bindPopup(`
                 <div style="font-family: 'Inter', sans-serif; padding: 10px; min-width: 220px;">
@@ -2098,8 +2124,10 @@
             L.marker([47.4878, -94.8912], { icon: streetLabelIcon('15th St. NW ─────'), interactive: false }).addTo(bnriMap);
             // 5th St label (south boundary)
             L.marker([47.4731, -94.8912], { icon: streetLabelIcon('5th St. NW ─────'), interactive: false }).addTo(bnriMap);
-            // Irvine Ave label (east boundary)
+            // Irvine Ave label (east boundary of pilot)
             L.marker([47.4810, -94.8845], { icon: streetLabelIcon('Irvine Ave. NW'), interactive: false }).addTo(bnriMap);
+            // Bemidji Ave label (east boundary of expansion)
+            L.marker([47.4810, -94.8730], { icon: streetLabelIcon('Bemidji Ave. NW'), interactive: false }).addTo(bnriMap);
 
             // ── Custom zone center marker ──
             const centerIcon = L.divIcon({
@@ -2138,6 +2166,260 @@
         window.addEventListener('load', function() {
             initMap();
         });
+    </script>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- BNRI AI Assistant — Powered by Google Gemini           -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <style>
+        #bnri-chat-toggle {
+            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+            width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none; cursor: pointer; box-shadow: 0 4px 24px rgba(16,185,129,0.4);
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        #bnri-chat-toggle:hover { transform: scale(1.08); box-shadow: 0 6px 32px rgba(16,185,129,0.5); }
+        #bnri-chat-toggle svg { width: 28px; height: 28px; fill: white; }
+        #bnri-chat-toggle .chat-badge {
+            position: absolute; top: -2px; right: -2px;
+            background: #ef4444; color: white; font-size: 10px; font-weight: 700;
+            width: 20px; height: 20px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Inter', sans-serif;
+        }
+
+        #bnri-chat-panel {
+            position: fixed; bottom: 96px; right: 24px; z-index: 9998;
+            width: 380px; max-height: 520px; border-radius: 20px;
+            background: #0a0a0a; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            display: none; flex-direction: column; overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+        #bnri-chat-panel.open { display: flex; animation: chatSlideUp 0.3s ease; }
+        @keyframes chatSlideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+
+        .chat-header {
+            padding: 16px 20px; background: linear-gradient(135deg, #064e3b, #0a0a0a);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .chat-header-icon {
+            width: 36px; height: 36px; background: #10b981; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .chat-header-icon svg { width: 18px; height: 18px; fill: white; }
+        .chat-header-text h4 { color: white; font-size: 14px; font-weight: 600; margin: 0; }
+        .chat-header-text span { color: rgba(255,255,255,0.5); font-size: 11px; }
+
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 16px 20px; max-height: 340px;
+            display: flex; flex-direction: column; gap: 12px;
+            scrollbar-width: thin; scrollbar-color: #333 transparent;
+        }
+        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.5; }
+        .chat-msg.bot { background: #1a1a2e; color: rgba(255,255,255,0.85); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .chat-msg.user { background: #10b981; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chat-msg.typing { color: rgba(255,255,255,0.4); font-style: italic; }
+
+        .chat-input-wrap {
+            padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex; gap: 8px; background: #0a0a0a;
+        }
+        .chat-input-wrap input {
+            flex: 1; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; padding: 10px 14px; color: white; font-size: 13px;
+            outline: none; font-family: 'Inter', sans-serif;
+        }
+        .chat-input-wrap input:focus { border-color: #10b981; }
+        .chat-input-wrap input::placeholder { color: rgba(255,255,255,0.3); }
+        .chat-input-wrap button {
+            background: #10b981; border: none; border-radius: 12px;
+            width: 40px; height: 40px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .chat-input-wrap button:hover { background: #059669; }
+        .chat-input-wrap button svg { width: 16px; height: 16px; fill: white; }
+
+        .chat-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 20px 12px; }
+        .chat-suggestions button {
+            background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);
+            color: #10b981; font-size: 11px; padding: 5px 10px; border-radius: 20px;
+            cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
+        }
+        .chat-suggestions button:hover { background: rgba(16,185,129,0.2); }
+
+        @media (max-width: 480px) {
+            #bnri-chat-panel { width: calc(100vw - 32px); right: 16px; bottom: 88px; }
+        }
+    </style>
+
+    <!-- Chat Toggle Button -->
+    <button id="bnri-chat-toggle" onclick="toggleChat()" aria-label="Chat with BNRI AI Assistant">
+        <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/><path d="M7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg>
+        <div class="chat-badge">AI</div>
+    </button>
+
+    <!-- Chat Panel -->
+    <div id="bnri-chat-panel">
+        <div class="chat-header">
+            <div class="chat-header-icon">
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+            </div>
+            <div class="chat-header-text">
+                <h4>BNRI Assistant</h4>
+                <span>Powered by Google Gemini AI</span>
+            </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg bot">Hi! I'm the BNRI AI assistant. Ask me anything about the Bemidji Neighborhood Renewal Incentive — incentives, eligibility, the pilot zone, partner organizations, or how to apply.</div>
+        </div>
+        <div class="chat-suggestions" id="chatSuggestions">
+            <button onclick="askSuggestion(this)">What incentives are available?</button>
+            <button onclick="askSuggestion(this)">Am I eligible?</button>
+            <button onclick="askSuggestion(this)">How do I apply?</button>
+            <button onclick="askSuggestion(this)">Where is the pilot zone?</button>
+        </div>
+        <div class="chat-input-wrap">
+            <input type="text" id="chatInput" placeholder="Ask about BNRI..." onkeydown="if(event.key==='Enter')sendChat()" />
+            <button onclick="sendChat()" aria-label="Send">
+                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+    // ═══ BNRI AI Chat — Gemini Integration ═══
+    const BNRI_CONTEXT = `You are the official AI assistant for the BNRI (Bemidji Neighborhood Renewal Incentive) program at RenewMyBlock.com. You help residents, builders, investors, and community partners understand the program.
+
+KEY FACTS:
+- BNRI targets 2,500 homes in Bemidji, MN (50% of housing stock) for renovation
+- Pilot Zone: 5th St. to 15th St. NW, west of Irvine Ave. (~400 homes)
+- Future expansion east to Bemidji Ave, plus north/south zones
+- Launched after the devastating June 2025 derecho (106 MPH winds, $9.8M damage)
+- Projected $300M–$500M economic impact by 2040
+
+INCENTIVES (stackable):
+1. 65% Fee Waivers — city waives most permit/inspection fees (save $8K–$15K)
+2. 10-Year Tax Abatement — property tax on improvements frozen for 10 years (save $15K–$40K+)
+3. 5% Cash Grant — up to $10,000 on qualifying project costs
+4. 2–3% Financing — below-market loans via local banks + FHLB partnership
+
+STATE & FEDERAL ADD-ONS:
+- Construction Materials Sales Tax Exemption (save ~$9K–$10K on first $165K materials)
+- Historic Rehabilitation Tax Credit (20% refundable)
+- State Housing Tax Credit (SHTC) via MN Housing
+- Housing Infrastructure Bonds (state-backed financing)
+- CDBG Block Grants (federal, Bemidji qualifies at 20.7% poverty rate)
+- Opportunity Zone Tax Benefits (capital gains deferral for investors)
+
+PARTNERS (14 organizations):
+United Way, HRDC, Bemidji HRA, Sanford Health, BSU, Local Lenders, Greater Bemidji, Downtown Alliance, Visit Bemidji, Chamber of Commerce, ISD 31 (School District), Local Realtors, State Rep. Bidel Duran
+
+HOW TO APPLY: Visit RenewMyBlock.com, scroll to the application section, choose your type (homeowner, builder, bank, business inquiry), and submit.
+
+MODEL: Based on Phoenix, AZ "Clean & Lean" approach with 48 pre-approved renovation plans.
+
+TONE: Be enthusiastic, helpful, and encouraging. Keep answers concise (2-4 sentences). If asked something outside BNRI scope, politely redirect. Always encourage people to apply or reach out for more info.`;
+
+    // Gemini API configuration
+    // To activate: Replace with your Google AI Studio API key from https://aistudio.google.com/apikey
+    const GEMINI_API_KEY = 'AIzaSyCFagdUnMLA00fKQOYoEZ8tnaI-usKCpLY';
+    const GEMINI_MODEL = 'gemini-2.0-flash';
+
+    let chatHistory = [];
+
+    function toggleChat() {
+        const panel = document.getElementById('bnri-chat-panel');
+        panel.classList.toggle('open');
+    }
+
+    function askSuggestion(btn) {
+        document.getElementById('chatInput').value = btn.textContent;
+        sendChat();
+        document.getElementById('chatSuggestions').style.display = 'none';
+    }
+
+    function addMessage(text, isUser) {
+        const msgs = document.getElementById('chatMessages');
+        const div = document.createElement('div');
+        div.className = 'chat-msg ' + (isUser ? 'user' : 'bot');
+        div.textContent = text;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+        return div;
+    }
+
+    async function sendChat() {
+        const input = document.getElementById('chatInput');
+        const question = input.value.trim();
+        if (!question) return;
+
+        input.value = '';
+        addMessage(question, true);
+
+        // Add typing indicator
+        const typing = addMessage('Thinking...', false);
+        typing.classList.add('typing');
+
+        chatHistory.push({ role: 'user', parts: [{ text: question }] });
+
+        try {
+            let answer;
+
+            if (GEMINI_API_KEY) {
+                // ── Live Gemini API call ──
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        system_instruction: { parts: [{ text: BNRI_CONTEXT }] },
+                        contents: chatHistory,
+                        generationConfig: { maxOutputTokens: 300, temperature: 0.7 }
+                    })
+                });
+                const data = await res.json();
+                answer = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I couldn\'t process that. Please try again.';
+            } else {
+                // ── Offline fallback — keyword matching ──
+                answer = offlineAnswer(question);
+            }
+
+            chatHistory.push({ role: 'model', parts: [{ text: answer }] });
+            typing.remove();
+            addMessage(answer, false);
+
+        } catch (err) {
+            typing.remove();
+            addMessage('Connection issue — please try again in a moment.', false);
+        }
+    }
+
+    function offlineAnswer(q) {
+        const ql = q.toLowerCase();
+        if (ql.includes('incentive') || ql.includes('save') || ql.includes('benefit'))
+            return 'BNRI offers four stackable incentives: 65% fee waivers (save $8K–$15K), a 10-year tax abatement ($15K–$40K+ savings), a 5% cash grant up to $10,000, and 2–3% financing through local banks + FHLB. Plus state programs like the construction materials sales tax exemption (~$9K–$10K more). Total savings can exceed $80,000!';
+        if (ql.includes('eligible') || ql.includes('qualify'))
+            return 'If your home is in the pilot zone (5th to 15th St. NW, west of Irvine Ave.), you\'re eligible for all BNRI incentives. Homeowners, builders, investors, and banks can all participate. The zone includes roughly 400 homes. Scroll down to the application section to get started!';
+        if (ql.includes('apply') || ql.includes('sign up') || ql.includes('start'))
+            return 'To apply, scroll to the "Transform Your Home" section at the bottom of this page. Choose your type — homeowner, builder, bank, or business inquiry — fill out the short form, and our team will follow up. It takes just 2 minutes!';
+        if (ql.includes('zone') || ql.includes('where') || ql.includes('map') || ql.includes('pilot'))
+            return 'The BNRI pilot zone covers 5th St. to 15th St. NW, west of Irvine Ave. — about 400 homes. Check the interactive GIS map on this page! Future expansion will extend east to Bemidji Ave, plus north and south zones. Expansion triggers once 50% of homes in a zone pull permits.';
+        if (ql.includes('partner') || ql.includes('who'))
+            return 'BNRI has 14 partner organizations including United Way, HRDC, Bemidji HRA, Sanford Health, BSU, local lenders, Greater Bemidji, Downtown Alliance, Visit Bemidji, the Chamber of Commerce, ISD 31 School District, local realtors, and State Rep. Bidel Duran. It\'s a true community coalition!';
+        if (ql.includes('phoenix') || ql.includes('model') || ql.includes('plan'))
+            return 'BNRI is modeled after Phoenix, Arizona\'s successful "Clean & Lean" housing initiative, but with enhancements: 48 pre-approved renovation plans, complete fee waivers + tax abatement, and zone-based expansion with measurable concentration. Phoenix proved this works — BNRI takes it further.';
+        if (ql.includes('storm') || ql.includes('derecho') || ql.includes('damage'))
+            return 'On June 20, 2025, a devastating derecho hit Bemidji with 106 MPH winds, causing $9.8 million in documented damage. Roofs were torn off, trees crashed through homes, and structures were compromised across the pilot zone. BNRI turns this crisis into an opportunity for neighborhood-wide renewal.';
+        if (ql.includes('tax') || ql.includes('abatement'))
+            return 'The 10-year tax abatement freezes property taxes on your improvements for a full decade. So if your $150K home becomes worth $250K after renovation, you won\'t pay taxes on that $100K increase for 10 years — saving $15,000 to $40,000+. Plus the state construction materials sales tax exemption saves another ~$9K–$10K!';
+        if (ql.includes('financ') || ql.includes('loan') || ql.includes('bank') || ql.includes('rate'))
+            return 'Local lenders partner with the Federal Home Loan Bank (FHLB) to offer 2–3% interest rates through loan buydowns. This makes major renovations truly affordable. Multiple local financial institutions are already engaged and excited about the lending pipeline of 2,500 homes.';
+        return 'Great question! BNRI is Bemidji\'s bold neighborhood renewal program offering up to $80K+ in stacked incentives for home renovation. I can help with details on incentives, eligibility, the pilot zone, partners, or how to apply. What would you like to know more about?';
+    }
     </script>
 </body>
 </html>
