@@ -3,234 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BNRI | Bemidji Neighborhood Renewal Incentive</title>
+    <title>BNRI Bemidji | Neighborhood Renewal Incentive</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        
-        :root {
-            --emerald: #10b981;
-        }
-        
-        .tail-container {
-            font-family: 'Inter', system_ui, sans-serif;
-        }
-        
-        .heading-font {
-            font-family: 'Space Grotesk', sans-serif;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@700&amp;display=swap');
         .hero-bg {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.75)), url('https://picsum.photos/id/1015/2000/1200');
-            background-size: cover;
-            background-position: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('https://picsum.photos/id/1015/2000/1200') center/cover no-repeat;
         }
-
-        .section-bg {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('https://picsum.photos/id/1016/2000/800');
-            background-size: cover;
-            background-position: center;
-        }
-
         .nav-link {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
         .nav-link:hover {
-            color: rgb(16 185 129);
-            transform: translateY(-1px);
+            color: #10b981;
+            transform: translateY(-2px);
         }
-
+        .accordion-header {
+            transition: all 0.3s ease;
+        }
         .stat-number {
             font-variant-numeric: tabular-nums;
         }
-
-        .card-hover {
-            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
-        }
-
-        .zone-map {
-            background: linear-gradient(135deg, #166534, #052e16);
+        .section-header {
             position: relative;
+        }
+        .section-header:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background: #10b981;
+            bottom: -8px;
+            left: 0;
         }
     </style>
 </head>
-<body class="tail-container bg-zinc-950 text-white overflow-x-hidden">
+<body class="font-sans bg-zinc-950 text-white">
     <!-- NAVBAR -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-zinc-950/90 backdrop-blur-lg border-b border-white/10">
-        <div class="max-w-screen-2xl mx-auto">
-            <div class="flex items-center justify-between px-8 py-6">
-                <!-- Logo -->
-                <div class="flex items-center gap-x-3">
-                    <div class="w-9 h-9 bg-emerald-600 rounded-2xl flex items-center justify-center text-white font-bold text-3xl leading-none pt-1">B</div>
-                    <div>
-                        <span class="heading-font text-3xl font-semibold tracking-tighter">BNRI</span>
-                        <span class="block text-[10px] text-emerald-500 -mt-1 font-medium tracking-[2px]">BEMIDJI</span>
-                    </div>
-                </div>
-
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center gap-x-10 text-sm font-medium">
-                    <a href="#vision" class="nav-link text-white/90 hover:text-emerald-400">VISION</a>
-                    <a href="#incentives" class="nav-link text-white/90 hover:text-emerald-400">INCENTIVES</a>
-                    <a href="#impact" class="nav-link text-white/90 hover:text-emerald-400">IMPACT</a>
-                    <a href="#zones" class="nav-link text-white/90 hover:text-emerald-400">ZONES</a>
-                    <a href="#partners" class="nav-link text-white/90 hover:text-emerald-400">PARTNERS</a>
-                    <a href="#participate" class="nav-link text-white/90 hover:text-emerald-400">GET INVOLVED</a>
-                </div>
-
-                <div class="flex items-center gap-x-4">
-                    <a href="#participate" 
-                       class="px-8 py-3.5 bg-white text-zinc-950 font-semibold text-sm rounded-2xl hover:bg-emerald-400 hover:text-white transition-all duration-300">
-                        APPLY NOW
-                    </a>
-                    <button onclick="toggleMobileMenu()" 
-                            class="md:hidden w-11 h-11 flex items-center justify-center border border-white/30 rounded-2xl">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
+    <nav class="bg-zinc-950 border-b border-zinc-800 fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-10 h-10 bg-emerald-600 rounded-2xl flex items-center justify-center text-2xl font-bold">B</div>
+                <div>
+                    <span class="text-2xl font-bold tracking-tighter">BNRI</span>
+                    <span class="text-emerald-400 text-sm block -mt-1">BEMIDJI</span>
                 </div>
             </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden md:hidden bg-zinc-950 border-t border-white/10 py-6 px-8">
-            <div class="flex flex-col gap-y-6 text-lg font-medium">
-                <a href="#vision" onclick="toggleMobileMenu()" class="nav-link">VISION</a>
-                <a href="#incentives" onclick="toggleMobileMenu()" class="nav-link">INCENTIVES</a>
-                <a href="#impact" onclick="toggleMobileMenu()" class="nav-link">IMPACT</a>
-                <a href="#zones" onclick="toggleMobileMenu()" class="nav-link">ZONES</a>
-                <a href="#partners" onclick="toggleMobileMenu()" class="nav-link">PARTNERS</a>
-                <a href="#participate" onclick="toggleMobileMenu()" class="nav-link">GET INVOLVED</a>
-                <div class="pt-6 border-t border-white/10">
-                    <a href="#participate" onclick="toggleMobileMenu()" 
-                       class="block w-full text-center py-4 bg-emerald-600 rounded-3xl text-white font-semibold">
-                        APPLY FOR INCENTIVES
-                    </a>
-                </div>
+            <div class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                <a href="#overview" class="nav-link">Overview</a>
+                <a href="#incentives" class="nav-link">Incentives</a>
+                <a href="#impacts" class="nav-link">Impacts</a>
+                <a href="#partners" class="nav-link">Partners</a>
+                <a href="#relocation" class="nav-link">Relocation</a>
+                <a href="#timeline" class="nav-link">Timeline</a>
+                <a href="#examples" class="nav-link">Examples</a>
             </div>
+            <a href="#contact" 
+               class="bg-emerald-600 hover:bg-emerald-500 transition-colors px-6 py-3 rounded-2xl font-semibold text-sm flex items-center gap-x-2">
+                <i class="fa-solid fa-handshake"></i>
+                <span>COLLABORATE</span>
+            </a>
         </div>
     </nav>
 
     <!-- HERO -->
-    <header class="hero-bg h-screen flex items-center relative">
-        <div class="max-w-screen-2xl mx-auto px-8 pt-20">
-            <div class="max-w-3xl">
-                <div class="inline-flex items-center gap-x-2 bg-white/10 backdrop-blur-md text-white text-xs font-medium tracking-widest px-6 py-2.5 rounded-3xl mb-6 border border-white/20">
-                    <div class="w-2 h-2 bg-emerald-400 animate-pulse rounded-full"></div>
-                    LAUNCHED MAY 13, 2025
-                </div>
-                
-                <h1 class="heading-font text-7xl md:text-8xl font-semibold leading-none tracking-tighter mb-6">
-                    REVITALIZING<br>BEMIDJI'S<br>HEART
-                </h1>
-                
-                <p class="text-2xl md:text-3xl text-white/90 max-w-lg mb-12">
-                    2,500 homes transformed.<br>
-                    One vibrant, inclusive future.
-                </p>
-
-                <div class="flex flex-wrap gap-4">
-                    <a href="#incentives" 
-                       class="inline-flex items-center gap-x-4 bg-white text-zinc-950 px-10 py-6 rounded-3xl font-semibold text-lg hover:bg-emerald-400 transition-all group">
-                        SEE INCENTIVES
-                        <span class="text-3xl group-hover:rotate-45 transition-transform">→</span>
-                    </a>
-                    
-                    <a href="#impact" 
-                       class="inline-flex items-center px-8 py-6 border border-white/50 hover:border-white rounded-3xl text-lg font-medium transition-all">
-                        $300–500M IMPACT
-                    </a>
-                </div>
-
-                <div class="mt-20 flex items-center gap-x-8 text-sm">
-                    <div class="flex -space-x-6">
-                        <div class="w-8 h-8 bg-emerald-700 border-2 border-zinc-950 rounded-2xl flex items-center justify-center text-xs font-bold">SH</div>
-                        <div class="w-8 h-8 bg-blue-700 border-2 border-zinc-950 rounded-2xl flex items-center justify-center text-xs font-bold">BSU</div>
-                    </div>
-                    <div class="text-white/70 text-sm max-w-[200px]">
-                        Partnering with Sanford Health, Bemidji State University &amp; the entire community
-                    </div>
-                </div>
+    <header class="hero-bg h-screen flex items-center pt-16">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <div class="inline-flex items-center gap-x-2 bg-white/10 backdrop-blur-md px-6 py-2 rounded-3xl text-sm mb-6">
+                <div class="w-2 h-2 bg-emerald-400 animate-pulse rounded-full"></div>
+                Launched May 13, 2025
             </div>
-        </div>
-
-        <!-- Hero badge -->
-        <div class="absolute bottom-12 right-12 bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-3xl px-8 py-6 max-w-xs hidden lg:block">
-            <div class="flex items-center gap-x-4">
-                <div class="text-emerald-400">
-                    <i class="fa-solid fa-map-pin text-4xl"></i>
+            <h1 class="text-6xl md:text-7xl font-bold leading-none tracking-tighter mb-6">
+                REVITALIZING<br>THE HEART OF<br><span class="text-emerald-400">BEMIDJI</span>
+            </h1>
+            <p class="max-w-2xl mx-auto text-xl text-zinc-300 mb-10">
+                Transforming 2,500 inner-city homes. Attracting professionals. Boosting downtown by $300–$500 million by 2040.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#partners" 
+                   class="bg-white text-zinc-950 hover:bg-emerald-400 transition-all px-10 py-5 rounded-3xl font-semibold text-lg flex items-center justify-center gap-x-3 group">
+                    MEET OUR PARTNERS
+                    <i class="fa-solid fa-arrow-right group-active:translate-x-1 transition"></i>
+                </a>
+                <a href="#impacts" 
+                   class="border border-white/70 hover:border-white transition-all px-10 py-5 rounded-3xl font-semibold text-lg flex items-center justify-center">
+                    SEE THE NUMBERS
+                </a>
+            </div>
+            <div class="mt-16 grid grid-cols-3 gap-8 max-w-md mx-auto text-center">
+                <div>
+                    <div class="text-emerald-400 text-4xl font-bold">2,500</div>
+                    <div class="text-xs tracking-widest text-zinc-400 mt-1">HOMES UPGRADED</div>
                 </div>
                 <div>
-                    <div class="text-xs tracking-widest text-white/60">PILOT ZONE</div>
-                    <div class="text-lg font-semibold">5th–15th Street west of Urban Avenue</div>
+                    <div class="text-emerald-400 text-4xl font-bold">$125M</div>
+                    <div class="text-xs tracking-widest text-zinc-400 mt-1">TAXABLE VALUE</div>
+                </div>
+                <div>
+                    <div class="text-emerald-400 text-4xl font-bold">5–10%</div>
+                    <div class="text-xs tracking-widest text-zinc-400 mt-1">CRIME REDUCTION</div>
                 </div>
             </div>
-        </div>
-
-        <div class="absolute bottom-12 left-1/2 flex flex-col items-center">
-            <div class="text-xs uppercase tracking-[3px] mb-3">SCROLL TO BEGIN</div>
-            <div class="w-px h-16 bg-gradient-to-b from-transparent via-white/40 to-transparent"></div>
         </div>
     </header>
 
-    <!-- VISION -->
-    <section id="vision" class="py-28 bg-zinc-950">
-        <div class="max-w-screen-2xl mx-auto px-8">
+    <!-- OVERVIEW -->
+    <section id="overview" class="py-24 bg-zinc-900">
+        <div class="max-w-6xl mx-auto px-6">
             <div class="grid md:grid-cols-12 gap-16 items-center">
-                <div class="md:col-span-5">
-                    <div class="sticky top-28">
-                        <div class="uppercase text-emerald-500 text-sm font-medium tracking-widest mb-4">OUR VISION</div>
-                        <h2 class="heading-font text-6xl font-semibold tracking-tighter leading-none mb-8">
-                            A thriving Bemidji for everyone
-                        </h2>
-                        <p class="text-xl text-white/70 leading-relaxed">
-                            Launched May 13, 2025, the Bemidji Neighborhood Renewal Incentive (BNRI) is transforming inner-city neighborhoods by incentivizing the remodel of 2,500 homes — starting with the pilot zone from 5th to 15th Street west of Urban Avenue.
-                        </p>
-                        <div class="mt-12 flex items-center gap-x-6">
-                            <div class="h-px w-16 bg-white/30"></div>
-                            <p class="text-sm uppercase tracking-widest text-white/50">Creating mixed-income communities • Attracting talent • Revitalizing downtown</p>
-                        </div>
+                <div class="md:col-span-7">
+                    <span class="uppercase text-emerald-500 text-sm font-semibold tracking-widest">Bemidji Neighborhood Renewal Incentive</span>
+                    <h2 class="text-5xl font-bold tracking-tighter mt-3">A Transformative Partnership for a Thriving Bemidji</h2>
+                    <div class="prose prose-invert mt-8 text-lg leading-relaxed">
+                        <p>Launched May 13, 2025, BNRI incentivizes the remodel of 2,500 homes in targeted zones (starting 5th–15th Street west of Urban Avenue). By offering fee waivers, 10-year tax abatements, 5% grants (up to $10,000), and 2–3% financing, the program creates mixed-income neighborhoods, attracts professionals from Sanford Health and Bemidji State University, and drives $300–$500 million in economic impact by 2040.</p>
+                        <p>Every stakeholder benefits: homeowners save thousands, builders gain demand, downtown businesses see $3.75–$7M annual revenue, and the city recoups costs within ~2 years post-abatement.</p>
                     </div>
                 </div>
-                
-                <div class="md:col-span-7">
-                    <div class="grid grid-cols-2 gap-8">
-                        <div class="bg-zinc-900 rounded-3xl p-8 card-hover">
-                            <div class="text-emerald-400 mb-6">
-                                <i class="fa-solid fa-home text-5xl"></i>
-                            </div>
-                            <div class="text-4xl font-semibold heading-font mb-3">2,500 Homes</div>
-                            <div class="text-white/70">Modernized, inspected, and made affordable through powerful incentives</div>
+                <div class="md:col-span-5">
+                    <div class="bg-zinc-800/50 border border-zinc-700 rounded-3xl p-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="text-sm font-medium">PILOT ZONE</div>
+                            <div class="px-4 py-1 bg-emerald-900 text-emerald-400 text-xs rounded-3xl">NOW OPEN</div>
                         </div>
-                        
-                        <div class="bg-zinc-900 rounded-3xl p-8 card-hover">
-                            <div class="text-emerald-400 mb-6">
-                                <i class="fa-solid fa-users text-5xl"></i>
-                            </div>
-                            <div class="text-4xl font-semibold heading-font mb-3">Mixed-Income Future</div>
-                            <div class="text-white/70">Attracting professionals while supporting ALICE families and dignified relocation</div>
+                        <div class="aspect-video bg-zinc-900 rounded-2xl flex items-center justify-center text-4xl font-light text-zinc-500 mb-8">
+                            5th–15th St W<br>of Urban Ave
                         </div>
-                        
-                        <div class="bg-zinc-900 rounded-3xl p-8 card-hover">
-                            <div class="text-emerald-400 mb-6">
-                                <i class="fa-solid fa-dollar-sign text-5xl"></i>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="bg-zinc-900 p-4 rounded-2xl">
+                                <div class="text-emerald-400">750</div>
+                                <div class="text-xs text-zinc-400">New professional households</div>
                             </div>
-                            <div class="text-4xl font-semibold heading-font mb-3">$300–500M</div>
-                            <div class="text-white/70">Projected economic impact by 2040 — including $125M in new taxable value</div>
-                        </div>
-                        
-                        <div class="bg-zinc-900 rounded-3xl p-8 card-hover">
-                            <div class="text-emerald-400 mb-6">
-                                <i class="fa-solid fa-leaf text-5xl"></i>
+                            <div class="bg-zinc-900 p-4 rounded-2xl">
+                                <div class="text-emerald-400">50%</div>
+                                <div class="text-xs text-zinc-400">City housing upgraded</div>
                             </div>
-                            <div class="text-4xl font-semibold heading-font mb-3">Dignified Renewal</div>
-                            <div class="text-white/70">Relocation plan with United Way, HRA &amp; HRDC support — no one left behind</div>
                         </div>
                     </div>
                 </div>
@@ -239,415 +145,340 @@
     </section>
 
     <!-- INCENTIVES -->
-    <section id="incentives" class="py-28 section-bg">
-        <div class="max-w-screen-2xl mx-auto px-8">
-            <div class="flex flex-col items-center text-center mb-16">
-                <div class="text-emerald-400 text-sm font-medium tracking-[3px]">NO-BRAINER INCENTIVES</div>
-                <h2 class="heading-font text-6xl font-semibold tracking-tighter mt-3">Four powerful ways to save</h2>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Card 1 -->
-                <div class="bg-zinc-900/90 backdrop-blur-xl rounded-3xl p-10 card-hover border border-white/5">
-                    <div class="h-14 w-14 bg-emerald-900/50 rounded-2xl flex items-center justify-center mb-8">
-                        <i class="fa-solid fa-file-invoice-dollar text-3xl text-emerald-400"></i>
-                    </div>
-                    <div class="text-3xl font-semibold mb-2">Fee Waivers</div>
-                    <div class="text-emerald-400 text-sm mb-6 font-medium">100% BUILDING PERMIT + PLAN REVIEW (65%) + INSPECTION FEES</div>
-                    <ul class="space-y-4 text-white/70 text-sm">
-                        <li class="flex items-start gap-3"><span class="text-emerald-400 mt-1">•</span>Eliminate thousands in upfront costs</li>
-                        <li class="flex items-start gap-3"><span class="text-emerald-400 mt-1">•</span>For remodels &gt; $50,000</li>
-                    </ul>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="bg-zinc-900/90 backdrop-blur-xl rounded-3xl p-10 card-hover border border-white/5">
-                    <div class="h-14 w-14 bg-emerald-900/50 rounded-2xl flex items-center justify-center mb-8">
-                        <i class="fa-solid fa-house-circle-check text-3xl text-emerald-400"></i>
-                    </div>
-                    <div class="text-3xl font-semibold mb-2">10-Year Tax Abatement</div>
-                    <div class="text-emerald-400 text-sm mb-6 font-medium">FULL PROPERTY TAX EXEMPTION</div>
-                    <p class="text-white/70 text-sm leading-relaxed">Long-term relief that pays for itself many times over. Your investment grows while taxes stay frozen.</p>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="bg-zinc-900/90 backdrop-blur-xl rounded-3xl p-10 card-hover border border-white/5">
-                    <div class="h-14 w-14 bg-emerald-900/50 rounded-2xl flex items-center justify-center mb-8">
-                        <i class="fa-solid fa-hand-holding-dollar text-3xl text-emerald-400"></i>
-                    </div>
-                    <div class="text-3xl font-semibold mb-2">5% Grant</div>
-                    <div class="text-emerald-400 text-sm mb-6 font-medium">UP TO $10,000 CASH BACK</div>
-                    <p class="text-white/70 text-sm leading-relaxed">Direct grant on qualifying project cost. Funded by the City and generous private partners.</p>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="bg-zinc-900/90 backdrop-blur-xl rounded-3xl p-10 card-hover border border-white/5">
-                    <div class="h-14 w-14 bg-emerald-900/50 rounded-2xl flex items-center justify-center mb-8">
-                        <i class="fa-solid fa-handshake text-3xl text-emerald-400"></i>
-                    </div>
-                    <div class="text-3xl font-semibold mb-2">2–3% Financing</div>
-                    <div class="text-emerald-400 text-sm mb-6 font-medium">THROUGH LOCAL BANKS + FHLB</div>
-                    <p class="text-white/70 text-sm leading-relaxed">Special low-rate loans. Effective rate after buydowns makes remodeling truly affordable.</p>
-                </div>
-            </div>
-
-            <div class="text-center mt-16">
-                <a href="#participate" class="inline-flex items-center gap-x-3 text-emerald-400 hover:text-emerald-300 transition-colors">
-                    <span class="text-lg font-medium">Ready to remodel? Start your application</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- IMPACT -->
-    <section id="impact" class="py-28 bg-zinc-900">
-        <div class="max-w-screen-2xl mx-auto px-8">
+    <section id="incentives" class="py-24 bg-black">
+        <div class="max-w-6xl mx-auto px-6">
             <div class="text-center mb-16">
-                <div class="text-emerald-500 text-sm font-medium tracking-widest">BY 2040</div>
-                <h2 class="heading-font text-6xl font-semibold tracking-tighter">A $300–500 million transformation</h2>
+                <span class="text-emerald-500 uppercase text-sm font-semibold">No-Brainer Incentives</span>
+                <h2 class="text-5xl font-bold tracking-tighter mt-2">Making Remodels Irresistible</h2>
             </div>
-
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
-                <div onclick="animateStat(this)" class="stat-card bg-zinc-950 rounded-3xl p-10 text-center border border-white/5 hover:border-emerald-500/30 transition-colors cursor-pointer">
-                    <div id="stat1" class="text-7xl font-semibold heading-font stat-number text-emerald-400">300</div>
-                    <div class="uppercase text-xs tracking-widest text-white/60 mt-2">MILLION DOLLARS</div>
-                    <div class="text-2xl font-medium mt-8">Economic Impact</div>
-                    <div class="text-white/60 text-sm mt-1">Total projected by 2040</div>
+            <div class="grid md:grid-cols-4 gap-6">
+                <div class="bg-zinc-900 p-8 rounded-3xl border border-zinc-800 hover:border-emerald-500 transition-colors group">
+                    <div class="text-emerald-400 text-5xl mb-6 group-hover:scale-110 transition">🏗️</div>
+                    <div class="font-semibold text-2xl">Fee Waivers</div>
+                    <div class="text-zinc-400 mt-2">100% building permits, plan review (65%), &amp; inspections eliminated</div>
                 </div>
-
-                <div onclick="animateStat(this)" class="stat-card bg-zinc-950 rounded-3xl p-10 text-center border border-white/5 hover:border-emerald-500/30 transition-colors cursor-pointer">
-                    <div id="stat2" class="text-7xl font-semibold heading-font stat-number text-emerald-400">125</div>
-                    <div class="uppercase text-xs tracking-widest text-white/60 mt-2">MILLION DOLLARS</div>
-                    <div class="text-2xl font-medium mt-8">New Taxable Value</div>
-                    <div class="text-white/60 text-sm mt-1">From 2,500 upgraded homes</div>
+                <div class="bg-zinc-900 p-8 rounded-3xl border border-zinc-800 hover:border-emerald-500 transition-colors group">
+                    <div class="text-emerald-400 text-5xl mb-6 group-hover:scale-110 transition">📉</div>
+                    <div class="font-semibold text-2xl">10-Year Tax Abatement</div>
+                    <div class="text-zinc-400 mt-2">Full property tax exemption on qualifying improvements</div>
                 </div>
-
-                <div onclick="animateStat(this)" class="stat-card bg-zinc-950 rounded-3xl p-10 text-center border border-white/5 hover:border-emerald-500/30 transition-colors cursor-pointer">
-                    <div id="stat3" class="text-7xl font-semibold heading-font stat-number text-emerald-400">7</div>
-                    <div class="uppercase text-xs tracking-widest text-white/60 mt-2">MILLION DOLLARS</div>
-                    <div class="text-2xl font-medium mt-8">Annual Downtown Revenue</div>
-                    <div class="text-white/60 text-sm mt-1">From new professional residents</div>
+                <div class="bg-zinc-900 p-8 rounded-3xl border border-zinc-800 hover:border-emerald-500 transition-colors group">
+                    <div class="text-emerald-400 text-5xl mb-6 group-hover:scale-110 transition">💰</div>
+                    <div class="font-semibold text-2xl">5% Grant</div>
+                    <div class="text-zinc-400 mt-2">Up to $10,000 toward project cost (city + partners)</div>
                 </div>
-
-                <div onclick="animateStat(this)" class="stat-card bg-zinc-950 rounded-3xl p-10 text-center border border-white/5 hover:border-emerald-500/30 transition-colors cursor-pointer">
-                    <div id="stat4" class="text-7xl font-semibold heading-font stat-number text-emerald-400">10</div>
-                    <div class="uppercase text-xs tracking-widest text-white/60 mt-2">% REDUCTION</div>
-                    <div class="text-2xl font-medium mt-8">In Crime &amp; Fire Calls</div>
-                    <div class="text-white/60 text-sm mt-1">Safer, stronger neighborhoods</div>
+                <div class="bg-zinc-900 p-8 rounded-3xl border border-zinc-800 hover:border-emerald-500 transition-colors group">
+                    <div class="text-emerald-400 text-5xl mb-6 group-hover:scale-110 transition">🏦</div>
+                    <div class="font-semibold text-2xl">2–3% Financing</div>
+                    <div class="text-zinc-400 mt-2">Through banks + FHLB + foundations (Opportunity Zones)</div>
                 </div>
-            </div>
-
-            <div class="mt-20 max-w-2xl mx-auto text-center text-white/70 text-lg">
-                Additional wins: $7.5–10M new property taxes • $15–30M tourism revenue • 750 new professional households • Talent attraction for Sanford Health &amp; Bemidji State University
             </div>
         </div>
     </section>
 
-    <!-- ZONES -->
-    <section id="zones" class="py-28 bg-black">
-        <div class="max-w-screen-2xl mx-auto px-8">
-            <div class="grid lg:grid-cols-12 gap-16">
-                <div class="lg:col-span-5">
-                    <div class="text-emerald-400 font-medium">PILOT ZONE NOW OPEN</div>
-                    <h2 class="heading-font text-6xl font-semibold tracking-tighter leading-none mt-3 mb-8">5th to 15th Street west of Urban Avenue</h2>
-                    <p class="text-xl text-white/70">
-                        Zoned expansion begins once 50% of properties in a zone pull permits. Focused investment creates immediate momentum.
-                    </p>
-                    <div class="mt-12 text-sm bg-zinc-900 p-8 rounded-3xl border border-white/10">
-                        <div class="font-medium mb-4 flex items-center gap-3">
-                            <span class="text-emerald-400">→</span> 
-                            HOW ZONES GROW
+    <!-- IMPACTS -->
+    <section id="impacts" class="py-24 bg-zinc-900">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid md:grid-cols-12 gap-16">
+                <div class="md:col-span-5">
+                    <h2 class="text-5xl font-bold tracking-tighter">Giant Returns for Bemidji</h2>
+                    <div class="mt-8 space-y-8">
+                        <div class="flex gap-6">
+                            <div class="w-16 h-16 bg-emerald-600/10 text-emerald-400 rounded-2xl flex items-center justify-center text-3xl shrink-0">$</div>
+                            <div>
+                                <div class="text-4xl font-bold text-emerald-400">$300–$500M</div>
+                                <div class="text-zinc-400">Total economic impact by 2040</div>
+                            </div>
                         </div>
-                        <div class="space-y-6 text-white/70">
-                            <div class="flex gap-4">
-                                <div class="font-mono text-5xl font-light text-emerald-400">01</div>
-                                <div>Pilot zone activates</div>
+                        <div class="flex gap-6">
+                            <div class="w-16 h-16 bg-emerald-600/10 text-emerald-400 rounded-2xl flex items-center justify-center text-3xl shrink-0">🏠</div>
+                            <div>
+                                <div class="text-4xl font-bold text-emerald-400">$125M</div>
+                                <div class="text-zinc-400">Added taxable value</div>
                             </div>
-                            <div class="flex gap-4">
-                                <div class="font-mono text-5xl font-light text-emerald-400">02</div>
-                                <div>50% permit threshold triggers next zone</div>
-                            </div>
-                            <div class="flex gap-4">
-                                <div class="font-mono text-5xl font-light text-emerald-400">03</div>
-                                <div>City-wide transformation by 2035</div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div class="w-16 h-16 bg-emerald-600/10 text-emerald-400 rounded-2xl flex items-center justify-center text-3xl shrink-0">🛍️</div>
+                            <div>
+                                <div class="text-4xl font-bold text-emerald-400">$3.75–$7M</div>
+                                <div class="text-zinc-400">Annual downtown revenue</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="lg:col-span-7 zone-map rounded-3xl p-12 text-white flex flex-col justify-center items-center text-center h-96 lg:h-auto">
-                    <div class="text-emerald-400 text-xs tracking-widest mb-4">INTERACTIVE ZONE MAP</div>
-                    <div class="text-5xl font-light mb-3">Bemidji, MN</div>
-                    <div class="text-2xl max-w-xs">Pilot Zone: 5th–15th Street west of Urban Avenue</div>
-                    <div class="mt-auto text-xs opacity-60">Expand zones • 50% saturation trigger • 2500 homes total</div>
-                    <div class="mt-8 text-[10px] bg-white/10 px-5 py-2 rounded-3xl">Click anywhere to see expansion potential (demo)</div>
+                <div class="md:col-span-7">
+                    <div class="bg-zinc-800 rounded-3xl p-8">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-zinc-700">
+                                    <th class="pb-4 font-normal text-zinc-400">Category</th>
+                                    <th class="pb-4 font-normal text-zinc-400 text-right">Projected Outcome</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm divide-y divide-zinc-700">
+                                <tr><td class="py-5">Property Taxes</td><td class="py-5 text-right font-medium">$7.5–$10M cumulative</td></tr>
+                                <tr><td class="py-5">Business Revenue</td><td class="py-5 text-right font-medium">$60–$110M</td></tr>
+                                <tr><td class="py-5">Tourism Revenue</td><td class="py-5 text-right font-medium">$15–$30M</td></tr>
+                                <tr><td class="py-5">Public Safety Savings</td><td class="py-5 text-right font-medium">$2–$4M</td></tr>
+                                <tr><td class="py-5">Crime Reduction</td><td class="py-5 text-right font-medium">5–10%</td></tr>
+                                <tr><td class="py-5">Fire Calls</td><td class="py-5 text-right font-medium">10–20% fewer</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- PARTNERS -->
-    <section id="partners" class="py-28 bg-zinc-950">
-        <div class="max-w-screen-2xl mx-auto px-8">
-            <div class="text-center mb-16">
-                <span class="px-5 py-2 text-xs bg-white/5 rounded-3xl">POWERED BY COMMUNITY</span>
+    <section id="partners" class="py-24 bg-black">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <span class="uppercase text-emerald-500 tracking-widest text-sm font-semibold">16 Powerful Partners</span>
+                <h2 class="text-5xl font-bold tracking-tighter mt-3">Everyone Wins</h2>
             </div>
             
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 opacity-75">
-                <div class="text-center py-8 text-2xl font-light">United Way</div>
-                <div class="text-center py-8 text-2xl font-light">HRDC</div>
-                <div class="text-center py-8 text-2xl font-light">Bemidji HRA</div>
-                <div class="text-center py-8 text-2xl font-light">Sanford Health</div>
-                <div class="text-center py-8 text-2xl font-light">Bemidji State</div>
-                <div class="text-center py-8 text-2xl font-light">First National Bank</div>
-                <div class="text-center py-8 text-2xl font-light">Greater Bemidji</div>
-                <div class="text-center py-8 text-2xl font-light">Downtown Alliance</div>
-                <div class="text-center py-8 text-2xl font-light">Visit Bemidji</div>
-                <div class="text-center py-8 text-2xl font-light">Chamber of Commerce</div>
-                <div class="text-center py-8 text-2xl font-light">ISD 31</div>
-                <div class="text-center py-8 text-2xl font-light">Local Realtors</div>
-            </div>
-            
-            <div class="text-center mt-20 text-xs text-white/40">
-                And growing every day with banks, foundations, and community leaders
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="accordion">
+                <!-- Dynamically populated by JS below -->
             </div>
         </div>
     </section>
 
-    <!-- RELOCATION &amp; ALICE -->
-    <section class="py-28 bg-black">
-        <div class="max-w-screen-2xl mx-auto px-8">
-            <div class="max-w-2xl mx-auto text-center">
-                <div class="inline px-6 py-2 bg-amber-900/30 text-amber-400 text-sm font-medium rounded-3xl mb-6">INCLUSIVE BY DESIGN</div>
-                <h2 class="heading-font text-5xl font-semibold tracking-tight">ALICE families &amp; dignified relocation</h2>
-                <p class="mt-8 text-xl text-white/80">
-                    The BNRI Relocation Plan works with the United Way of Bemidji Area, HRA, and HRDC to transition unhoused and low-income individuals to stable, community-integrated housing with case management, mental health support, and permanent solutions.
-                </p>
-                <div class="mt-12 text-emerald-400 font-medium flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-heart"></i>
-                    <span>No one is left behind</span>
+    <!-- RELOCATION -->
+    <section id="relocation" class="py-24 bg-zinc-900">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <span class="inline-block px-5 py-2 bg-amber-900 text-amber-400 text-sm font-medium rounded-3xl mb-6">Dignity First</span>
+            <h2 class="text-5xl font-bold tracking-tighter">BNRI Relocation Plan</h2>
+            <p class="text-xl text-zinc-300 mt-6 max-w-2xl mx-auto">
+                Transitioning homeless and low-income individuals to community-integrated housing with full support services. 
+                United Way, HRA, and HRDC lead case management, mental health, job training, and permanent housing solutions.
+            </p>
+            <div class="mt-12 bg-zinc-800 rounded-3xl p-10 flex flex-col md:flex-row gap-8 items-center">
+                <div class="flex-1">
+                    <div class="font-medium text-emerald-400 mb-3">UNITED WAY ROLE</div>
+                    <ul class="text-left space-y-3 text-sm">
+                        <li class="flex gap-3"><i class="fa-solid fa-check text-emerald-400 mt-1"></i> Case management &amp; mental health</li>
+                        <li class="flex gap-3"><i class="fa-solid fa-check text-emerald-400 mt-1"></i> $49,500 Housing Trust Fund</li>
+                        <li class="flex gap-3"><i class="fa-solid fa-check text-emerald-400 mt-1"></i> Emergency food &amp; hygiene support</li>
+                    </ul>
+                </div>
+                <div class="flex-1">
+                    <div class="font-medium text-emerald-400 mb-3">HRA / HRDC ROLE</div>
+                    <ul class="text-left space-y-3 text-sm">
+                        <li class="flex gap-3"><i class="fa-solid fa-check text-emerald-400 mt-1"></i> Rental assistance &amp; site development</li>
+                        <li class="flex gap-3"><i class="fa-solid fa-check text-emerald-400 mt-1"></i> Conifer Estates model housing</li>
+                        <li class="flex gap-3"><i class="fa-solid fa-check text-emerald-400 mt-1"></i> ALICE &amp; LMI priority placement</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- GET INVOLVED -->
-    <section id="participate" class="py-28 bg-gradient-to-b from-zinc-900 to-black">
-        <div class="max-w-screen-2xl mx-auto px-8">
-            <div class="grid lg:grid-cols-2 gap-20">
-                <div>
-                    <h2 class="heading-font text-6xl font-semibold tracking-tighter">Ready to be part of the renewal?</h2>
-                    <div class="mt-12 space-y-8">
-                        <a href="#" class="group block bg-zinc-900 hover:bg-white hover:text-zinc-950 transition-all rounded-3xl p-8 flex justify-between items-center">
-                            <div>
-                                <div class="text-emerald-400 text-sm">FOR HOMEOWNERS</div>
-                                <div class="text-3xl font-medium">Apply for your remodel incentives</div>
-                            </div>
-                            <div class="text-5xl opacity-30 group-hover:opacity-100 transition-all">→</div>
-                        </a>
-                        
-                        <a href="#" class="group block bg-zinc-900 hover:bg-white hover:text-zinc-950 transition-all rounded-3xl p-8 flex justify-between items-center">
-                            <div>
-                                <div class="text-emerald-400 text-sm">FOR BUILDERS &amp; CONTRACTORS</div>
-                                <div class="text-3xl font-medium">Join the network of BNRI pros</div>
-                            </div>
-                            <div class="text-5xl opacity-30 group-hover:opacity-100 transition-all">→</div>
-                        </a>
-                        
-                        <a href="#" class="group block bg-zinc-900 hover:bg-white hover:text-zinc-950 transition-all rounded-3xl p-8 flex justify-between items-center">
-                            <div>
-                                <div class="text-emerald-400 text-sm">FOR BANKS &amp; PARTNERS</div>
-                                <div class="text-3xl font-medium">Fund the future of Bemidji</div>
-                            </div>
-                            <div class="text-5xl opacity-30 group-hover:opacity-100 transition-all">→</div>
-                        </a>
+    <!-- TIMELINE -->
+    <section id="timeline" class="py-24 bg-black">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-5xl font-bold tracking-tighter text-center mb-16">Roadmap to Revitalization</h2>
+            <div class="max-w-3xl mx-auto space-y-12">
+                <div class="flex gap-8">
+                    <div class="w-28 shrink-0 text-right">
+                        <div class="font-mono text-emerald-400">Jul–Sep 2025</div>
+                    </div>
+                    <div class="flex-1 bg-zinc-900 rounded-3xl p-8">
+                        <div class="font-semibold">City Council Approval &amp; Partnerships</div>
+                        <div class="text-sm text-zinc-400 mt-2">Form task force with all 16 partners • Finalize incentives</div>
                     </div>
                 </div>
-                
-                <div class="bg-zinc-900 rounded-3xl p-12 lg:p-16">
-                    <div class="text-emerald-400 text-xs tracking-widest mb-6">CONTACT THE ADVOCATE BEHIND BNRI</div>
-                    <div class="text-4xl font-medium leading-none">Mychal Stittsworth</div>
-                    <div class="text-white/70 text-xl">Stittsworth Meats Owner &amp; Community Advocate</div>
-                    
-                    <div class="mt-16 space-y-8">
-                        <div>
-                            <a href="mailto:mychals@stittsworthmeats.com" class="flex items-center gap-4 group">
-                                <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-xl group-hover:bg-emerald-600 transition-colors">✉️</div>
-                                <div>
-                                    <div class="text-sm text-white/60">Email</div>
-                                    <div class="font-medium">mychals@stittsworthmeats.com</div>
-                                </div>
-                            </a>
-                        </div>
-                        <div>
-                            <a href="tel:2183439834" class="flex items-center gap-4 group">
-                                <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-xl group-hover:bg-emerald-600 transition-colors">📞</div>
-                                <div>
-                                    <div class="text-sm text-white/60">Call or Text</div>
-                                    <div class="font-medium">(218) 343-9834</div>
-                                </div>
-                            </a>
-                        </div>
+                <div class="flex gap-8">
+                    <div class="w-28 shrink-0 text-right">
+                        <div class="font-mono text-emerald-400">Oct 2025–Jun 2026</div>
                     </div>
-                    
-                    <div class="mt-16 pt-12 border-t border-white/10 text-xs leading-relaxed text-white/60">
-                        Whether you own a home in the zone, run a construction business, represent a bank, or simply want to help build a better Bemidji — Mychal is ready to talk.
+                    <div class="flex-1 bg-zinc-900 rounded-3xl p-8">
+                        <div class="font-semibold">Pilot Zone Launch</div>
+                        <div class="text-sm text-zinc-400 mt-2">First permits issued • Relocation plan begins • Banks activate 2–3% loans</div>
                     </div>
-                    
-                    <button onclick="document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth' })" 
-                            class="mt-12 w-full py-6 bg-white text-zinc-950 rounded-3xl font-semibold text-sm tracking-wider hover:bg-emerald-400 transition-colors">
-                        SEND A MESSAGE TO MYCHAL
-                    </button>
+                </div>
+                <div class="flex gap-8">
+                    <div class="w-28 shrink-0 text-right">
+                        <div class="font-mono text-emerald-400">2027–2030</div>
+                    </div>
+                    <div class="flex-1 bg-zinc-900 rounded-3xl p-8">
+                        <div class="font-semibold">Zone Expansion</div>
+                        <div class="text-sm text-zinc-400 mt-2">50% saturation triggers next zones • Full ALICE &amp; professional influx</div>
+                    </div>
+                </div>
+                <div class="flex gap-8">
+                    <div class="w-28 shrink-0 text-right">
+                        <div class="font-mono text-emerald-400">2035–2040</div>
+                    </div>
+                    <div class="flex-1 bg-emerald-900/30 rounded-3xl p-8 border border-emerald-500">
+                        <div class="font-semibold text-emerald-400">$300–$500M Impact Achieved</div>
+                        <div class="text-sm text-emerald-300 mt-2">Sustained growth • Mixed-income neighborhoods complete</div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CONTACT FORM -->
-    <section id="contactForm" class="py-20 bg-zinc-950 border-t border-white/10">
-        <div class="max-w-xl mx-auto px-8">
-            <h3 class="text-center text-3xl font-medium mb-10">Tell us how you'd like to help renew Bemidji</h3>
-            <form onsubmit="handleSubmit(event)" class="space-y-8">
-                <div class="grid grid-cols-2 gap-6">
-                    <input type="text" placeholder="Your name" class="bg-zinc-900 border border-white/10 focus:border-emerald-400 rounded-3xl px-8 py-6 outline-none text-sm">
-                    <input type="email" placeholder="Email address" class="bg-zinc-900 border border-white/10 focus:border-emerald-400 rounded-3xl px-8 py-6 outline-none text-sm">
+    <!-- EXAMPLES -->
+    <section id="examples" class="py-24 bg-zinc-900">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-5xl font-bold tracking-tighter text-center mb-12">Proven Models</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-zinc-800 rounded-3xl p-8">
+                    <div class="text-xs uppercase mb-2 text-rose-400">PHILADELPHIA</div>
+                    <div class="font-semibold">$517M total investment via Choice Neighborhoods + banks</div>
+                    <div class="text-sm text-zinc-400 mt-6">Mixed-income housing success story mirrored in BNRI relocation plan.</div>
                 </div>
-                <textarea placeholder="Tell us about your project, partnership idea, or how you'd like to get involved..." rows="6" class="w-full bg-zinc-900 border border-white/10 focus:border-emerald-400 rounded-3xl px-8 py-6 outline-none text-sm resize-none"></textarea>
-                <button type="submit" 
-                        class="w-full py-7 bg-emerald-600 hover:bg-emerald-500 transition-colors rounded-3xl text-lg font-semibold">
-                    SEND MESSAGE TO THE BNRI TEAM
-                </button>
-            </form>
+                <div class="bg-zinc-800 rounded-3xl p-8">
+                    <div class="text-xs uppercase mb-2 text-sky-400">PITTSBURGH</div>
+                    <div class="font-semibold">FHLBank Blueprint Communities®</div>
+                    <div class="text-sm text-zinc-400 mt-6">7% crime drop • Bank-financed neighborhood revitalization.</div>
+                </div>
+                <div class="bg-zinc-800 rounded-3xl p-8">
+                    <div class="text-xs uppercase mb-2 text-amber-400">OSWEGO, NY</div>
+                    <div class="font-semibold">$10M DRI → Indoor water park &amp; housing boom</div>
+                    <div class="text-sm text-zinc-400 mt-6">Tourism + professional attraction model for Visit Bemidji.</div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="bg-black py-20 border-t border-white/10">
-        <div class="max-w-screen-2xl mx-auto px-8 grid md:grid-cols-12 gap-y-16">
-            <div class="md:col-span-5">
-                <div class="flex items-center gap-x-3">
-                    <div class="w-9 h-9 bg-emerald-600 rounded-2xl flex items-center justify-center text-white font-bold text-3xl leading-none pt-1">B</div>
-                    <span class="heading-font text-4xl font-semibold tracking-tighter">BNRI</span>
+    <!-- CONTACT / CTA -->
+    <section id="contact" class="py-24 bg-black border-t border-zinc-800">
+        <div class="max-w-2xl mx-auto text-center px-6">
+            <h2 class="text-5xl font-bold tracking-tighter">Ready to Build the Future of Bemidji?</h2>
+            <p class="mt-6 text-zinc-400 text-lg">Every partner above has a tailored collaboration document. Let's schedule a presentation.</p>
+            
+            <div class="mt-12 bg-zinc-900 rounded-3xl p-10 text-left max-w-md mx-auto">
+                <div class="flex items-center gap-x-4">
+                    <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-3xl">👋</div>
+                    <div>
+                        <div class="font-semibold">Mychal Stittsworth</div>
+                        <div class="text-emerald-400 text-sm">Stittsworth Meats Owner &amp; Community Advocate</div>
+                    </div>
                 </div>
-                <div class="mt-6 text-white/60 max-w-xs">
-                    Bemidji Neighborhood Renewal Incentive<br>
-                    Transforming homes, neighborhoods, and lives since May 2025
-                </div>
-                <div class="mt-12 text-xs text-white/40">
-                    © 2026 Bemidji Neighborhood Renewal Incentive. All rights reserved.
+                <div class="mt-8 space-y-4">
+                    <a href="mailto:mychals@stittsworthmeats.com" class="flex items-center gap-x-4 hover:text-emerald-400 transition">
+                        <i class="fa-solid fa-envelope w-5"></i>
+                        <span class="font-mono text-sm">mychals@stittsworthmeats.com</span>
+                    </a>
+                    <a href="tel:2183439834" class="flex items-center gap-x-4 hover:text-emerald-400 transition">
+                        <i class="fa-solid fa-phone w-5"></i>
+                        <span class="font-mono text-sm">(218) 343-9834</span>
+                    </a>
                 </div>
             </div>
             
-            <div class="md:col-span-2">
-                <div class="text-xs font-medium tracking-widest mb-6">QUICK LINKS</div>
-                <div class="space-y-4 text-sm">
-                    <a href="#incentives" class="block hover:text-emerald-400 transition-colors">Incentives</a>
-                    <a href="#impact" class="block hover:text-emerald-400 transition-colors">Impact</a>
-                    <a href="#zones" class="block hover:text-emerald-400 transition-colors">Zones</a>
-                </div>
-            </div>
-            
-            <div class="md:col-span-2">
-                <div class="text-xs font-medium tracking-widest mb-6">COMMUNITY</div>
-                <div class="space-y-4 text-sm">
-                    <a href="#" class="block hover:text-emerald-400 transition-colors">For Homeowners</a>
-                    <a href="#" class="block hover:text-emerald-400 transition-colors">For Builders</a>
-                    <a href="#" class="block hover:text-emerald-400 transition-colors">For Banks</a>
-                    <a href="#" class="block hover:text-emerald-400 transition-colors">For Employers</a>
-                </div>
-            </div>
-            
-            <div class="md:col-span-3">
-                <div class="text-xs font-medium tracking-widest mb-6">CONTACT THE ADVOCATE</div>
-                <div class="text-xl font-medium">Mychal Stittsworth</div>
-                <a href="mailto:mychals@stittsworthmeats.com" class="block mt-3 hover:underline">mychals@stittsworthmeats.com</a>
-                <a href="tel:2183439834" class="block mt-1 hover:underline">(218) 343-9834</a>
-                
-                <div class="mt-12 text-[10px] text-white/30">
-                    Stittsworth Meats Owner &amp;<br>Community Advocate
-                </div>
-            </div>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+                    class="mt-16 text-xs uppercase tracking-widest flex items-center gap-x-2 mx-auto hover:text-emerald-400">
+                <i class="fa-solid fa-arrow-up"></i>
+                <span>Back to Top</span>
+            </button>
+        </div>
+    </section>
+
+    <footer class="bg-black py-12 border-t border-zinc-800 text-center text-xs text-zinc-500">
+        <div class="max-w-6xl mx-auto px-6">
+            Bemidji Neighborhood Renewal Incentive • May 2025<br>
+            A community-led initiative by Mychal Stittsworth • All documents synthesized for stakeholder collaboration
         </div>
     </footer>
 
     <script>
         // Tailwind script run
         function initializeTailwind() {
-            // Already initialized via CDN
-        }
-        
-        // Mobile menu
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu')
-            menu.classList.toggle('hidden')
-        }
-        
-        // Simple stat counter animation
-        function animateStat(el) {
-            const numbers = el.querySelectorAll('.stat-number')
-            numbers.forEach(num => {
-                const target = parseInt(num.textContent)
-                let count = 0
-                const increment = Math.ceil(target / 40)
-                const timer = setInterval(() => {
-                    count += increment
-                    if (count >= target) {
-                        count = target
-                        clearInterval(timer)
-                    }
-                    num.textContent = count
-                }, 30)
-            })
-        }
-        
-        // Form handler
-        function handleSubmit(e) {
-            e.preventDefault()
-            const btn = e.target.querySelector('button')
-            const originalText = btn.textContent
-            btn.textContent = "MESSAGE SENT — THANK YOU!"
-            btn.style.backgroundColor = "#10b981"
-            
-            setTimeout(() => {
-                btn.textContent = originalText
-                btn.style.backgroundColor = ""
-                e.target.reset()
-            }, 2800)
-            
-            console.log('%c✅ BNRI Contact Form Submitted', 'color:#10b981; font-weight:bold')
-        }
-        
-        // Keyboard escape for mobile menu
-        document.addEventListener('keydown', function(e) {
-            if (e.key === "Escape") {
-                const menu = document.getElementById('mobileMenu')
-                if (!menu.classList.contains('hidden')) toggleMobileMenu()
+            tailwind.config = {
+                content: [],
+                theme: {
+                    extend: {}
+                }
             }
-        })
-        
+        }
+        initializeTailwind();
+
+        // Accordion data from all files
+        const partners = [
+            { name: "United Way of Bemidji Area", lead: "Denae Alamano", role: "Financial support, case management, relocation services, $49,500 Housing Trust Fund", benefit: "Increased donations &amp; program expansion" },
+            { name: "Headwaters Regional Development Commission (HRDC)", lead: "Regional Planning", role: "Housing expertise, grant administration, master planning, ALICE focus", benefit: "New funding streams &amp; regional leadership" },
+            { name: "Bemidji Housing &amp; Redevelopment Authority (HRA)", lead: "Orlando Alamano", role: "Rental assistance, Bridges Program, 306 vouchers, relocation sites", benefit: "More funding &amp; reduced maintenance costs" },
+            { name: "Greater Bemidji", lead: "Economic Development", role: "Promotion, investor attraction, market data", benefit: "Talent retention &amp; enhanced reputation" },
+            { name: "Bemidji Downtown Alliance", lead: "Downtown Revitalization", role: "Events, parking solutions, revolving loans, policy advocacy", benefit: "Foot traffic &amp; membership growth" },
+            { name: "Visit Bemidji", lead: "Tourism Board", role: "Marketing campaigns, visitor experiences, historic home tours", benefit: "$15–$30M tourism revenue boost" },
+            { name: "Bemidji Chamber of Commerce", lead: "Business Network", role: "Workshops, networking, policy lobbying", benefit: "Member growth &amp; business revenue" },
+            { name: "Bemidji Realtors Association", lead: "Real Estate", role: "Promotion, transaction facilitation, market insights", benefit: "Higher commissions from $125M value increase" },
+            { name: "Bemidji School District ISD 31", lead: "Education", role: "Vocational training, community service, enrollment growth", benefit: "225+ new students &amp; increased funding" },
+            { name: "Financial Institutions (Banks)", lead: "First National Bank Bemidji &amp; partners", role: "2–3% loans, CRA lending, grant co-funding", benefit: "Loan volume, lower risk, CRA compliance" },
+            { name: "Large Employers (Sanford Health &amp; BSU)", lead: "Anchor Institutions", role: "Employee housing assistance, grant co-funding", benefit: "Talent retention &amp; recruitment" },
+            { name: "City of Bemidji Council", lead: "Local Government", role: "Fee waivers, 10-yr tax abatement, expedited permitting", benefit: "$1.5M+ annual tax revenue post-abatement" },
+            { name: "State Representative Bidel Duran", lead: "Minnesota Legislature", role: "State grants, deregulation, tax credits", benefit: "Legislative portfolio &amp; voter support" }
+        ];
+
+        // Render accordion
+        function renderAccordion() {
+            const container = document.getElementById('accordion');
+            partners.forEach((partner, index) => {
+                const div = document.createElement('div');
+                div.className = `bg-zinc-900 border border-zinc-700 rounded-3xl overflow-hidden group`;
+                div.innerHTML = `
+                    <div onclick="this.parentElement.classList.toggle('active'); this.nextElementSibling.classList.toggle('hidden')" 
+                         class="accordion-header px-8 py-6 flex justify-between items-center cursor-pointer hover:bg-zinc-800 transition">
+                        <div class="flex items-center gap-x-4">
+                            <span class="text-emerald-400 font-mono text-xl">${(index+1).toString().padStart(2,'0')}</span>
+                            <div>
+                                <div class="font-semibold text-lg">${partner.name}</div>
+                                <div class="text-xs text-zinc-400">${partner.lead}</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down transition-transform group-active:rotate-180"></i>
+                    </div>
+                    <div class="hidden px-8 pb-8 text-sm text-zinc-300 leading-relaxed border-t border-zinc-700 pt-6">
+                        <strong>Contribution:</strong> ${partner.role}<br><br>
+                        <strong>ROI for Partner:</strong> ${partner.benefit}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Simple counter animation for stats (optional)
+        function animateStats() {
+            const stats = document.querySelectorAll('.stat-number');
+            if (stats.length === 0) return;
+            stats.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-target'));
+                let count = 0;
+                const increment = Math.ceil(target / 60);
+                const timer = setInterval(() => {
+                    count += increment;
+                    if (count >= target) {
+                        count = target;
+                        clearInterval(timer);
+                    }
+                    stat.textContent = count.toLocaleString();
+                }, 30);
+            });
+        }
+
         // Initialize everything
         window.onload = function() {
-            console.log('%c🚀 BNRI Website Loaded — Inspired by Rivian.com', 'color:#10b981; font-family:monospace; font-size:13px')
+            renderAccordion();
+            // Trigger any counters if present
+            setTimeout(animateStats, 800);
             
-            // Trigger one stat animation on load for hero effect
-            setTimeout(() => {
-                const firstStat = document.querySelector('.stat-card')
-                if (firstStat) animateStat(firstStat)
-            }, 1800)
-            
-            // Smooth scroll for anchor links
+            // Smooth scroll for nav links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
-                    if (this.getAttribute('href') === '#') return
-                    e.preventDefault()
-                    const target = document.querySelector(this.getAttribute('href'))
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    if (this.getAttribute('href') !== '#') {
+                        e.preventDefault();
+                        document.querySelector(this.getAttribute('href')).scrollIntoView({
+                            behavior: 'smooth'
+                        });
                     }
-                })
-            })
-        }
+                });
+            });
+            
+            console.log('%c✅ BNRI Bemidji single-file website ready. All 18 documents synthesized.', 'color:#10b981; font-family:monospace');
+        };
     </script>
 </body>
 </html>
