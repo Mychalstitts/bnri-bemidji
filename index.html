@@ -424,12 +424,6 @@
                         $300&#8211;500M IMPACT
                     </a>
 
-                    <button onclick="openCatalog()"
-                            class="inline-flex items-center gap-x-3 bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-6 rounded-3xl font-semibold text-lg transition-all group">
-                        <i class="fa-solid fa-house-chimney"></i>
-                        VIEW HOUSE PLANS
-                        <span class="group-hover:translate-x-1 transition-transform">&#8594;</span>
-                    </button>
                 </div>
 
                 <div class="mt-20 flex items-center gap-x-8 text-sm">
@@ -724,10 +718,14 @@
                 </div>
             </div>
 
-            <div class="text-center mt-16 reveal">
+            <div class="text-center mt-16 reveal flex flex-col items-center gap-4">
                 <a href="#participate" class="inline-flex items-center gap-x-3 text-emerald-400 hover:text-emerald-300 transition-colors">
                     <span class="text-lg font-medium">Ready to remodel? Start your application</span>
                     <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a onclick="openCatalog()" class="inline-flex items-center gap-x-3 text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer">
+                    <span class="text-lg font-medium">Browse pre-approved house plans</span>
+                    <i class="fa-solid fa-house-chimney"></i>
                 </a>
             </div>
 
