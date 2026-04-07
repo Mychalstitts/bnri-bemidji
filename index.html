@@ -1214,13 +1214,19 @@
             </div>
 
             <div class="text-center mt-16 reveal">
-                <div class="inline-flex items-center gap-4 bg-zinc-900 rounded-3xl px-10 py-6 border border-white/10">
-                    <div class="text-emerald-400 text-3xl"><i class="fa-solid fa-trophy"></i></div>
-                    <div class="text-left">
-                        <div class="text-xl font-semibold">BNRI combines the best of all of them</div>
-                        <div class="text-white/60 text-sm">Pre-approved plans + fee waivers + tax abatement + grants + low-rate financing — the most aggressive incentive package in Minnesota</div>
+                <button onclick="openPlanCatalog()" class="group inline-flex flex-col items-center gap-4 bg-zinc-900 hover:bg-zinc-800 active:scale-95 rounded-3xl px-10 py-8 border border-white/10 hover:border-emerald-500/50 transition-all cursor-pointer shadow-xl w-full max-w-2xl mx-auto">
+                    <div class="flex items-center gap-4 w-full">
+                        <div class="text-emerald-400 text-3xl"><i class="fa-solid fa-trophy"></i></div>
+                        <div class="text-left flex-1">
+                            <div class="text-xl font-semibold">BNRI combines the best of all of them</div>
+                            <div class="text-white/60 text-sm">Pre-approved plans + fee waivers + tax abatement + grants + low-rate financing — the most aggressive incentive package in Minnesota</div>
+                        </div>
+                        <div class="text-emerald-400 text-2xl group-hover:translate-x-1 transition-transform">&rarr;</div>
                     </div>
-                </div>
+                    <div class="flex items-center gap-2 text-emerald-400 text-sm font-medium">
+                        <span>&#128214;</span> Browse the Pre-Approved House Plan Catalog &mdash; 48 ready-to-build homes &bull; $175k&ndash;$400k
+                    </div>
+                </button>
             </div>
         </div>
     </section>
@@ -2478,5 +2484,228 @@ TONE: Be enthusiastic, helpful, and encouraging. Keep answers concise (2-4 sente
         return 'Great question! BNRI is Bemidji\'s bold neighborhood renewal program offering up to $80K+ in stacked incentives for home renovation. I can help with details on incentives, eligibility, the pilot zone, partners, or how to apply. What would you like to know more about?';
     }
     </script>
+
+<!-- ================================================
+     BNRI HOUSE PLAN CATALOG MODAL
+     ================================================ -->
+<style>
+  #bnriCatalogModal { animation: bnriFadeIn 0.3s ease forwards; }
+  @keyframes bnriFadeIn { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:scale(1); } }
+  .bnri-plan-card { transition: box-shadow 0.18s, transform 0.18s; }
+  .bnri-plan-card:hover { box-shadow: 0 6px 28px rgba(16,185,129,0.2); transform: translateY(-3px); }
+</style>
+
+<div id="bnriCatalogModal" class="hidden fixed inset-0 bg-black/95 z-[990] flex items-center justify-center p-3">
+  <div class="bg-white text-black rounded-3xl w-full max-w-5xl max-h-[96vh] flex flex-col overflow-hidden shadow-2xl">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 bg-emerald-700 text-white flex-shrink-0 gap-3 flex-wrap">
+      <div class="flex items-center gap-3 min-w-0">
+        <span class="text-2xl flex-shrink-0">&#128214;</span>
+        <div class="min-w-0">
+          <div class="font-bold text-lg leading-tight">BNRI Pre-Approved House Plans</div>
+          <div class="text-emerald-200 text-xs">48 plans &bull; All fit Bemidji city lots &bull; $175k&ndash;$400k</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0 flex-wrap">
+        <!-- Filter tabs -->
+        <div class="flex gap-1 bg-emerald-800/60 rounded-xl p-1">
+          <button onclick="bnriFilter('all')" id="bnriTab-all" class="bnri-tab bg-white text-emerald-800 text-xs px-3 py-1 rounded-lg font-bold transition-all">All</button>
+          <button onclick="bnriFilter('ranch')" id="bnriTab-ranch" class="bnri-tab text-white text-xs px-3 py-1 rounded-lg font-medium hover:bg-emerald-600 transition-all">Ranch</button>
+          <button onclick="bnriFilter('loft')" id="bnriTab-loft" class="bnri-tab text-white text-xs px-3 py-1 rounded-lg font-medium hover:bg-emerald-600 transition-all">Loft</button>
+          <button onclick="bnriFilter('2story')" id="bnriTab-2story" class="bnri-tab text-white text-xs px-3 py-1 rounded-lg font-medium hover:bg-emerald-600 transition-all">2-Story</button>
+          <button onclick="bnriFilter('specialty')" id="bnriTab-specialty" class="bnri-tab text-white text-xs px-3 py-1 rounded-lg font-medium hover:bg-emerald-600 transition-all">Specialty</button>
+        </div>
+        <div id="bnriPageInfo" class="text-xs text-emerald-200 hidden sm:block whitespace-nowrap">Showing 1&ndash;8 of 48</div>
+        <button onclick="closePlanCatalog()" class="text-white hover:text-emerald-200 text-2xl leading-none ml-1 flex-shrink-0">&times;</button>
+      </div>
+    </div>
+
+    <!-- Plan Grid -->
+    <div id="bnriPlanGrid" class="flex-1 overflow-y-auto p-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 bg-gray-50"></div>
+
+    <!-- Footer / Pagination -->
+    <div class="flex-shrink-0 bg-white border-t py-3 px-5 flex items-center justify-between gap-3 flex-wrap">
+      <div class="flex items-center gap-2">
+        <button onclick="bnriPrev()" id="bnriPrevBtn" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-4 py-2 rounded-xl text-sm font-semibold transition-colors disabled:opacity-40">&larr; Prev</button>
+        <div id="bnriDots" class="flex gap-1 items-center"></div>
+        <button onclick="bnriNext()" id="bnriNextBtn" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-4 py-2 rounded-xl text-sm font-semibold transition-colors disabled:opacity-40">Next &rarr;</button>
+      </div>
+      <div class="bg-emerald-100 text-emerald-700 text-xs px-3 py-1 rounded-full font-medium">Click any plan to view details &amp; apply</div>
+    </div>
+  </div>
+</div>
+
+<!-- Plan Detail Popup -->
+<div id="bnriDetailModal" class="hidden fixed inset-0 bg-black/80 z-[995] flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-y-auto max-h-[90vh] relative">
+    <button onclick="closePlanDetail()" class="absolute top-4 right-5 text-2xl text-gray-400 hover:text-gray-800 z-10">&times;</button>
+    <div id="bnriDetailContent" class="p-7"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+var PLANS=[
+{id:1,name:"Bemidji Starter Ranch",sqFt:980,beds:2,baths:1,price:"$175k–$210k",cat:"ranch",garage:"Rear 2-car",features:["Open kitchen-living","High-efficiency insulation","Snow-shed roof"],desc:"Compact, affordable entry-level home perfect for first-time buyers or downsizers on narrow lots."},
+{id:2,name:"Urban Craftsman",sqFt:1250,beds:3,baths:2,price:"$225k–$275k",cat:"ranch",garage:"Side 2-car",features:["Deep front porch","Hardwood floors","Energy Star windows"],desc:"Classic Minnesota craftsman charm with excellent curb appeal on a standard city lot."},
+{id:3,name:"Family Haven Rambler",sqFt:1450,beds:3,baths:2,price:"$260k–$310k",cat:"ranch",garage:"Rear 2-car",features:["Flex office/den","Large pantry","Walk-in closets"],desc:"Spacious single-story ideal for young professionals or growing families."},
+{id:4,name:"Garden Courtyard Ranch",sqFt:1320,beds:3,baths:2,price:"$245k–$290k",cat:"ranch",garage:"Side 2-car",features:["Private side courtyard","Mudroom","Sheltered outdoor living"],desc:"Offers a sheltered outdoor living space while staying narrow-lot friendly."},
+{id:5,name:"Sunroom Ranch",sqFt:1380,beds:3,baths:2,price:"$255k–$300k",cat:"ranch",garage:"Rear 2-car",features:["Four-season sunroom","Energy-efficient design","Natural light year-round"],desc:"Brings year-round natural light and views of Bemidji's seasons."},
+{id:6,name:"Northwoods Bungalow",sqFt:1050,beds:2,baths:1,price:"$185k–$220k",cat:"ranch",garage:"Rear 1-car",features:["Covered porch","Wood accents","Compact footprint"],desc:"Cozy bungalow perfect for empty-nesters or singles."},
+{id:7,name:"Accessible Ranch",sqFt:1200,beds:3,baths:2,price:"$220k–$260k",cat:"ranch",garage:"Rear 2-car",features:["Wide doorways","No-step entry","Roll-in shower option"],desc:"Single-story design built for accessibility and aging in place."},
+{id:8,name:"Efficiency Duplex Ranch",sqFt:1100,beds:2,baths:1,price:"$195k–$230k",cat:"ranch",garage:"Attached",features:["Rental income potential","Shared utilities option","Investment ready"],desc:"Smart investment home with possible duplex configuration."},
+{id:9,name:"Cozy Basement Option",sqFt:1350,beds:3,baths:2,price:"$280k–$350k",cat:"ranch",garage:"Side 2-car",features:["Finished lower level","Family room below","Future bedroom option"],desc:"Versatile home with expansion space for growing families."},
+{id:10,name:"Classic Cape Cod Ranch",sqFt:1280,beds:3,baths:2,price:"$235k–$280k",cat:"ranch",garage:"Rear 2-car",features:["Symmetrical design","Dormer windows","Timeless appeal"],desc:"Timeless appeal with practical single-story living."},
+{id:11,name:"Modern Minimal Ranch",sqFt:1150,beds:2,baths:2,price:"$210k–$255k",cat:"ranch",garage:"Rear 2-car",features:["Clean lines","Large windows","Smart-home ready"],desc:"Sleek and efficient for busy professionals."},
+{id:12,name:"Retiree Retreat Ranch",sqFt:1020,beds:2,baths:1.5,price:"$180k–$215k",cat:"ranch",garage:"Rear 1-car",features:["Main-floor laundry","Easy maintenance","Comfort-focused layout"],desc:"Low-maintenance home designed for comfortable retirement."},
+{id:13,name:"Loft Haven 1½-Story",sqFt:1520,beds:4,baths:2.5,price:"$270k–$320k",cat:"loft",garage:"Side 2-car",features:["Private loft suite","Vaulted ceilings","Remote-work ready"],desc:"Excellent for remote workers needing a quiet upper-level office or bedroom."},
+{id:14,name:"Family Loft 1½-Story",sqFt:1580,beds:4,baths:2.5,price:"$280k–$330k",cat:"loft",garage:"Rear 2-car",features:["Two upper bedrooms","Open main floor","Room to grow"],desc:"Balanced family home with room to grow."},
+{id:15,name:"Lakeview Loft",sqFt:1620,beds:4,baths:2.5,price:"$290k–$340k",cat:"loft",garage:"Side 2-car",features:["Upper-level views","Energy-efficient windows","Scenic outlook"],desc:"Designed to capture Bemidji’s natural beauty."},
+{id:16,name:"Craftsman Loft",sqFt:1480,beds:3,baths:2.5,price:"$265k–$315k",cat:"loft",garage:"Rear 2-car",features:["Porch details","Wood accents upstairs","Classic character"],desc:"Craftsman style with modern loft functionality."},
+{id:17,name:"Professional Loft Office",sqFt:1550,beds:3,baths:2.5,price:"$275k–$325k",cat:"loft",garage:"Side 2-car",features:["Dedicated upper office","Main-floor master","Work-from-home ideal"],desc:"Ideal for work-from-home professionals."},
+{id:18,name:"Modern Gable 1½-Story",sqFt:1650,beds:4,baths:2.5,price:"$295k–$345k",cat:"loft",garage:"Rear 2-car",features:["Bold gables","Open concept","Contemporary lines"],desc:"Contemporary take on the classic 1½-story."},
+{id:19,name:"Compact Loft Ranch",sqFt:1420,beds:3,baths:2,price:"$255k–$300k",cat:"loft",garage:"Side 2-car",features:["Efficient upper loft","Lower-level living","Space-smart design"],desc:"Space-smart design for smaller families."},
+{id:20,name:"Winter Haven 1½-Story",sqFt:1590,beds:4,baths:2.5,price:"$285k–$335k",cat:"loft",garage:"Rear 2-car",features:["Superior insulation","Snow management design","Cold-climate built"],desc:"Built specifically for Bemidji’s harsh winters."},
+{id:21,name:"Sunlit Loft",sqFt:1530,beds:3,baths:2.5,price:"$270k–$320k",cat:"loft",garage:"Side 2-car",features:["Large south-facing windows","Maximized natural light","Bright interiors"],desc:"Maximizes natural light in Minnesota’s short winters."},
+{id:22,name:"Versatile Loft Family",sqFt:1610,beds:4,baths:2.5,price:"$290k–$340k",cat:"loft",garage:"Rear 2-car",features:["Flexible upper rooms","Adaptable layout","Family-friendly"],desc:"Adapts easily as family needs change."},
+{id:23,name:"Charming Gable Loft",sqFt:1490,beds:3,baths:2.5,price:"$265k–$315k",cat:"loft",garage:"Side 2-car",features:["Classic gables","Modern interior","Street appeal"],desc:"Charming exterior meets practical living."},
+{id:24,name:"Executive Loft",sqFt:1680,beds:4,baths:2.5,price:"$305k–$355k",cat:"loft",garage:"Rear 2-car",features:["Upper-level primary suite","Premium feel","Professional finish"],desc:"Premium feel for professionals."},
+{id:25,name:"Professional 2-Story",sqFt:1750,beds:3,baths:2.5,price:"$315k–$370k",cat:"2story",garage:"Rear 2-car",features:["Main-floor office","Spacious master","Vertical efficiency"],desc:"Vertical design perfect for working professionals."},
+{id:26,name:"Family 2-Story Colonial",sqFt:1820,beds:4,baths:2.5,price:"$325k–$380k",cat:"2story",garage:"Side 2-car",features:["Formal dining","Family room","Traditional layout"],desc:"Traditional family layout with modern updates."},
+{id:27,name:"Modern 2-Story",sqFt:1900,beds:4,baths:3,price:"$340k–$400k",cat:"2story",garage:"Side 2-car",features:["Open great room","Large windows","Contemporary feel"],desc:"Sleek modern home with excellent light."},
+{id:28,name:"Craftsman 2-Story",sqFt:1720,beds:3,baths:2.5,price:"$310k–$365k",cat:"2story",garage:"Rear 2-car",features:["Porch details","Wood trim","Craftsman character"],desc:"Craftsman style scaled for city lots."},
+{id:29,name:"Energy Smart 2-Story",sqFt:1680,beds:4,baths:2.5,price:"$300k–$355k",cat:"2story",garage:"Side 2-car",features:["Superior insulation","Solar-ready","Low utility costs"],desc:"Designed for low utility costs in cold climate."},
+{id:30,name:"Young Family 2-Story",sqFt:1780,beds:4,baths:2.5,price:"$320k–$375k",cat:"2story",garage:"Rear 2-car",features:["Playroom option","Laundry upstairs","Kid-friendly layout"],desc:"Practical layout for families with young children."},
+{id:31,name:"Luxury Compact 2-Story",sqFt:1650,beds:3,baths:2.5,price:"$295k–$350k",cat:"2story",garage:"Side 2-car",features:["High-end finishes","Spa-like bath","Luxury in small footprint"],desc:"Luxury feel in a smaller footprint."},
+{id:32,name:"Traditional 2-Story",sqFt:1850,beds:4,baths:2.5,price:"$330k–$385k",cat:"2story",garage:"Rear 2-car",features:["Formal living","Open kitchen","Timeless design"],desc:"Timeless traditional design."},
+{id:33,name:"Vertical Modern",sqFt:1690,beds:3,baths:2.5,price:"$305k–$360k",cat:"2story",garage:"Rear 2-car",features:["Tall ceilings","Minimalist design","Narrow-lot optimized"],desc:"Maximizes height on narrow lots."},
+{id:34,name:"Executive Family 2-Story",sqFt:1880,beds:4,baths:3,price:"$335k–$395k",cat:"2story",garage:"Side 2-car",features:["Home theater option","Premium space","Entertainment ready"],desc:"Premium space for growing executive families."},
+{id:35,name:"Winter Warrior 2-Story",sqFt:1740,beds:4,baths:2.5,price:"$315k–$370k",cat:"2story",garage:"Rear 2-car",features:["Heated garage option","Superior weatherproofing","Cold-climate tough"],desc:"Built tough for Bemidji winters."},
+{id:36,name:"Balanced 2-Story",sqFt:1710,beds:3,baths:2.5,price:"$310k–$365k",cat:"2story",garage:"Side 2-car",features:["Evenly distributed space","Well-proportioned rooms","Flexible layout"],desc:"Well-balanced rooms throughout both floors."},
+{id:37,name:"ADA Premium Ranch",sqFt:1280,beds:3,baths:2,price:"$235k–$280k",cat:"specialty",garage:"Rear 2-car",features:["Full accessibility upgrades","Premium finishes","Zero-barrier entry"],desc:"Premium finishes in an accessible single-story."},
+{id:38,name:"Income Duplex 1½-Story",sqFt:1450,beds:3,baths:2,price:"$260k–$310k",cat:"specialty",garage:"Attached",features:["Owner + rental unit","Income generating","Smart investment"],desc:"Smart income-generating design."},
+{id:39,name:"Tiny Home + ADU Option",sqFt:920,beds:2,baths:1,price:"$175k–$205k",cat:"specialty",garage:"None/Detached",features:["ADU-ready","Small footprint","Flexible use"],desc:"Flexible small home or ADU starter."},
+{id:40,name:"Senior Living Ranch",sqFt:1120,beds:2,baths:1.5,price:"$200k–$240k",cat:"specialty",garage:"Rear 1-car",features:["Single-level","Easy maintenance","Senior-friendly"],desc:"Designed specifically for senior comfort."},
+{id:41,name:"Premium Modern 2-Story",sqFt:1950,beds:4,baths:3,price:"$355k–$400k",cat:"specialty",garage:"Side 2-car",features:["High-end kitchen","Spa bath","Top-tier finishes"],desc:"Top-tier finishes within the price cap."},
+{id:42,name:"Multi-Gen 1½-Story",sqFt:1600,beds:4,baths:2.5,price:"$285k–$335k",cat:"specialty",garage:"Rear 2-car",features:["Private spaces","Extended family ready","Multi-generational"],desc:"Supports multi-generational living."},
+{id:43,name:"Eco-Friendly Ranch",sqFt:1240,beds:3,baths:2,price:"$230k–$275k",cat:"specialty",garage:"Side 2-car",features:["Solar-ready","High insulation","Eco-conscious"],desc:"Environmentally conscious design."},
+{id:44,name:"Compact 2-Story Starter",sqFt:1620,beds:3,baths:2.5,price:"$290k–$340k",cat:"specialty",garage:"Rear 2-car",features:["Efficient vertical layout","Maximum space","Minimal footprint"],desc:"Maximum space on minimal footprint."},
+{id:45,name:"Artist Loft 1½-Story",sqFt:1490,beds:3,baths:2,price:"$265k–$315k",cat:"specialty",garage:"Side 2-car",features:["Large upper studio","Creative space","Natural light"],desc:"Ideal for creatives needing studio space."},
+{id:46,name:"Investment Duplex Ranch",sqFt:1300,beds:4,baths:2,price:"$240k–$290k",cat:"specialty",garage:"Attached",features:["Two separate units","Rental income","Investment property"],desc:"Strong rental income potential."},
+{id:47,name:"Winter Luxury Ranch",sqFt:1420,beds:3,baths:2,price:"$255k–$305k",cat:"specialty",garage:"Rear 2-car",features:["Heated floors option","Superior build","Luxury winter comfort"],desc:"Luxury comfort through Bemidji winters."},
+{id:48,name:"Ultimate Family 2-Story",sqFt:1850,beds:4,baths:3,price:"$330k–$395k",cat:"specialty",garage:"Side 2-car",features:["Game room","Large yard compatible","Flagship family home"],desc:"Flagship family home within the price range."}
+];
+
+var ICONS={ranch:'🏡',loft:'🏠','2story':'🏠',specialty:'⭐'};
+var PAGE=8, page=0, filter='all';
+
+function filtered(){return filter==='all'?PLANS:PLANS.filter(function(p){return p.cat===filter;});}
+
+window.openPlanCatalog=function(){
+  page=0;filter='all';
+  document.getElementById('bnriCatalogModal').classList.remove('hidden');
+  document.body.style.overflow='hidden';
+  renderGrid();
+  setTab('all');
+};
+window.closePlanCatalog=function(){
+  document.getElementById('bnriCatalogModal').classList.add('hidden');
+  document.body.style.overflow='';
+};
+window.bnriFilter=function(f){filter=f;page=0;setTab(f);renderGrid();};
+window.bnriNext=function(){var fp=filtered();if(page<Math.ceil(fp.length/PAGE)-1){page++;renderGrid();}};
+window.bnriPrev=function(){if(page>0){page--;renderGrid();}};
+
+function setTab(f){
+  document.querySelectorAll('.bnri-tab').forEach(function(b){b.classList.remove('bg-white','text-emerald-800');b.classList.add('text-white');});
+  var el=document.getElementById('bnriTab-'+f);
+  if(el){el.classList.add('bg-white','text-emerald-800');el.classList.remove('text-white');}
+}
+
+function renderGrid(){
+  var fp=filtered(), total=fp.length, pages=Math.ceil(total/PAGE);
+  var items=fp.slice(page*PAGE,page*PAGE+PAGE);
+  var catColors={ranch:'bg-sky-50 text-sky-700',loft:'bg-violet-50 text-violet-700','2story':'bg-indigo-50 text-indigo-700',specialty:'bg-amber-50 text-amber-700'};
+  document.getElementById('bnriPlanGrid').innerHTML=items.map(function(p){
+    var cc=catColors[p.cat]||'bg-gray-100 text-gray-600';
+    var catLabel={ranch:'Ranch',loft:'Loft','2story':'2-Story',specialty:'Specialty'}[p.cat]||p.cat;
+    return '<div class="bg-white rounded-2xl overflow-hidden shadow border border-gray-100 bnri-plan-card flex flex-col cursor-pointer" onclick="bnriDetail('+p.id+')">'
+      +'<div class="bg-gradient-to-br from-emerald-50 to-teal-50 flex flex-col items-center justify-center py-6 px-2 gap-1">'
+        +'<div class="text-4xl">'+(p.cat==='ranch'?'🏡':p.cat==='loft'?'🏠':p.cat==='2story'?'🏠':'⭐')+'</div>'
+        +'<span class="text-xs font-semibold px-2 py-0.5 rounded-full '+cc+'">'+catLabel+'</span>'
+      +'</div>'
+      +'<div class="p-3 flex flex-col flex-1">'
+        +'<div class="text-gray-400 text-xs font-medium">PLAN #'+p.id+'</div>'
+        +'<div class="font-bold text-sm leading-snug mt-0.5">'+p.name+'</div>'
+        +'<div class="text-xs text-gray-500 mt-1.5 flex gap-2"><span>'+p.sqFt+' sqft</span><span>'+p.beds+'bd/'+p.baths+'ba</span></div>'
+        +'<div class="text-emerald-600 font-bold text-sm mt-1.5">'+p.price+'</div>'
+        +'<button class="mt-3 w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 rounded-xl transition-colors">Details &amp; Apply &rarr;</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+
+  document.getElementById('bnriPageInfo').textContent='Showing '+(page*PAGE+1)+'–'+Math.min(page*PAGE+PAGE,total)+' of '+total;
+
+  var dots=document.getElementById('bnriDots');
+  dots.innerHTML='';
+  for(var i=0;i<pages;i++){
+    var d=document.createElement('button');
+    d.className='rounded-full transition-all '+(i===page?'w-4 h-2 bg-emerald-600':'w-2 h-2 bg-gray-300');
+    (function(pg){d.onclick=function(){page=pg;renderGrid();};})(i);
+    dots.appendChild(d);
+  }
+  document.getElementById('bnriPrevBtn').disabled=page===0;
+  document.getElementById('bnriNextBtn').disabled=page>=pages-1;
+}
+
+window.bnriDetail=function(id){
+  var p=PLANS.find(function(x){return x.id===id;});
+  if(!p)return;
+  document.getElementById('bnriDetailContent').innerHTML=
+    '<div class="text-emerald-600 text-xs font-bold tracking-wider">PLAN #'+p.id+'</div>'
+    +'<h2 class="text-2xl font-bold mt-1 leading-tight">'+p.name+'</h2>'
+    +'<div class="text-emerald-600 font-bold text-xl mt-1">'+p.price+'</div>'
+    +'<div class="flex flex-wrap gap-3 text-sm text-gray-600 mt-3">'
+      +'<span>📏 '+p.sqFt+' sq ft</span>'
+      +'<span>🛏 '+p.beds+' bed</span>'
+      +'<span>🛁 '+p.baths+' bath</span>'
+      +'<span>🚗 '+p.garage+'</span>'
+    +'</div>'
+    +'<p class="text-gray-600 text-sm mt-4 leading-relaxed">'+p.desc+'</p>'
+    +'<div class="mt-4"><div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Features</div>'
+    +'<div class="flex flex-wrap gap-2">'+p.features.map(function(f){return '<span class="bg-emerald-50 text-emerald-700 text-xs px-3 py-1 rounded-full">'+f+'</span>';}).join('')+'</div></div>'
+    +'<div class="mt-5 bg-emerald-50 rounded-2xl p-4">'
+      +'<div class="font-bold text-emerald-800 text-sm">🏆 BNRI Incentives Available for This Plan</div>'
+      +'<div class="text-xs text-emerald-700 mt-1">Pre-approved status • Fee waivers • Tax abatement • Grants • Low-rate financing</div>'
+    +'</div>'
+    +'<button onclick="bnriApply('+p.id+')" class="mt-5 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-2xl transition-colors text-sm">Apply for Plan #'+p.id+' Under BNRI →</button>';
+  document.getElementById('bnriDetailModal').classList.remove('hidden');
+};
+
+window.closePlanDetail=function(){document.getElementById('bnriDetailModal').classList.add('hidden');};
+
+window.bnriApply=function(id){
+  closePlanDetail();closePlanCatalog();
+  var apply=document.getElementById('apply')||document.querySelector('section[id*="apply"]')||document.querySelector('form');
+  if(apply)apply.scrollIntoView({behavior:'smooth'});
+  var homeTab=document.querySelector('[onclick*="homeowner"],[onclick*="Homeowner"],[onclick*="homeownerForm"]');
+  if(homeTab)homeTab.click();
+  var planInput=document.querySelector('input[name="plan_id"],input[name="plan"],input[name="planName"]');
+  if(planInput){var p=PLANS.find(function(x){return x.id===id;});planInput.value='Plan #'+id+(p?' — '+p.name:'');}
+};
+
+document.getElementById('bnriCatalogModal').addEventListener('click',function(e){if(e.target===this)closePlanCatalog();});
+document.getElementById('bnriDetailModal').addEventListener('click',function(e){if(e.target===this)closePlanDetail();});
+document.addEventListener('keydown',function(e){
+  if(!document.getElementById('bnriDetailModal').classList.contains('hidden')){if(e.key==='Escape')closePlanDetail();return;}
+  if(!document.getElementById('bnriCatalogModal').classList.contains('hidden')){
+    if(e.key==='Escape')closePlanCatalog();
+    if(e.key==='ArrowRight')bnriNext();
+    if(e.key==='ArrowLeft')bnriPrev();
+  }
+});
+})();
+</script>
 </body>
 </html>
