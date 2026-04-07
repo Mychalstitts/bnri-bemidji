@@ -2416,10 +2416,7 @@ MODEL: Based on Phoenix, AZ "Clean & Lean" approach with 48 pre-approved renovat
 
 TONE: Be enthusiastic, helpful, and encouraging. Keep answers concise (2-4 sentences). If asked something outside BNRI scope, politely redirect. Always encourage people to apply or reach out for more info.`;
 
-    // Gemini API configuration
-    // To activate: Replace with your Google AI Studio API key from https://aistudio.google.com/apikey
-    const GEMINI_API_KEY = 'AIzaSyCFagdUnMLA00fKQOYoEZ8tnaI-usKCpLY';
-    const GEMINI_MODEL = 'gemini-2.0-flash';
+    // Gemini API is called server-side via /api/chat (key stored in Vercel env vars, never in source)
 
     let chatHistory = [];
 
@@ -2461,19 +2458,19 @@ TONE: Be enthusiastic, helpful, and encouraging. Keep answers concise (2-4 sente
         try {
             let answer;
 
-            if (GEMINI_API_KEY) {
-                // ── Live Gemini API call ──
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        system_instruction: { parts: [{ text: BNRI_CONTEXT }] },
-                        contents: chatHistory,
-                        generationConfig: { maxOutputTokens: 300, temperature: 0.7 }
-                    })
-                });
+            // ── Secure proxy call &mdash; key never exposed in source ──
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    history: chatHistory,
+                    systemContext: BNRI_CONTEXT
+                })
+            });
+
+            if (res.ok) {
                 const data = await res.json();
-                answer = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I couldn\'t process that. Please try again.';
+                answer = data?.answer || 'Sorry, I couldn\'t process that. Please try again.';
             } else {
                 // ── Offline fallback &mdash; keyword matching ──
                 answer = offlineAnswer(question);
