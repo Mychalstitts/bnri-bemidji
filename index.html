@@ -1,4 +1,3 @@
-<!-- bnri v2.1 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,36 +97,62 @@
             transform: translateY(0);
         }
 
-        /* House Plan Catalog Modal */
-        #houseCatalog {
-            position: fixed; inset: 0; z-index: 9999;
-            background: rgba(0,0,0,0.93);
-            backdrop-filter: blur(18px);
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.35s ease;
+        /* House Plans Catalog Modal */
+        .catalog-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
             overflow-y: auto;
         }
-        #houseCatalog.cat-open { opacity: 1; pointer-events: all; }
-        .cat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.75rem;
+        .catalog-overlay.active {
+            opacity: 1;
+            pointer-events: all;
         }
-        .cat-card {
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 2rem;
+        }
+        @media (max-width: 640px) {
+            .catalog-grid { grid-template-columns: 1fr; }
+        }
+        .catalog-card {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 1.25rem;
+            border-radius: 1.5rem;
             overflow: hidden;
-            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.35s ease, border-color 0.35s ease;
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
         }
-        .cat-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); border-color: rgba(16,185,129,0.35); }
-        .cat-card img { width: 100%; height: 220px; object-fit: cover; display: block; transition: transform 0.5s ease; }
-        .cat-card:hover img { transform: scale(1.04); }
-        .cat-badge {
-            display: inline-block;
-            font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em;
-            padding: 0.2rem 0.65rem; border-radius: 999px;
-            background: rgba(16,185,129,0.15); color: #10b981;
+        .catalog-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border-color: rgba(16,185,129,0.3);
+        }
+        .catalog-card img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        .catalog-card:hover img {
+            transform: scale(1.05);
+        }
+        .catalog-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(16,185,129,0.15);
+            color: #10b981;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            letter-spacing: 0.05em;
         }
 
         /* Expandable section panels */
@@ -329,11 +354,11 @@
                 <div class="hidden md:flex items-center gap-x-10 text-sm font-medium">
                     <a href="#vision" class="nav-link text-white/90 hover:text-emerald-400 relative">
                         VISION
-                        <span class="nav-tooltip text-xs text-white/70">A thriving Bemidji for everyone &mdash; 2,500 homes</span>
+                        <span class="nav-tooltip text-xs text-white/70">A thriving Bemidji for everyone — 2,500 homes</span>
                     </a>
                     <a href="#why-now" class="nav-link text-white/90 hover:text-emerald-400 relative">
                         WHY NOW
-                        <span class="nav-tooltip text-xs text-white/70">June 2025 derecho &mdash; the case for renewal</span>
+                        <span class="nav-tooltip text-xs text-white/70">June 2025 derecho — the case for renewal</span>
                     </a>
                     <a href="#incentives" class="nav-link text-white/90 hover:text-emerald-400 relative">
                         INCENTIVES
@@ -345,19 +370,22 @@
                     </a>
                     <a href="#proven" class="nav-link text-white/90 hover:text-emerald-400 relative">
                         PROVEN
-                        <span class="nav-tooltip text-xs text-white/70">Phoenix + 5 more cities &mdash; this model works</span>
+                        <span class="nav-tooltip text-xs text-white/70">Phoenix + 5 more cities — this model works</span>
                     </a>
                     <a href="#zones" class="nav-link text-white/90 hover:text-emerald-400 relative">
                         ZONES
-                        <span class="nav-tooltip text-xs text-white/70">Interactive map &mdash; pilot zone now open</span>
+                        <span class="nav-tooltip text-xs text-white/70">Interactive map — pilot zone now open</span>
                     </a>
                     <a href="#partners" class="nav-link text-white/90 hover:text-emerald-400 relative">
                         PARTNERS
                         <span class="nav-tooltip text-xs text-white/70">14 organizations and growing</span>
                     </a>
+                    <a href="#" onclick="event.preventDefault();openCatalog()" class="nav-link text-white/90 hover:text-emerald-400 relative">
+                        HOUSE PLANS
+                    </a>
                     <a href="#participate" class="nav-link text-white/90 hover:text-emerald-400 relative">
                         GET INVOLVED
-                        <span class="nav-tooltip text-xs text-white/70">Homeowners, builders, banks &mdash; apply now</span>
+                        <span class="nav-tooltip text-xs text-white/70">Homeowners, builders, banks — apply now</span>
                     </a>
                 </div>
 
@@ -384,6 +412,7 @@
                 <a href="#proven" onclick="toggleMobileMenu()" class="nav-link">PROVEN</a>
                 <a href="#zones" onclick="toggleMobileMenu()" class="nav-link">ZONES</a>
                 <a href="#partners" onclick="toggleMobileMenu()" class="nav-link">PARTNERS</a>
+                <a href="#" onclick="toggleMobileMenu();openCatalog()" class="nav-link">HOUSE PLANS</a>
                 <a href="#participate" onclick="toggleMobileMenu()" class="nav-link">GET INVOLVED</a>
                 <div class="pt-6 border-t border-white/10">
                     <a href="#participate" onclick="toggleMobileMenu()"
@@ -395,7 +424,7 @@
         </div>
     </nav>
 
-    <!-- HERO &mdash; Lake Bemidji background -->
+    <!-- HERO — Lake Bemidji background -->
     <header class="hero-bg h-screen flex items-center relative">
         <div class="max-w-screen-2xl mx-auto px-8 pt-20">
             <div class="max-w-3xl">
@@ -425,6 +454,12 @@
                         $300–500M IMPACT
                     </a>
 
+                    <button onclick="openCatalog()"
+                       class="inline-flex items-center gap-x-3 px-8 py-6 bg-emerald-600 hover:bg-emerald-500 rounded-3xl text-lg font-semibold transition-all group">
+                        <i class="fa-solid fa-house-chimney text-xl"></i>
+                        VIEW HOUSE PLANS
+                        <span class="text-xl group-hover:translate-x-1 transition-transform">→</span>
+                    </button>
                 </div>
 
                 <div class="mt-20 flex items-center gap-x-8 text-sm">
@@ -469,18 +504,18 @@
                             A thriving Bemidji for everyone
                         </h2>
                         <p class="text-xl text-white/70 leading-relaxed reveal">
-                            Launched May 13, 2025, the Bemidji Neighborhood Renewal Incentive (BNRI) is transforming inner-city neighborhoods by incentivizing the remodel of 2,500 homes &mdash; starting with the pilot zone from 5th to 15th St. west of Irvine Ave.
+                            Launched May 13, 2025, the Bemidji Neighborhood Renewal Incentive (BNRI) is transforming inner-city neighborhoods by incentivizing the remodel of 2,500 homes — starting with the pilot zone from 5th to 15th St. west of Irvine Ave.
                         </p>
                         <div class="mt-8 grid grid-cols-2 gap-4 reveal">
                             <div class="bg-red-950/30 border border-red-500/20 rounded-2xl p-4 text-center">
                                 <div class="text-2xl font-bold text-red-400">$9.8M</div>
                                 <div class="text-xs text-white/50">Documented storm damage</div>
-                                <div class="text-[10px] text-white/30 mt-1 italic">&mdash; Bemidji Pioneer</div>
+                                <div class="text-[10px] text-white/30 mt-1 italic">— Bemidji Pioneer</div>
                             </div>
                             <div class="bg-red-950/30 border border-red-500/20 rounded-2xl p-4 text-center">
                                 <div class="text-2xl font-bold text-red-400">43%</div>
                                 <div class="text-xs text-white/50">Population decline since 1990</div>
-                                <div class="text-[10px] text-white/30 mt-1 italic">&mdash; U.S. Census</div>
+                                <div class="text-[10px] text-white/30 mt-1 italic">— U.S. Census</div>
                             </div>
                         </div>
                         <div class="mt-12 flex items-center gap-x-6 reveal">
@@ -492,7 +527,7 @@
                             <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/Paul_Bunyan_and_Babe_statues_Bemidji_Minnesota_crop.JPG"
                                  alt="Paul Bunyan and Babe the Blue Ox statues in Bemidji, Minnesota"
                                  class="w-full h-48 object-cover opacity-80 hover:opacity-100 transition-opacity">
-                            <div class="bg-zinc-900 px-6 py-3 text-xs text-white/50">Paul Bunyan & Babe the Blue Ox &mdash; Bemidji's iconic landmark since 1937</div>
+                            <div class="bg-zinc-900 px-6 py-3 text-xs text-white/50">Paul Bunyan & Babe the Blue Ox — Bemidji's iconic landmark since 1937</div>
                         </div>
                     </div>
                 </div>
@@ -528,7 +563,7 @@
                                 <i class="fa-solid fa-dollar-sign text-5xl"></i>
                             </div>
                             <div class="text-4xl font-semibold heading-font mb-3">$300–500M</div>
-                            <div class="text-white/70">Projected economic impact by 2040 &mdash; including $125M in new taxable value</div>
+                            <div class="text-white/70">Projected economic impact by 2040 — including $125M in new taxable value</div>
                             <div class="section-detail mt-4 text-sm text-white/50 border-t border-white/10 pt-4">
                                 Includes $7.5–10M in new property taxes, $15–30M in tourism revenue, 750 new professional households, and Opportunity Zone tax benefits in Beltrami County.
                             </div>
@@ -540,7 +575,7 @@
                                 <i class="fa-solid fa-leaf text-5xl"></i>
                             </div>
                             <div class="text-4xl font-semibold heading-font mb-3">Dignified Renewal</div>
-                            <div class="text-white/70">Relocation plan with United Way, HRA & HRDC support &mdash; no one left behind</div>
+                            <div class="text-white/70">Relocation plan with United Way, HRA & HRDC support — no one left behind</div>
                             <div class="section-detail mt-4 text-sm text-white/50 border-t border-white/10 pt-4">
                                 Case management, mental health support, and permanent housing solutions. The relocation plan transitions individuals to stable, community-integrated housing.
                             </div>
@@ -552,7 +587,7 @@
         </div>
     </section>
 
-    <!-- WHY NOW &mdash; Storm Damage Section with Video Background -->
+    <!-- WHY NOW — Storm Damage Section with Video Background -->
     <section id="why-now" class="py-28 relative overflow-hidden" style="background: #000;">
         <!-- YouTube video background -->
         <div id="stormVideoWrap" style="position:absolute; top:50%; left:50%; width:120%; height:0; padding-bottom:67.5%; transform:translate(-50%,-50%); pointer-events:none; z-index:0; overflow:hidden;">
@@ -571,7 +606,7 @@
             <div class="text-center mb-16 reveal">
                 <div class="inline-flex items-center gap-2 px-5 py-2 bg-red-900/30 text-red-400 text-sm font-medium rounded-3xl mb-6">
                     <i class="fa-solid fa-bolt"></i>
-                    JUNE 20–21, 2025 &mdash; THE DERECHO
+                    JUNE 20–21, 2025 — THE DERECHO
                 </div>
                 <h2 class="heading-font text-6xl font-semibold tracking-tighter">Why Bemidji needs this now</h2>
                 <p class="mt-6 text-xl text-white/70 max-w-2xl mx-auto">
@@ -583,12 +618,12 @@
                 <div class="bg-zinc-900 rounded-3xl p-8 text-center storm-pulse reveal">
                     <div class="text-5xl font-bold heading-font text-red-400">106</div>
                     <div class="text-xs tracking-widest text-white/60 mt-2">MPH WINDS</div>
-                    <div class="text-sm text-white/70 mt-4">Recorded at Bemidji Airport &mdash; up to 120 MPH estimated</div>
+                    <div class="text-sm text-white/70 mt-4">Recorded at Bemidji Airport — up to 120 MPH estimated</div>
                 </div>
                 <div class="bg-zinc-900 rounded-3xl p-8 text-center storm-pulse reveal">
                     <div class="text-5xl font-bold heading-font text-red-400">9M</div>
                     <div class="text-xs tracking-widest text-white/60 mt-2">TREES DESTROYED</div>
-                    <div class="text-sm text-white/70 mt-4">Snapped, uprooted &mdash; the city will never look the same</div>
+                    <div class="text-sm text-white/70 mt-4">Snapped, uprooted — the city will never look the same</div>
                 </div>
                 <div class="bg-zinc-900 rounded-3xl p-8 text-center storm-pulse reveal">
                     <div class="text-5xl font-bold heading-font text-red-400">60K</div>
@@ -598,7 +633,7 @@
                 <div class="bg-zinc-900 rounded-3xl p-8 text-center storm-pulse reveal">
                     <div class="text-5xl font-bold heading-font text-red-400">$9.8M</div>
                     <div class="text-xs tracking-widest text-white/60 mt-2">IN DOCUMENTED DAMAGE</div>
-                    <div class="text-sm text-white/70 mt-4">FEMA denied aid &mdash; fell $800K short of the $10.7M federal threshold</div>
+                    <div class="text-sm text-white/70 mt-4">FEMA denied aid — fell $800K short of the $10.7M federal threshold</div>
                 </div>
             </div>
 
@@ -611,11 +646,11 @@
                              style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; animation: stormKenBurns 12s ease-in-out infinite alternate;" loading="lazy" />
                         <div style="position:absolute; inset:0; background: linear-gradient(transparent 30%, rgba(0,0,0,0.75)); z-index:1;"></div>
                         <div style="position:absolute; bottom:12px; left:16px; z-index:2;">
-                            <div class="text-xs text-white/60 flex items-center gap-1"><i class="fa-solid fa-camera text-red-400"></i> June 2025 derecho &mdash; 106 MPH winds</div>
+                            <div class="text-xs text-white/60 flex items-center gap-1"><i class="fa-solid fa-camera text-red-400"></i> June 2025 derecho — 106 MPH winds</div>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="text-red-400 text-xs tracking-widest mb-2">BEFORE &mdash; THE DAMAGE</div>
+                        <div class="text-red-400 text-xs tracking-widest mb-2">BEFORE — THE DAMAGE</div>
                         <div class="text-lg font-medium">Homes damaged by 100+ MPH winds</div>
                         <div class="text-sm text-white/60 mt-2">Roofs peeled, trees through houses, structures compromised across the pilot zone</div>
                     </div>
@@ -626,11 +661,11 @@
                         <img src="https://design.canva.ai/nq8l_X7e7Ak2eGN" alt="AI rendering of renewed Bemidji neighborhood with charming craftsman homes at golden hour" style="width:100%; height:100%; object-fit:cover;" loading="lazy" />
                         <div style="position:absolute; inset:0; background: linear-gradient(transparent 40%, rgba(0,0,0,0.7)); z-index:1;"></div>
                         <div style="position:absolute; bottom:12px; left:16px; z-index:2;">
-                            <div class="text-xs text-white/60 flex items-center gap-1"><i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> AI rendering &mdash; BNRI vision</div>
+                            <div class="text-xs text-white/60 flex items-center gap-1"><i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> AI rendering — BNRI vision</div>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="text-emerald-400 text-xs tracking-widest mb-2">AFTER &mdash; THE RENEWAL</div>
+                        <div class="text-emerald-400 text-xs tracking-widest mb-2">AFTER — THE RENEWAL</div>
                         <div class="text-lg font-medium">Modern, efficient, beautiful homes</div>
                         <div class="text-sm text-white/60 mt-2">48 pre-approved Phoenix Clean & Lean designs transforming neighborhoods block by block</div>
                     </div>
@@ -719,14 +754,10 @@
                 </div>
             </div>
 
-            <div class="text-center mt-16 reveal flex flex-col items-center gap-4">
+            <div class="text-center mt-16 reveal">
                 <a href="#participate" class="inline-flex items-center gap-x-3 text-emerald-400 hover:text-emerald-300 transition-colors">
                     <span class="text-lg font-medium">Ready to remodel? Start your application</span>
                     <i class="fa-solid fa-arrow-right"></i>
-                </a>
-                <a onclick="openCatalog()" class="inline-flex items-center gap-x-3 text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer">
-                    <span class="text-lg font-medium">Browse pre-approved house plans</span>
-                    <i class="fa-solid fa-house-chimney"></i>
                 </a>
             </div>
 
@@ -756,7 +787,7 @@
                                     <div>Applies to single-family, duplex, or triplex purchases</div>
                                     <div>Savings reflected directly in sale price</div>
                                     <div>Expires July 1, 2033</div>
-                                    <div class="text-white/40 text-xs pt-1 italic">Via State Rep. Bidel Duran &mdash; HF177/HF178 advancing through MN House</div>
+                                    <div class="text-white/40 text-xs pt-1 italic">Via State Rep. Bidel Duran — HF177/HF178 advancing through MN House</div>
                                 </div>
                             </div>
                         </div>
@@ -779,7 +810,7 @@
                                     <div>Must also qualify for federal historic rehabilitation tax credit</div>
                                     <div>Applies to character-defining features of historic buildings</div>
                                     <div>Ideal for pre-1970 homes in the BNRI pilot zone</div>
-                                    <div class="text-white/40 text-xs pt-1 italic">$31.8M allocated statewide &mdash; supported by Bidel Duran's legislative advocacy</div>
+                                    <div class="text-white/40 text-xs pt-1 italic">$31.8M allocated statewide — supported by Bidel Duran's legislative advocacy</div>
                                 </div>
                             </div>
                         </div>
@@ -976,7 +1007,7 @@
                     <div class="text-emerald-400 text-sm font-medium tracking-[3px]">GROW YOUR BUSINESS HERE</div>
                     <h2 class="heading-font text-5xl font-semibold tracking-tighter mt-3 mb-6">Talent attraction for major employers & new companies</h2>
                     <p class="text-lg text-white/70 mb-8">
-                        BNRI doesn't just transform neighborhoods &mdash; it builds the housing infrastructure that major employers like Sanford Health and Bemidji State University need to recruit and retain top talent. And for companies looking to expand, Bemidji offers something rare: regional-center infrastructure with small-town quality of life.
+                        BNRI doesn't just transform neighborhoods — it builds the housing infrastructure that major employers like Sanford Health and Bemidji State University need to recruit and retain top talent. And for companies looking to expand, Bemidji offers something rare: regional-center infrastructure with small-town quality of life.
                     </p>
 
                     <!-- Key selling points -->
@@ -1082,22 +1113,22 @@
         </div>
     </section>
 
-    <!-- PROVEN NATIONWIDE &mdash; Reference Communities -->
+    <!-- PROVEN NATIONWIDE — Reference Communities -->
     <section id="proven" class="py-28 bg-black">
         <div class="max-w-screen-2xl mx-auto px-8">
             <div class="text-center mb-16 reveal">
                 <div class="text-emerald-400 text-sm font-medium tracking-[3px]">THIS MODEL WORKS</div>
                 <h2 class="heading-font text-6xl font-semibold tracking-tighter mt-3">Proven across America</h2>
                 <p class="mt-6 text-xl text-white/70 max-w-2xl mx-auto">
-                    Cities of every size are using incentive-based neighborhood renewal to transform communities. BNRI is built on their playbook &mdash; and designed to go further.
+                    Cities of every size are using incentive-based neighborhood renewal to transform communities. BNRI is built on their playbook — and designed to go further.
                 </p>
             </div>
 
-            <!-- Phoenix &mdash; Primary Model -->
+            <!-- Phoenix — Primary Model -->
             <div class="bg-gradient-to-r from-emerald-950/50 to-zinc-900 rounded-3xl p-12 mb-8 border border-emerald-500/20 reveal">
                 <div class="grid md:grid-cols-2 gap-12 items-center">
                     <div>
-                        <div class="text-emerald-400 text-xs tracking-widest mb-4">PRIMARY MODEL &mdash; OUR BLUEPRINT</div>
+                        <div class="text-emerald-400 text-xs tracking-widest mb-4">PRIMARY MODEL — OUR BLUEPRINT</div>
                         <h3 class="heading-font text-5xl font-semibold tracking-tight">Phoenix, Arizona</h3>
                         <p class="mt-6 text-white/70 text-lg">Phoenix's Housing Initiative used pre-approved design plans, adaptive reuse programs, and streamlined zoning to blow past their goals.</p>
                         <p class="mt-4 text-white/60">BNRI improves on Phoenix with up to 48 pre-approved plans (vs. Phoenix's base model), complete 65% fee waivers + 10-year tax abatement, and zone-based expansion with measurable concentration.</p>
@@ -1109,7 +1140,7 @@
                         </div>
                         <div class="bg-black/40 rounded-2xl p-6 text-center">
                             <div class="text-4xl font-bold heading-font text-emerald-400">50,000</div>
-                            <div class="text-xs text-white/60 mt-2">Original goal &mdash; exceeded</div>
+                            <div class="text-xs text-white/60 mt-2">Original goal — exceeded</div>
                         </div>
                         <div class="bg-black/40 rounded-2xl p-6 text-center">
                             <div class="text-4xl font-bold heading-font text-emerald-400">5 yrs</div>
@@ -1148,7 +1179,7 @@
                             <div class="text-xs text-white/50">95% Tax Rebate / 10 Years</div>
                         </div>
                     </div>
-                    <p class="text-white/70 text-sm">Topeka's NRP provides 95% tax rebates for 5 years, then 50% for 5 more. "Intensive Care" neighborhoods get 95% for the full 10-year period &mdash; similar to BNRI's approach.</p>
+                    <p class="text-white/70 text-sm">Topeka's NRP provides 95% tax rebates for 5 years, then 50% for 5 more. "Intensive Care" neighborhoods get 95% for the full 10-year period — similar to BNRI's approach.</p>
                     <div class="section-detail mt-4 text-sm text-white/50 border-t border-white/10 pt-4">
                         Topeka targets properties that raise appraised value by 10%+ (residential) or 20%+ (commercial), focusing on at-risk neighborhoods and downtown areas.
                     </div>
@@ -1163,7 +1194,7 @@
                             <div class="text-xs text-white/50">100% Tax Abatement</div>
                         </div>
                     </div>
-                    <p class="text-white/70 text-sm">Cleveland offers 100% tax abatement on improvements as a citywide incentive to spur investment across all neighborhoods &mdash; the same principle powering BNRI.</p>
+                    <p class="text-white/70 text-sm">Cleveland offers 100% tax abatement on improvements as a citywide incentive to spur investment across all neighborhoods — the same principle powering BNRI.</p>
                     <div class="section-detail mt-4 text-sm text-white/50 border-t border-white/10 pt-4">
                         Cleveland's program is available to both homeowners and developers, encouraging investment in every neighborhood regardless of current condition.
                     </div>
@@ -1178,7 +1209,7 @@
                             <div class="text-xs text-white/50">100% Abatement + 15yr Extension</div>
                         </div>
                     </div>
-                    <p class="text-white/70 text-sm">Independence offers 100% tax abatement for 10 years, then 50% for another 15 years &mdash; a 25-year total incentive window that's driven significant neighborhood reinvestment.</p>
+                    <p class="text-white/70 text-sm">Independence offers 100% tax abatement for 10 years, then 50% for another 15 years — a 25-year total incentive window that's driven significant neighborhood reinvestment.</p>
                     <div class="section-detail mt-4 text-sm text-white/50 border-t border-white/10 pt-4">
                         The extended timeline gives long-term certainty to investors and homeowners, creating sustained revitalization momentum.
                     </div>
@@ -1210,7 +1241,7 @@
                     </div>
                     <p class="text-white/70 text-sm">Habitat partnered with 10 affiliates in diverse, under-resourced neighborhoods. By 2023, all 10 communities saw measurable improvements in neighborhood conditions.</p>
                     <div class="section-detail mt-4 text-sm text-white/50 border-t border-white/10 pt-4">
-                        Proof that community-driven revitalization works at every scale &mdash; from major metro areas to smaller communities like Bemidji.
+                        Proof that community-driven revitalization works at every scale — from major metro areas to smaller communities like Bemidji.
                     </div>
                     <button class="mt-4 text-emerald-400 text-sm hover:text-emerald-300 transition-colors">Learn more ↓</button>
                 </div>
@@ -1221,7 +1252,7 @@
                     <div class="text-emerald-400 text-3xl"><i class="fa-solid fa-trophy"></i></div>
                     <div class="text-left">
                         <div class="text-xl font-semibold">BNRI combines the best of all of them</div>
-                        <div class="text-white/60 text-sm">Pre-approved plans + fee waivers + tax abatement + grants + low-rate financing &mdash; the most aggressive incentive package in Minnesota</div>
+                        <div class="text-white/60 text-sm">Pre-approved plans + fee waivers + tax abatement + grants + low-rate financing — the most aggressive incentive package in Minnesota</div>
                     </div>
                 </div>
             </div>
@@ -1301,6 +1332,38 @@
                 <p class="mt-4 text-white/60 max-w-xl mx-auto text-sm">Click any partner to see what they bring to the table and how BNRI benefits them.</p>
             </div>
 
+            <!-- FLAGSHIP PARTNERS IN ACTION -->
+            <div class="mb-20 reveal">
+                <div class="text-center mb-10">
+                    <span class="uppercase text-xs tracking-widest text-emerald-400">Partners Already in Action</span>
+                    <h3 class="heading-font text-3xl md:text-4xl font-medium mt-3">Three anchor partnerships shaping BNRI</h3>
+                    <p class="text-white/60 mt-4 max-w-2xl mx-auto">Early alignment with Bemidji's housing, economic development, and health anchors &mdash; the foundation we're building the rest of the coalition on.</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-zinc-900 rounded-2xl p-8 border border-emerald-500/20 card-hover">
+                        <div class="w-12 h-12 bg-emerald-900/50 rounded-xl flex items-center justify-center text-emerald-400 mb-5"><i class="fa-solid fa-heart text-xl"></i></div>
+                        <div class="text-sm uppercase tracking-widest text-emerald-400 mb-2">United Way of Bemidji Area</div>
+                        <h4 class="text-xl font-medium mb-3">Housing stability for ALICE families</h4>
+                        <p class="text-white/70 text-sm leading-relaxed">The $49,500 Housing Trust Fund and United Way's ALICE focus map directly onto BNRI's workforce-housing goals. We're working toward a coordinated pipeline that gets renovation dollars to the families who need them most.</p>
+                    </div>
+
+                    <div class="bg-zinc-900 rounded-2xl p-8 border border-emerald-500/20 card-hover">
+                        <div class="w-12 h-12 bg-emerald-900/50 rounded-xl flex items-center justify-center text-emerald-400 mb-5"><i class="fa-solid fa-building-columns text-xl"></i></div>
+                        <div class="text-sm uppercase tracking-widest text-emerald-400 mb-2">Greater Bemidji</div>
+                        <h4 class="text-xl font-medium mb-3">Economic development alignment</h4>
+                        <p class="text-white/70 text-sm leading-relaxed">BNRI's projected $300&ndash;500M economic impact and $125M in new taxable value line up with Greater Bemidji's regional growth mandate. The opportunity we see: a unified incentive stack that keeps workers, employers, and tax base inside city limits.</p>
+                    </div>
+
+                    <div class="bg-zinc-900 rounded-2xl p-8 border border-emerald-500/20 card-hover">
+                        <div class="w-12 h-12 bg-emerald-900/50 rounded-xl flex items-center justify-center text-emerald-400 mb-5"><i class="fa-solid fa-hospital text-xl"></i></div>
+                        <div class="text-sm uppercase tracking-widest text-emerald-400 mb-2">Sanford Health</div>
+                        <h4 class="text-xl font-medium mb-3">Healthcare workforce retention</h4>
+                        <p class="text-white/70 text-sm leading-relaxed">Safe, affordable housing near the hospital is a direct recruitment and retention lever. We're working toward positioning BNRI's pilot zone as a landing pad for nurses, techs, and support staff Sanford is actively hiring.</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
                 <!-- United Way -->
                 <div class="partner-card bg-zinc-900 rounded-2xl border border-white/5 overflow-hidden cursor-pointer" onclick="togglePartner(this)">
@@ -1333,7 +1396,7 @@
                         <div class="border-t border-white/10 pt-4 space-y-3 text-sm">
                             <div><span class="text-emerald-400 font-medium">Brings:</span> <span class="text-white/70">Housing expertise, grants, ALICE workforce focus, Comprehensive Plan leadership, low-interest loan programs</span></div>
                             <div><span class="text-emerald-400 font-medium">BNRI benefits them:</span> <span class="text-white/70">Creates pipeline for housing development programs, increases demand for their services, fulfills mission</span></div>
-                            <div class="text-white/40 text-xs">Director: Cal Larson &mdash; Full proposal delivered, Advisory Council appointment secured</div>
+                            <div class="text-white/40 text-xs">Director: Cal Larson — Full proposal delivered, Advisory Council appointment secured</div>
                         </div>
                     </div>
                 </div>
@@ -1351,7 +1414,7 @@
                         <div class="border-t border-white/10 pt-4 space-y-3 text-sm">
                             <div><span class="text-emerald-400 font-medium">Brings:</span> <span class="text-white/70">306 Housing Choice Vouchers, 120 public housing units, redevelopment authority, anti-displacement tools</span></div>
                             <div><span class="text-emerald-400 font-medium">BNRI benefits them:</span> <span class="text-white/70">Increased housing stock for voucher placement, modern units to manage, stronger community outcomes</span></div>
-                            <div class="text-white/40 text-xs">Director: Orlando Alamano &mdash; Full proposal delivered, ready for administration</div>
+                            <div class="text-white/40 text-xs">Director: Orlando Alamano — Full proposal delivered, ready for administration</div>
                         </div>
                     </div>
                 </div>
@@ -1368,7 +1431,7 @@
                     <div class="section-detail px-6 pb-6">
                         <div class="border-t border-white/10 pt-4 space-y-3 text-sm">
                             <div><span class="text-emerald-400 font-medium">Brings:</span> <span class="text-white/70">Grant co-funding, employee housing partnerships, recruitment/retention infrastructure</span></div>
-                            <div><span class="text-emerald-400 font-medium">BNRI benefits them:</span> <span class="text-white/70">Solves #1 recruitment problem &mdash; housing. Nurses and professionals need quality homes to accept positions in Bemidji</span></div>
+                            <div><span class="text-emerald-400 font-medium">BNRI benefits them:</span> <span class="text-white/70">Solves #1 recruitment problem — housing. Nurses and professionals need quality homes to accept positions in Bemidji</span></div>
                         </div>
                     </div>
                 </div>
@@ -1385,7 +1448,7 @@
                     <div class="section-detail px-6 pb-6">
                         <div class="border-t border-white/10 pt-4 space-y-3 text-sm">
                             <div><span class="text-emerald-400 font-medium">Brings:</span> <span class="text-white/70">Faculty/staff housing demand, student workforce, research partnerships, institutional credibility</span></div>
-                            <div><span class="text-emerald-400 font-medium">BNRI benefits them:</span> <span class="text-white/70">Faculty recruitment tool &mdash; quality housing near campus. Vibrant downtown attracts students and retains graduates</span></div>
+                            <div><span class="text-emerald-400 font-medium">BNRI benefits them:</span> <span class="text-white/70">Faculty recruitment tool — quality housing near campus. Vibrant downtown attracts students and retains graduates</span></div>
                         </div>
                     </div>
                 </div>
@@ -1405,9 +1468,9 @@
                             <div><span class="text-emerald-400 font-medium">BNRI benefits them:</span> <span class="text-white/70">Massive lending pipeline of 2,500 homes, CRA compliance credits, community leadership positioning</span></div>
                             <div class="mt-3 p-3 bg-emerald-900/20 rounded-lg border border-emerald-500/10">
                                 <div class="text-emerald-400/80 text-xs font-medium mb-1">FROM A LOCAL BANKING LEADER:</div>
-                                <div class="text-white/60 text-xs italic">"The BNRI creates a structured lending pipeline that lets us leverage FHLB buydowns at scale. Instead of one-off rehab loans, we can offer 2–3% financing across hundreds of homes &mdash; that's CRA credit, community impact, and solid loan volume all in one program. Every bank in town should want a seat at this table."</div>
+                                <div class="text-white/60 text-xs italic">"The BNRI creates a structured lending pipeline that lets us leverage FHLB buydowns at scale. Instead of one-off rehab loans, we can offer 2–3% financing across hundreds of homes — that's CRA credit, community impact, and solid loan volume all in one program. Every bank in town should want a seat at this table."</div>
                             </div>
-                            <div class="text-white/40 text-xs mt-2">Multiple local financial institutions engaged &mdash; strong interest in pilot phase</div>
+                            <div class="text-white/40 text-xs mt-2">Multiple local financial institutions engaged — strong interest in pilot phase</div>
                         </div>
                     </div>
                 </div>
@@ -1423,9 +1486,9 @@
                     </div>
                     <div class="section-detail px-6 pb-6">
                         <div class="border-t border-white/10 pt-4 space-y-3 text-sm">
-                            <div><span class="text-emerald-400 font-medium">Brings:</span> <span class="text-white/70">Promotion, networking, investor attraction, Opportunity Zone expertise, <strong class="text-cyan-400">218 Relocate program</strong> ($2,500 moving incentive &mdash; 45 telecommuters recruited)</span></div>
-                            <div><span class="text-emerald-400 font-medium">BNRI benefits them:</span> <span class="text-white/70">Renovated housing stock makes 218 Relocate far more effective &mdash; quality homes close the deal for relocating professionals</span></div>
-                            <div class="text-white/40 text-xs">Director: Dave Hengel &mdash; Co-promotion and board presentations ready</div>
+                            <div><span class="text-emerald-400 font-medium">Brings:</span> <span class="text-white/70">Promotion, networking, investor attraction, Opportunity Zone expertise, <strong class="text-cyan-400">218 Relocate program</strong> ($2,500 moving incentive — 45 telecommuters recruited)</span></div>
+                            <div><span class="text-emerald-400 font-medium">BNRI benefits them:</span> <span class="text-white/70">Renovated housing stock makes 218 Relocate far more effective — quality homes close the deal for relocating professionals</span></div>
+                            <div class="text-white/40 text-xs">Director: Bud Kaney — Co-promotion and board presentations ready</div>
                         </div>
                     </div>
                 </div>
@@ -1554,7 +1617,7 @@
                     <div class="text-cyan-400 text-3xl mt-1"><i class="fa-solid fa-plane-arrival"></i></div>
                     <div>
                         <div class="text-cyan-400 text-xs tracking-widest mb-2">GREATER BEMIDJI'S 218 RELOCATE PROGRAM</div>
-                        <div class="text-xl font-medium">Bringing professionals home &mdash; and BNRI gives them homes to move into</div>
+                        <div class="text-xl font-medium">Bringing professionals home — and BNRI gives them homes to move into</div>
                         <p class="mt-3 text-white/70 text-sm">218 Relocate has already recruited 45 telecommuters and their families from across the U.S. with $2,500 moving incentives, co-working memberships, and community connections. BNRI supercharges this program by creating quality, modern housing stock for new arrivals.</p>
                         <a href="https://www.218relocate.com/" target="_blank" class="inline-flex items-center gap-2 mt-4 text-cyan-400 text-sm hover:text-cyan-300 transition-colors">
                             Visit 218relocate.com <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
@@ -1566,60 +1629,6 @@
             <div class="mt-12 text-emerald-400 font-medium flex items-center justify-center gap-3 reveal">
                 <i class="fa-solid fa-heart"></i>
                 <span>No one is left behind</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- CALL TO THE CITY -->
-    <section class="py-28 bg-gradient-to-b from-black to-zinc-950">
-        <div class="max-w-screen-2xl mx-auto px-8">
-            <div class="text-center mb-16 reveal">
-                <div class="inline-block px-6 py-2 bg-blue-900/30 text-blue-400 text-sm font-medium rounded-3xl mb-6">THE ROAD AHEAD</div>
-                <h2 class="heading-font text-5xl md:text-6xl font-semibold tracking-tighter leading-tight">A call to the city we love</h2>
-                <p class="mt-8 text-xl text-white/70 max-w-3xl mx-auto">
-                    The HRDC's 2026 Comprehensive Plan confirms what our neighbors already know: the city of Bemidji needs to add roughly <span class="text-white font-medium">4,000 housing units over the next decade</span> &mdash; and 11 of 13 housing types are currently considered difficult or very difficult to build here. The plan calls for a city that asks <span class="text-blue-300 font-medium">"How can we make this work?"</span> We couldn't agree more.
-                </p>
-            </div>
-
-            <!-- The ask cards -->
-            <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto reveal">
-                <div class="bg-zinc-900 rounded-3xl p-8 border border-blue-500/10">
-                    <div class="text-blue-400 text-2xl mb-4"><i class="fa-solid fa-person-circle-check"></i></div>
-                    <div class="text-lg font-semibold mb-2">Designate a single point of contact</div>
-                    <p class="text-white/60 text-sm leading-relaxed">Assign one person in the Building Department as the BNRI liaison &mdash; someone who can answer questions, move paperwork, and help projects succeed rather than stall. One phone call. One name. That's all we need.</p>
-                </div>
-                <div class="bg-zinc-900 rounded-3xl p-8 border border-blue-500/10">
-                    <div class="text-blue-400 text-2xl mb-4"><i class="fa-solid fa-rocket"></i></div>
-                    <div class="text-lg font-semibold mb-2">Expedited review for pre-approved plans</div>
-                    <p class="text-white/60 text-sm leading-relaxed">Our house plan catalog uses designs already vetted by licensed architects. When a homeowner submits a pre-approved plan, the permit process should reflect that &mdash; reducing weeks of review to days.</p>
-                </div>
-                <div class="bg-zinc-900 rounded-3xl p-8 border border-blue-500/10">
-                    <div class="text-blue-400 text-2xl mb-4"><i class="fa-solid fa-scale-balanced"></i></div>
-                    <div class="text-lg font-semibold mb-2">Benchmark fees against peer cities</div>
-                    <p class="text-white/60 text-sm leading-relaxed">The HRDC plan recommends comparing Bemidji's ordinances and fees with similar-sized communities to identify improvements. We support that process fully and will help gather the data.</p>
-                </div>
-                <div class="bg-zinc-900 rounded-3xl p-8 border border-blue-500/10">
-                    <div class="text-blue-400 text-2xl mb-4"><i class="fa-solid fa-handshake"></i></div>
-                    <div class="text-lg font-semibold mb-2">Formally recognize BNRI in the Comprehensive Plan</div>
-                    <p class="text-white/60 text-sm leading-relaxed">As the HRDC finalizes Bemidji's 10-year Comprehensive Plan in July 2026, we're asking the City Council to include BNRI as an official city-community partnership &mdash; giving this work the institutional backing it needs to last.</p>
-                </div>
-            </div>
-
-            <!-- National model statement -->
-            <div class="max-w-3xl mx-auto mt-16 reveal">
-                <div class="bg-gradient-to-r from-blue-950/40 to-zinc-900 rounded-3xl p-10 border border-blue-500/20 text-center">
-                    <div class="text-blue-400 text-3xl mb-6"><i class="fa-solid fa-earth-americas"></i></div>
-                    <div class="text-2xl font-semibold heading-font tracking-tight mb-4">Bemidji can be the city other cities study</div>
-                    <p class="text-white/60 leading-relaxed">
-                        Every small city in America facing the same housing crisis, the same aging neighborhoods, the same gap between what residents need and what the system allows &mdash; they're watching what Bemidji does next. <span class="text-white/80">RenewMyBlock.com is built to be a blueprint.</span> Let's give them something worth copying.
-                    </p>
-                    <div class="mt-6 text-blue-400 font-medium text-sm tracking-widest">RENEWMYBLOCK.COM &mdash; A ROAD MAP FOR EVERY TOWN IN AMERICA</div>
-                </div>
-            </div>
-
-            <div class="mt-12 text-blue-400 font-medium flex items-center justify-center gap-3 reveal">
-                <i class="fa-solid fa-flag"></i>
-                <span>This isn't about blame. It's about Bemidji having the courage to lead.</span>
             </div>
         </div>
     </section>
@@ -1721,10 +1730,10 @@
                                     </div>
                                     <select name="investorType" class="w-full bg-zinc-800 border border-white/10 focus:border-emerald-400 rounded-2xl px-6 py-4 outline-none text-sm text-white/70">
                                         <option value="">Type of interest</option>
-                                        <option>Bank / Credit Union &mdash; CRA Lending</option>
-                                        <option>Bank / Credit Union &mdash; FHLB Partnership</option>
-                                        <option>Individual Investor &mdash; Buy & Renovate</option>
-                                        <option>REIT / Institutional &mdash; Portfolio Investment</option>
+                                        <option>Bank / Credit Union — CRA Lending</option>
+                                        <option>Bank / Credit Union — FHLB Partnership</option>
+                                        <option>Individual Investor — Buy & Renovate</option>
+                                        <option>REIT / Institutional — Portfolio Investment</option>
                                         <option>Foundation / Grant Funder</option>
                                         <option>Opportunity Zone Investment</option>
                                         <option>Other Partnership</option>
@@ -1761,11 +1770,18 @@
                             </a>
                         </div>
                         <div>
+                            <a href="tel:2183439834" class="flex items-center gap-4 group">
+                                <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-xl group-hover:bg-emerald-600 transition-colors">📞</div>
+                                <div>
+                                    <div class="text-sm text-white/60">Call or Text</div>
+                                    <div class="font-medium">(218) 343-9834</div>
+                                </div>
+                            </a>
                         </div>
                     </div>
 
                     <div class="mt-16 pt-12 border-t border-white/10 text-xs leading-relaxed text-white/60">
-                        Whether you own a home in the zone, run a construction business, represent a bank, or simply want to help build a better Bemidji &mdash; Mychal is ready to talk.
+                        Whether you own a home in the zone, run a construction business, represent a bank, or simply want to help build a better Bemidji — Mychal is ready to talk.
                     </div>
 
                     <button onclick="document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth' })"
@@ -1839,7 +1855,7 @@
                 <div class="text-xs font-medium tracking-widest mb-6">CONTACT THE ADVOCATE</div>
                 <div class="text-xl font-medium">Mychal Stittsworth</div>
                 <a href="mailto:mychal@renewmyblock.com" class="block mt-3 hover:underline">mychal@renewmyblock.com</a>
-
+                <a href="tel:2183439834" class="block mt-1 hover:underline">(218) 343-9834</a>
 
                 <div class="mt-12 text-[10px] text-white/30">
                     Stittsworth Meats Owner &<br>Community Advocate
@@ -1954,7 +1970,7 @@
             if (arrow) arrow.style.transform = form.classList.contains('expanded') ? 'rotate(90deg)' : '';
         }
 
-        // Application form submission &mdash; collects data and stores locally
+        // Application form submission — collects data and stores locally
         async function submitApplication(e, type) {
             e.preventDefault();
             const form = e.target;
@@ -1977,7 +1993,7 @@
                 });
 
                 if (res.ok) {
-                    btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>APPLICATION SUBMITTED &mdash; THANK YOU!';
+                    btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>APPLICATION SUBMITTED — THANK YOU!';
                     btn.style.backgroundColor = '#10b981';
                     form.reset();
                     setTimeout(() => {
@@ -1989,7 +2005,7 @@
                     throw new Error('Server error');
                 }
             } catch (err) {
-                btn.innerHTML = '<i class="fa-solid fa-exclamation-triangle mr-2"></i>ERROR &mdash; PLEASE TRY AGAIN';
+                btn.innerHTML = '<i class="fa-solid fa-exclamation-triangle mr-2"></i>ERROR — PLEASE TRY AGAIN';
                 btn.style.backgroundColor = '#ef4444';
                 btn.disabled = false;
                 setTimeout(() => {
@@ -2015,12 +2031,12 @@
                     headers: { 'Accept': 'application/json' }
                 });
                 if (res.ok) {
-                    btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>MESSAGE SENT &mdash; THANK YOU!';
+                    btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>MESSAGE SENT — THANK YOU!';
                     btn.style.backgroundColor = '#10b981';
                     form.reset();
                 } else { throw new Error(); }
             } catch {
-                btn.innerHTML = '<i class="fa-solid fa-exclamation-triangle mr-2"></i>ERROR &mdash; TRY AGAIN';
+                btn.innerHTML = '<i class="fa-solid fa-exclamation-triangle mr-2"></i>ERROR — TRY AGAIN';
                 btn.style.backgroundColor = '#ef4444';
             }
             btn.disabled = false;
@@ -2128,7 +2144,7 @@
                 dashArray: '0'
             }).addTo(bnriMap);
 
-            // Future expansion zone (示す next phases &mdash; lighter, dashed)
+            // Future expansion zone (示す next phases — lighter, dashed)
             const futureNorth = L.polygon([
                 [47.4945, -94.8855],
                 [47.4945, -94.8970],
@@ -2155,7 +2171,7 @@
                 dashArray: '6, 8'
             }).addTo(bnriMap);
 
-            // Future expansion zone EAST &mdash; Irvine Ave to Bemidji Ave, 5th–15th St
+            // Future expansion zone EAST — Irvine Ave to Bemidji Ave, 5th–15th St
             const futureEast = L.polygon([
                 [47.4875, -94.8855],
                 [47.4875, -94.8740],
@@ -2254,7 +2270,7 @@
     </script>
 
     <!-- ═══════════════════════════════════════════════════════ -->
-    <!-- BNRI AI Assistant &mdash; Powered by Google Gemini           -->
+    <!-- BNRI AI Assistant — Powered by Google Gemini           -->
     <!-- ═══════════════════════════════════════════════════════ -->
     <style>
         #bnri-chat-toggle {
@@ -2360,7 +2376,7 @@
             </div>
         </div>
         <div class="chat-messages" id="chatMessages">
-            <div class="chat-msg bot">Hi! I'm the BNRI AI assistant. Ask me anything about the Bemidji Neighborhood Renewal Incentive &mdash; incentives, eligibility, the pilot zone, partner organizations, or how to apply.</div>
+            <div class="chat-msg bot">Hi! I'm the BNRI AI assistant. Ask me anything about the Bemidji Neighborhood Renewal Incentive — incentives, eligibility, the pilot zone, partner organizations, or how to apply.</div>
         </div>
         <div class="chat-suggestions" id="chatSuggestions">
             <button onclick="askSuggestion(this)">What incentives are available?</button>
@@ -2377,7 +2393,7 @@
     </div>
 
     <script>
-    // ═══ BNRI AI Chat &mdash; Gemini Integration ═══
+    // ═══ BNRI AI Chat — Gemini Integration ═══
     const BNRI_CONTEXT = `You are the official AI assistant for the BNRI (Bemidji Neighborhood Renewal Incentive) program at RenewMyBlock.com. You help residents, builders, investors, and community partners understand the program.
 
 KEY FACTS:
@@ -2388,10 +2404,10 @@ KEY FACTS:
 - Projected $300M–$500M economic impact by 2040
 
 INCENTIVES (stackable):
-1. 65% Fee Waivers &mdash; city waives most permit/inspection fees (save $8K–$15K)
-2. 10-Year Tax Abatement &mdash; property tax on improvements frozen for 10 years (save $15K–$40K+)
-3. 5% Cash Grant &mdash; up to $10,000 on qualifying project costs
-4. 2–3% Financing &mdash; below-market loans via local banks + FHLB partnership
+1. 65% Fee Waivers — city waives most permit/inspection fees (save $8K–$15K)
+2. 10-Year Tax Abatement — property tax on improvements frozen for 10 years (save $15K–$40K+)
+3. 5% Cash Grant — up to $10,000 on qualifying project costs
+4. 2–3% Financing — below-market loans via local banks + FHLB partnership
 
 STATE & FEDERAL ADD-ONS:
 - Construction Materials Sales Tax Exemption (save ~$9K–$10K on first $165K materials)
@@ -2410,7 +2426,10 @@ MODEL: Based on Phoenix, AZ "Clean & Lean" approach with 48 pre-approved renovat
 
 TONE: Be enthusiastic, helpful, and encouraging. Keep answers concise (2-4 sentences). If asked something outside BNRI scope, politely redirect. Always encourage people to apply or reach out for more info.`;
 
-    // Gemini API is called server-side via /api/chat (key stored in Vercel env vars, never in source)
+    // Gemini API configuration
+    // To activate: Replace with your Google AI Studio API key from https://aistudio.google.com/apikey
+    const GEMINI_API_KEY = 'AIzaSyCFagdUnMLA00fKQOYoEZ8tnaI-usKCpLY';
+    const GEMINI_MODEL = 'gemini-2.0-flash';
 
     let chatHistory = [];
 
@@ -2452,21 +2471,21 @@ TONE: Be enthusiastic, helpful, and encouraging. Keep answers concise (2-4 sente
         try {
             let answer;
 
-            // ── Secure proxy call &mdash; key never exposed in source ──
-            const res = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    history: chatHistory,
-                    systemContext: BNRI_CONTEXT
-                })
-            });
-
-            if (res.ok) {
+            if (GEMINI_API_KEY) {
+                // ── Live Gemini API call ──
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        system_instruction: { parts: [{ text: BNRI_CONTEXT }] },
+                        contents: chatHistory,
+                        generationConfig: { maxOutputTokens: 300, temperature: 0.7 }
+                    })
+                });
                 const data = await res.json();
-                answer = data?.answer || 'Sorry, I couldn\'t process that. Please try again.';
+                answer = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I couldn\'t process that. Please try again.';
             } else {
-                // ── Offline fallback &mdash; keyword matching ──
+                // ── Offline fallback — keyword matching ──
                 answer = offlineAnswer(question);
             }
 
@@ -2476,7 +2495,7 @@ TONE: Be enthusiastic, helpful, and encouraging. Keep answers concise (2-4 sente
 
         } catch (err) {
             typing.remove();
-            addMessage('Connection issue &mdash; please try again in a moment.', false);
+            addMessage('Connection issue — please try again in a moment.', false);
         }
     }
 
@@ -2487,183 +2506,228 @@ TONE: Be enthusiastic, helpful, and encouraging. Keep answers concise (2-4 sente
         if (ql.includes('eligible') || ql.includes('qualify'))
             return 'If your home is in the pilot zone (5th to 15th St. NW, west of Irvine Ave.), you\'re eligible for all BNRI incentives. Homeowners, builders, investors, and banks can all participate. The zone includes roughly 400 homes. Scroll down to the application section to get started!';
         if (ql.includes('apply') || ql.includes('sign up') || ql.includes('start'))
-            return 'To apply, scroll to the "Transform Your Home" section at the bottom of this page. Choose your type &mdash; homeowner, builder, bank, or business inquiry &mdash; fill out the short form, and our team will follow up. It takes just 2 minutes!';
+            return 'To apply, scroll to the "Transform Your Home" section at the bottom of this page. Choose your type — homeowner, builder, bank, or business inquiry — fill out the short form, and our team will follow up. It takes just 2 minutes!';
         if (ql.includes('zone') || ql.includes('where') || ql.includes('map') || ql.includes('pilot'))
-            return 'The BNRI pilot zone covers 5th St. to 15th St. NW, west of Irvine Ave. &mdash; about 400 homes. Check the interactive GIS map on this page! Future expansion will extend east to Bemidji Ave, plus north and south zones. Expansion triggers once 50% of homes in a zone pull permits.';
+            return 'The BNRI pilot zone covers 5th St. to 15th St. NW, west of Irvine Ave. — about 400 homes. Check the interactive GIS map on this page! Future expansion will extend east to Bemidji Ave, plus north and south zones. Expansion triggers once 50% of homes in a zone pull permits.';
         if (ql.includes('partner') || ql.includes('who'))
             return 'BNRI has 14 partner organizations including United Way, HRDC, Bemidji HRA, Sanford Health, BSU, local lenders, Greater Bemidji, Downtown Alliance, Visit Bemidji, the Chamber of Commerce, ISD 31 School District, local realtors, and State Rep. Bidel Duran. It\'s a true community coalition!';
         if (ql.includes('phoenix') || ql.includes('model') || ql.includes('plan'))
-            return 'BNRI is modeled after Phoenix, Arizona\'s successful "Clean & Lean" housing initiative, but with enhancements: 48 pre-approved renovation plans, complete fee waivers + tax abatement, and zone-based expansion with measurable concentration. Phoenix proved this works &mdash; BNRI takes it further.';
+            return 'BNRI is modeled after Phoenix, Arizona\'s successful "Clean & Lean" housing initiative, but with enhancements: 48 pre-approved renovation plans, complete fee waivers + tax abatement, and zone-based expansion with measurable concentration. Phoenix proved this works — BNRI takes it further.';
         if (ql.includes('storm') || ql.includes('derecho') || ql.includes('damage'))
             return 'On June 20, 2025, a devastating derecho hit Bemidji with 106 MPH winds, causing $9.8 million in documented damage. Roofs were torn off, trees crashed through homes, and structures were compromised across the pilot zone. BNRI turns this crisis into an opportunity for neighborhood-wide renewal.';
         if (ql.includes('tax') || ql.includes('abatement'))
-            return 'The 10-year tax abatement freezes property taxes on your improvements for a full decade. So if your $150K home becomes worth $250K after renovation, you won\'t pay taxes on that $100K increase for 10 years &mdash; saving $15,000 to $40,000+. Plus the state construction materials sales tax exemption saves another ~$9K–$10K!';
+            return 'The 10-year tax abatement freezes property taxes on your improvements for a full decade. So if your $150K home becomes worth $250K after renovation, you won\'t pay taxes on that $100K increase for 10 years — saving $15,000 to $40,000+. Plus the state construction materials sales tax exemption saves another ~$9K–$10K!';
         if (ql.includes('financ') || ql.includes('loan') || ql.includes('bank') || ql.includes('rate'))
             return 'Local lenders partner with the Federal Home Loan Bank (FHLB) to offer 2–3% interest rates through loan buydowns. This makes major renovations truly affordable. Multiple local financial institutions are already engaged and excited about the lending pipeline of 2,500 homes.';
         return 'Great question! BNRI is Bemidji\'s bold neighborhood renewal program offering up to $80K+ in stacked incentives for home renovation. I can help with details on incentives, eligibility, the pilot zone, partners, or how to apply. What would you like to know more about?';
     }
     </script>
 
-    <!-- HOUSE PLAN CATALOG MODAL -->
-    <div id="houseCatalog" onclick="if(event.target===this)closeCatalog()">
-      <div class="max-w-screen-2xl mx-auto px-6 py-14">
+    <!-- ═══════════════════ HOUSE PLANS CATALOG MODAL ═══════════════════ -->
+    <div id="houseCatalog" class="catalog-overlay" onclick="if(event.target===this)closeCatalog()">
+        <div class="max-w-screen-2xl mx-auto px-6 py-16">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-12">
+                <div>
+                    <div class="text-emerald-400 text-sm font-medium tracking-[3px] mb-2">BNRI PRE-APPROVED DESIGNS</div>
+                    <h2 class="heading-font text-5xl md:text-6xl font-semibold tracking-tighter">House Plan Catalog</h2>
+                    <p class="text-white/50 mt-3 max-w-2xl text-lg">Pre-approved plans + fee waivers + tax abatement + grants + low-rate financing — the most aggressive incentive package in Minnesota.</p>
+                </div>
+                <button onclick="closeCatalog()" class="w-14 h-14 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center justify-center transition-all text-2xl shrink-0">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
-        <!-- Header row -->
-        <div class="flex items-start justify-between gap-6 mb-10">
-          <div>
-            <div class="text-emerald-400 text-xs font-semibold tracking-[3px] mb-2">BNRI PRE-APPROVED DESIGNS</div>
-            <h2 class="heading-font text-5xl md:text-6xl font-semibold tracking-tighter leading-tight">House Plan Catalog <span class="text-white/40 text-3xl md:text-4xl font-normal">(Example)</span></h2>
-            <p class="mt-3 text-white/50 text-base max-w-2xl">Pre-approved plans + fee waivers + tax abatement + grants + low-rate financing — the most aggressive incentive package in Minnesota.</p>
-          </div>
-          <button onclick="closeCatalog()" class="shrink-0 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center justify-center text-xl transition-all" aria-label="Close">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
+            <!-- Filter badges -->
+            <div class="flex flex-wrap gap-3 mb-10">
+                <span class="catalog-badge"><i class="fa-solid fa-check"></i> Pre-Approved</span>
+                <span class="catalog-badge"><i class="fa-solid fa-bolt"></i> Fast-Track Permits</span>
+                <span class="catalog-badge"><i class="fa-solid fa-dollar-sign"></i> Up to $80K+ Savings</span>
+                <span class="catalog-badge"><i class="fa-solid fa-snowflake"></i> Minnesota Climate-Ready</span>
+            </div>
+
+            <!-- Catalog Grid -->
+            <div class="catalog-grid">
+
+                <!-- Plan 1: Craftsman Bungalow -->
+                <div class="catalog-card">
+                    <div class="overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=800&q=80" alt="Craftsman Bungalow">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-semibold">The Bemidji Craftsman</h3>
+                            <span class="catalog-badge">POPULAR</span>
+                        </div>
+                        <p class="text-white/50 text-sm mb-4">Classic craftsman bungalow with covered front porch, tapered columns, and warm earth-tone siding. Perfect for established neighborhoods.</p>
+                        <div class="flex items-center gap-4 text-xs text-white/40 border-t border-white/10 pt-4">
+                            <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i> 1,400 sq ft</span>
+                            <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i> 3 bed / 2 bath</span>
+                            <span><i class="fa-solid fa-layer-group mr-1 text-emerald-400"></i> 1 story</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 2: Modern Ranch -->
+                <div class="catalog-card">
+                    <div class="overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80" alt="Modern Ranch">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-semibold">The Lakeview Ranch</h3>
+                            <span class="catalog-badge">NEW</span>
+                        </div>
+                        <p class="text-white/50 text-sm mb-4">Clean-lined modern ranch with open floor plan, energy-efficient design, and attached garage. Ideal for young families and professionals.</p>
+                        <div class="flex items-center gap-4 text-xs text-white/40 border-t border-white/10 pt-4">
+                            <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i> 1,800 sq ft</span>
+                            <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i> 3 bed / 2 bath</span>
+                            <span><i class="fa-solid fa-layer-group mr-1 text-emerald-400"></i> 1 story</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 3: Cozy Cottage -->
+                <div class="catalog-card">
+                    <div class="overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&q=80" alt="Cozy Cottage">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-semibold">The Northern Cottage</h3>
+                            <span class="catalog-badge">STARTER</span>
+                        </div>
+                        <p class="text-white/50 text-sm mb-4">Charming cottage with steep gabled roof, cozy front porch, and efficient layout. Great first home or downsizing option.</p>
+                        <div class="flex items-center gap-4 text-xs text-white/40 border-t border-white/10 pt-4">
+                            <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i> 1,100 sq ft</span>
+                            <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i> 2 bed / 1 bath</span>
+                            <span><i class="fa-solid fa-layer-group mr-1 text-emerald-400"></i> 1 story</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 4: Two-Story Family -->
+                <div class="catalog-card">
+                    <div class="overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80" alt="Two-Story Family Home">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-semibold">The Paul Bunyan</h3>
+                            <span class="catalog-badge">FAMILY</span>
+                        </div>
+                        <p class="text-white/50 text-sm mb-4">Spacious two-story home with modern finishes, large kitchen, and room to grow. Built for Minnesota winters with superior insulation.</p>
+                        <div class="flex items-center gap-4 text-xs text-white/40 border-t border-white/10 pt-4">
+                            <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i> 2,200 sq ft</span>
+                            <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i> 4 bed / 2.5 bath</span>
+                            <span><i class="fa-solid fa-layer-group mr-1 text-emerald-400"></i> 2 story</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 5: Retirement Ranch -->
+                <div class="catalog-card">
+                    <div class="overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=800&q=80" alt="Retirement Ranch">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-semibold">The Easy Living Ranch</h3>
+                            <span class="catalog-badge">ACCESSIBLE</span>
+                        </div>
+                        <p class="text-white/50 text-sm mb-4">Single-story accessible design with zero-step entry, wide doorways, and easy-access features. Perfect for aging in place.</p>
+                        <div class="flex items-center gap-4 text-xs text-white/40 border-t border-white/10 pt-4">
+                            <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i> 1,300 sq ft</span>
+                            <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i> 2 bed / 2 bath</span>
+                            <span><i class="fa-solid fa-wheelchair mr-1 text-emerald-400"></i> ADA Ready</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 6: Contemporary Duplex -->
+                <div class="catalog-card">
+                    <div class="overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80" alt="Contemporary Duplex">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-semibold">The Birchwood Duplex</h3>
+                            <span class="catalog-badge">INVESTOR</span>
+                        </div>
+                        <p class="text-white/50 text-sm mb-4">Modern side-by-side duplex with private entries, individual garages, and rental income potential. Maximize your BNRI investment.</p>
+                        <div class="flex items-center gap-4 text-xs text-white/40 border-t border-white/10 pt-4">
+                            <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i> 2,400 sq ft total</span>
+                            <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i> 2x 2 bed / 1 bath</span>
+                            <span><i class="fa-solid fa-building mr-1 text-emerald-400"></i> Duplex</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 7: Energy-Efficient Modern -->
+                <div class="catalog-card">
+                    <div class="overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80" alt="Energy Efficient Modern">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-semibold">The Northwind Modern</h3>
+                            <span class="catalog-badge">ECO</span>
+                        </div>
+                        <p class="text-white/50 text-sm mb-4">Ultra-efficient design with solar-ready roof, triple-pane windows, and heat-pump HVAC. Lowest operating costs in the catalog.</p>
+                        <div class="flex items-center gap-4 text-xs text-white/40 border-t border-white/10 pt-4">
+                            <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i> 1,600 sq ft</span>
+                            <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i> 3 bed / 2 bath</span>
+                            <span><i class="fa-solid fa-leaf mr-1 text-emerald-400"></i> Energy Star</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 8: Full Renovation Template -->
+                <div class="catalog-card">
+                    <div class="overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800&q=80" alt="Full Home Renovation">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-semibold">Full Renovation Package</h3>
+                            <span class="catalog-badge">REMODEL</span>
+                        </div>
+                        <p class="text-white/50 text-sm mb-4">Complete renovation template for existing homes: new siding, windows, roof, kitchen, and bathroom. Transform what you already have.</p>
+                        <div class="flex items-center gap-4 text-xs text-white/40 border-t border-white/10 pt-4">
+                            <span><i class="fa-solid fa-hammer mr-1 text-emerald-400"></i> Your existing home</span>
+                            <span><i class="fa-solid fa-arrow-trend-up mr-1 text-emerald-400"></i> +$50K value</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom CTA -->
+            <div class="mt-16 text-center">
+                <p class="text-white/40 text-sm mb-6">All plans are pre-approved for fast-track permitting in the BNRI zone. Custom modifications available.</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#participate" onclick="closeCatalog()" class="inline-flex items-center gap-3 bg-emerald-600 hover:bg-emerald-500 text-white px-10 py-5 rounded-3xl font-semibold text-lg transition-all">
+                        <i class="fa-solid fa-paper-plane"></i> APPLY NOW
+                    </a>
+                    <button onclick="closeCatalog()" class="inline-flex items-center gap-3 border border-white/30 hover:border-white/60 px-10 py-5 rounded-3xl font-medium text-lg transition-all hover:bg-white/5">
+                        BACK TO SITE
+                    </button>
+                </div>
+            </div>
         </div>
-
-        <!-- Filter pills -->
-        <div class="flex flex-wrap gap-2 mb-10">
-          <span class="cat-badge"><i class="fa-solid fa-check mr-1"></i>Pre-Approved</span>
-          <span class="cat-badge"><i class="fa-solid fa-bolt mr-1"></i>Fast-Track Permits</span>
-          <span class="cat-badge"><i class="fa-solid fa-dollar-sign mr-1"></i>Up to $80K+ Savings</span>
-          <span class="cat-badge"><i class="fa-solid fa-snowflake mr-1"></i>Minnesota Climate-Ready</span>
-        </div>
-
-        <!-- Grid -->
-        <div class="cat-grid">
-
-          <div class="cat-card">
-            <div class="overflow-hidden"><img src="https://images.unsplash.com/photo-1711386862777-701a41786513?w=800&q=80" alt="Craftsman Bungalow" loading="lazy"></div>
-            <div class="p-5">
-              <div class="flex items-center justify-between mb-1"><h3 class="text-lg font-semibold">The Bemidji Craftsman</h3><span class="cat-badge">POPULAR</span></div>
-              <p class="text-white/50 text-sm mb-4">Classic craftsman bungalow with covered porch, tapered columns, and warm earth-tone siding.</p>
-              <div class="flex flex-wrap gap-3 text-xs text-white/40 border-t border-white/10 pt-3">
-                <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i>1,400 sq ft</span>
-                <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i>3 bed / 2 bath</span>
-                <span><i class="fa-solid fa-layer-group mr-1 text-emerald-400"></i>1 story</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="cat-card">
-            <div class="overflow-hidden"><img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80" alt="Modern Ranch" loading="lazy"></div>
-            <div class="p-5">
-              <div class="flex items-center justify-between mb-1"><h3 class="text-lg font-semibold">The Lakeview Ranch</h3><span class="cat-badge">NEW</span></div>
-              <p class="text-white/50 text-sm mb-4">Clean-lined modern ranch with open floor plan, energy-efficient design, and attached garage.</p>
-              <div class="flex flex-wrap gap-3 text-xs text-white/40 border-t border-white/10 pt-3">
-                <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i>1,800 sq ft</span>
-                <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i>3 bed / 2 bath</span>
-                <span><i class="fa-solid fa-layer-group mr-1 text-emerald-400"></i>1 story</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="cat-card">
-            <div class="overflow-hidden"><img src="https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=800&q=80" alt="Cozy Cottage" loading="lazy"></div>
-            <div class="p-5">
-              <div class="flex items-center justify-between mb-1"><h3 class="text-lg font-semibold">The Northern Cottage</h3><span class="cat-badge">STARTER</span></div>
-              <p class="text-white/50 text-sm mb-4">Charming cottage with steep gabled roof, cozy front porch, and efficient layout.</p>
-              <div class="flex flex-wrap gap-3 text-xs text-white/40 border-t border-white/10 pt-3">
-                <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i>1,100 sq ft</span>
-                <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i>2 bed / 1 bath</span>
-                <span><i class="fa-solid fa-layer-group mr-1 text-emerald-400"></i>1 story</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="cat-card">
-            <div class="overflow-hidden"><img src="https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=800&q=80" alt="Two-Story Family Home" loading="lazy"></div>
-            <div class="p-5">
-              <div class="flex items-center justify-between mb-1"><h3 class="text-lg font-semibold">The Paul Bunyan</h3><span class="cat-badge">FAMILY</span></div>
-              <p class="text-white/50 text-sm mb-4">Spacious two-story home with modern finishes, large kitchen, built for Minnesota winters.</p>
-              <div class="flex flex-wrap gap-3 text-xs text-white/40 border-t border-white/10 pt-3">
-                <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i>2,200 sq ft</span>
-                <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i>4 bed / 2.5 bath</span>
-                <span><i class="fa-solid fa-layer-group mr-1 text-emerald-400"></i>2 story</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="cat-card">
-            <div class="overflow-hidden"><img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=800&q=80" alt="Accessible Ranch" loading="lazy"></div>
-            <div class="p-5">
-              <div class="flex items-center justify-between mb-1"><h3 class="text-lg font-semibold">The Easy Living Ranch</h3><span class="cat-badge">ACCESSIBLE</span></div>
-              <p class="text-white/50 text-sm mb-4">Single-story accessible design with zero-step entry, wide doorways, and easy-access features.</p>
-              <div class="flex flex-wrap gap-3 text-xs text-white/40 border-t border-white/10 pt-3">
-                <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i>1,300 sq ft</span>
-                <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i>2 bed / 2 bath</span>
-                <span><i class="fa-solid fa-wheelchair mr-1 text-emerald-400"></i>ADA Ready</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="cat-card">
-            <div class="overflow-hidden"><img src="https://images.unsplash.com/photo-1629558010050-7dcdac8ce7ab?w=800&q=80" alt="Duplex" loading="lazy"></div>
-            <div class="p-5">
-              <div class="flex items-center justify-between mb-1"><h3 class="text-lg font-semibold">The Birchwood Duplex</h3><span class="cat-badge">INVESTOR</span></div>
-              <p class="text-white/50 text-sm mb-4">Modern side-by-side duplex with private entries and rental income potential.</p>
-              <div class="flex flex-wrap gap-3 text-xs text-white/40 border-t border-white/10 pt-3">
-                <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i>2,400 sq ft total</span>
-                <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i>2x (2 bed / 1 bath)</span>
-                <span><i class="fa-solid fa-building mr-1 text-emerald-400"></i>Duplex</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="cat-card">
-            <div class="overflow-hidden"><img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80" alt="Energy Efficient" loading="lazy"></div>
-            <div class="p-5">
-              <div class="flex items-center justify-between mb-1"><h3 class="text-lg font-semibold">The Northwind Modern</h3><span class="cat-badge">ECO</span></div>
-              <p class="text-white/50 text-sm mb-4">Ultra-efficient design with solar-ready roof, triple-pane windows, and heat-pump HVAC.</p>
-              <div class="flex flex-wrap gap-3 text-xs text-white/40 border-t border-white/10 pt-3">
-                <span><i class="fa-solid fa-ruler-combined mr-1 text-emerald-400"></i>1,600 sq ft</span>
-                <span><i class="fa-solid fa-bed mr-1 text-emerald-400"></i>3 bed / 2 bath</span>
-                <span><i class="fa-solid fa-leaf mr-1 text-emerald-400"></i>Energy Star</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="cat-card">
-            <div class="overflow-hidden"><img src="https://images.unsplash.com/photo-1761135149034-1d0c084826db?w=800&q=80" alt="Full Renovation" loading="lazy"></div>
-            <div class="p-5">
-              <div class="flex items-center justify-between mb-1"><h3 class="text-lg font-semibold">Full Renovation Package</h3><span class="cat-badge">REMODEL</span></div>
-              <p class="text-white/50 text-sm mb-4">Complete renovation template for existing homes: new siding, windows, roof, kitchen, and bath.</p>
-              <div class="flex flex-wrap gap-3 text-xs text-white/40 border-t border-white/10 pt-3">
-                <span><i class="fa-solid fa-hammer mr-1 text-emerald-400"></i>Your existing home</span>
-                <span><i class="fa-solid fa-arrow-trend-up mr-1 text-emerald-400"></i>+$50K value avg</span>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /cat-grid -->
-
-        <!-- Bottom CTA -->
-        <div class="mt-14 text-center">
-          <p class="text-white/40 text-sm mb-5">All plans pre-approved for fast-track permitting in the BNRI zone. Custom modifications available.</p>
-          <div class="flex flex-wrap justify-center gap-4">
-            <a href="#participate" onclick="closeCatalog()"
-               class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-9 py-5 rounded-3xl font-semibold text-base transition-all">
-              <i class="fa-solid fa-paper-plane"></i> APPLY NOW
-            </a>
-            <button onclick="closeCatalog()"
-                    class="inline-flex items-center gap-2 border border-white/30 hover:border-white/60 px-9 py-5 rounded-3xl font-medium text-base transition-all hover:bg-white/5">
-              BACK TO SITE
-            </button>
-          </div>
-        </div>
-
-      </div>
     </div>
 
     <script>
-      function openCatalog() {
-        document.getElementById('houseCatalog').classList.add('cat-open');
+    // House Plans Catalog
+    function openCatalog() {
+        document.getElementById('houseCatalog').classList.add('active');
         document.body.style.overflow = 'hidden';
-      }
-      function closeCatalog() {
-        document.getElementById('houseCatalog').classList.remove('cat-open');
+    }
+    function closeCatalog() {
+        document.getElementById('houseCatalog').classList.remove('active');
         document.body.style.overflow = '';
-      }
-      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeCatalog(); });
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCatalog(); });
     </script>
 </body>
 </html>
