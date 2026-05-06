@@ -40,6 +40,7 @@ a:hover{text-decoration:underline}
 .nav-item .dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.5}
 .nav-item.active .dot{opacity:1}
 .nav-item .badge{margin-left:auto;font-size:10px;background:var(--emerald);color:#0A2418;padding:1px 7px;border-radius:9px;font-weight:700}
+.nav-item .badge.zero{display:none}
 .nav-item.active .badge{background:#0A2418;color:var(--emerald-3)}
 
 .sidebar-foot{padding:14px 24px;font-size:11px;opacity:.6;border-top:1px solid rgba(16,185,129,.12)}
@@ -185,7 +186,7 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
 .intake-meta{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;font-weight:600}
 .intake-name{font-size:15px;font-weight:700;margin-bottom:4px}
 .intake-contact{font-size:13px;color:var(--ink-soft);margin-bottom:8px}
-.intake-need{font-size:13px;color:var(--ink);background:var(--cream);padding:8px 12px;border-radius:8px;margin-top:6px;line-height:1.55}
+.intake-need{font-size:13px;color:var(--ink);background:var(--cream);padding:8px 12px;border-radius:8px;margin-top:6px;line-height:1.55;word-wrap:break-word;overflow-wrap:break-word}
 .status-chip{font-size:10px;padding:3px 9px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
 .status-new{background:var(--emerald);color:#fff}
 .status-contacted{background:#E5EFF6;color:var(--sky)}
@@ -549,7 +550,8 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
         <div class="kpi"><div class="lab">Pre-Approved Plans</div><div class="val">48</div><div class="sub">Phoenix Clean &amp; Lean</div></div>
       </div>
 
-      <h2 class="h2">Master checklist</h2>
+      <h2 class="h2">Master checklist <span style="font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-soft);margin-left:8px">Reference</span></h2>
+      <p style="font-size:13px;color:var(--ink-soft);margin:-6px 0 12px;line-height:1.55">This is the persona-wide reference checklist. The <b>per-contact</b> version lives inside each <a href="#" onclick="showPage('inbox');return false;" style="color:var(--emerald-2);font-weight:700">Case File</a> and persists across sessions for that specific person.</p>
       <div class="checklist" data-persona="contractor">
         <div class="check-item"><input type="checkbox" id="c1"><label for="c1">Confirm property is inside the BNRI pilot zone (5th–15th St, west of Irvine Ave) — pull GIS map</label><span class="tag">Eligibility</span></div>
         <div class="check-item"><input type="checkbox" id="c2"><label for="c2">Pull Certificate of Survey (required for all new builds; confirm if remodel triggers it)</label><span class="tag">Required</span></div>
@@ -586,7 +588,8 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
         <div class="kpi"><div class="lab">ALICE in Bemidji</div><div class="val">53%</div><div class="sub">of households</div></div>
       </div>
 
-      <h2 class="h2">Master checklist</h2>
+      <h2 class="h2">Master checklist <span style="font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-soft);margin-left:8px">Reference</span></h2>
+      <p style="font-size:13px;color:var(--ink-soft);margin:-6px 0 12px;line-height:1.55">This is the persona-wide reference checklist. The <b>per-contact</b> version lives inside each <a href="#" onclick="showPage('inbox');return false;" style="color:var(--emerald-2);font-weight:700">Case File</a> and persists across sessions for that specific person.</p>
       <div class="checklist" data-persona="homeowner">
         <div class="check-item"><input type="checkbox" id="h1"><label for="h1">Identify sub-path: building, buying move-in-ready, or relocating</label><span class="tag">Triage</span></div>
         <div class="check-item"><input type="checkbox" id="h2"><label for="h2">Confirm property/target address inside BNRI pilot zone</label><span class="tag">Eligibility</span></div>
@@ -637,7 +640,8 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
         Beltrami County does <b>not</b> currently host a federally designated Opportunity Zone (verified May 2026). Do not pitch OZ tax benefits. Lead instead with the BNRI 10-year tax abatement, fee waivers, and MN-specific programs.
       </div>
 
-      <h2 class="h2">Master checklist</h2>
+      <h2 class="h2">Master checklist <span style="font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-soft);margin-left:8px">Reference</span></h2>
+      <p style="font-size:13px;color:var(--ink-soft);margin:-6px 0 12px;line-height:1.55">This is the persona-wide reference checklist. The <b>per-contact</b> version lives inside each <a href="#" onclick="showPage('inbox');return false;" style="color:var(--emerald-2);font-weight:700">Case File</a> and persists across sessions for that specific person.</p>
       <div class="checklist" data-persona="investor">
         <div class="check-item"><input type="checkbox" id="i1"><label for="i1">Classify investor type: REIT, fund, syndicate, or single private investor</label><span class="tag">Triage</span></div>
         <div class="check-item"><input type="checkbox" id="i2"><label for="i2">Confirm investment thesis: hold (rental), flip (sell-on), or build-to-rent</label><span class="tag">Strategy</span></div>
@@ -690,7 +694,8 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
         <div class="kpi"><div class="lab">Referrals</div><div class="val">Active</div><div class="sub">Inbound from partners</div></div>
       </div>
 
-      <h2 class="h2">Master checklist</h2>
+      <h2 class="h2">Master checklist <span style="font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-soft);margin-left:8px">Reference</span></h2>
+      <p style="font-size:13px;color:var(--ink-soft);margin:-6px 0 12px;line-height:1.55">This is the persona-wide reference checklist. The <b>per-contact</b> version lives inside each <a href="#" onclick="showPage('inbox');return false;" style="color:var(--emerald-2);font-weight:700">Case File</a> and persists across sessions for that specific person.</p>
       <div class="checklist" data-persona="partner">
         <div class="check-item"><input type="checkbox" id="p1"><label for="p1">Identify which partner org the inquiry is from</label><span class="tag">Triage</span></div>
         <div class="check-item"><input type="checkbox" id="p2"><label for="p2">Determine inquiry type: referral, co-marketing, MOU question, partner-event invite, or escalation</label><span class="tag">Type</span></div>
@@ -1348,8 +1353,12 @@ function renderInbox(){
   const el = document.getElementById('inboxList');
   const empty = document.getElementById('inboxEmpty');
   document.getElementById('inboxCount').textContent = list.length+' record'+(list.length===1?'':'s');
-  document.getElementById('inboxBadge').textContent = _inbox.filter(i=>i.status==='new').length;
-  document.getElementById('kpiNew').textContent = _inbox.filter(i=>i.status==='new').length;
+  const newCount = _inbox.filter(i=>i.status==='new').length;
+  const inboxBadge = document.getElementById('inboxBadge');
+  inboxBadge.textContent = newCount;
+  inboxBadge.title = newCount + ' new (untriaged) ' + (newCount===1?'contact':'contacts');
+  inboxBadge.classList.toggle('zero', newCount === 0);
+  document.getElementById('kpiNew').textContent = newCount;
   document.getElementById('kpiActive').textContent = _inbox.filter(i=>i.status==='contacted'||i.status==='qualified').length;
   const overdueEl = document.getElementById('kpiOverdue');
   if (overdueEl) overdueEl.textContent = _inbox.filter(isOverdue).length;
@@ -1594,8 +1603,8 @@ function renderCase(){
               ${(_partners||[]).map(p=>`<option value="${esc(p.id)}" ${links.partnerId===p.id?'selected':''}>${esc(p.org)}</option>`).join('')}
             </select>
           </div>
-          <div class="field"><label>Lender / mortgage partner</label><input id="L_lender" value="${esc(links.lender||'')}" placeholder="e.g., Northwoods Bank" onchange="saveLinks()"></div>
-          <div class="field"><label>Plan basis</label><input id="L_plan" value="${esc(links.plan||'')}" placeholder="e.g., BNRI plan #14, or Custom" onchange="saveLinks()"></div>
+          <div class="field"><label>Lender / mortgage partner</label><input id="L_lender" value="${esc(links.lender||'')}" placeholder="e.g., Northwoods Bank" title="${esc(links.lender||'')}" onchange="saveLinks();this.title=this.value"></div>
+          <div class="field"><label>Plan basis</label><input id="L_plan" value="${esc(links.plan||'')}" placeholder="e.g., BNRI plan #14, or Custom" title="${esc(links.plan||'')}" onchange="saveLinks();this.title=this.value"></div>
         </div>
 
         <div class="side-card">
@@ -1775,8 +1784,14 @@ async function emailChecklistDialog(){
   const currentIdx = Math.max(0, j.stages.findIndex(s => s.id === (it.stage||j.stages[0].id)));
   const targetIdx = Math.min(j.stages.length-1, currentIdx + 1);
 
-  // Build a small inline picker
-  const picker = j.stages.map((s,i) => `<option value="${esc(s.id)}" ${i===targetIdx?'selected':''}>${i+1}. ${esc(s.label)}</option>`).join('');
+  // Build a forward-only stage picker — Concierge wouldn't email a checklist
+  // to "advance" a contact backward, so only show stages ahead of current.
+  const forwardStages = j.stages.map((s, i) => ({...s, _i:i})).filter(s => s._i > currentIdx);
+  if (forwardStages.length === 0) {
+    alert('This contact is already at the final stage of their journey.');
+    return;
+  }
+  const picker = forwardStages.map(s => `<option value="${esc(s.id)}" ${s._i===targetIdx?'selected':''}>${s._i+1}. ${esc(s.label)}</option>`).join('');
   const dialog = document.createElement('div');
   dialog.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:grid;place-items:center;padding:20px;backdrop-filter:blur(4px)';
   dialog.innerHTML = `
