@@ -217,6 +217,74 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
 /* Letter preview iframe */
 .letter-preview{width:100%;min-height:520px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-top:12px}
 
+/* Case File */
+.case-header{background:linear-gradient(135deg,#000 0%,#0A2418 100%);color:#EFE9D8;border-radius:18px;padding:28px 32px;margin-bottom:22px;border:1px solid rgba(16,185,129,.12);position:relative;overflow:hidden}
+.case-header::before{content:"";position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(16,185,129,.18) 0%,transparent 65%);pointer-events:none}
+.case-header .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;position:relative}
+.case-header .who{display:flex;align-items:center;gap:14px}
+.case-avatar{width:50px;height:50px;border-radius:14px;background:var(--emerald);color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px;box-shadow:0 0 0 3px rgba(16,185,129,.18)}
+.case-header h1{font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.15;margin:0}
+.case-header .sub{font-size:13px;color:rgba(255,255,255,.6);margin-top:3px;font-weight:500}
+.case-header .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;position:relative}
+.case-header .meta .pill{font-size:11px;background:rgba(16,185,129,.15);color:var(--emerald-3);padding:5px 12px;border-radius:20px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border:1px solid rgba(16,185,129,.3)}
+.case-header .meta .pill a{color:inherit}
+.case-header .actions{display:flex;gap:8px}
+.case-header .actions .a{font-size:12px;background:rgba(255,255,255,.08);color:#fff;padding:7px 14px;border-radius:8px;font-weight:600;border:1px solid rgba(255,255,255,.15);cursor:pointer;transition:background .15s,border-color .15s}
+.case-header .actions .a:hover{background:rgba(16,185,129,.2);border-color:var(--emerald)}
+.case-header .actions .a.primary{background:var(--emerald);border-color:var(--emerald);color:#fff}
+.case-header .actions .a.primary:hover{background:var(--emerald-2)}
+
+.stage-tracker{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:18px;overflow-x:auto;gap:6px}
+.stage{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:80px;cursor:pointer;text-align:center;position:relative}
+.stage .dot{width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--ink-soft);transition:all .2s}
+.stage .lbl{font-size:11px;color:var(--ink-soft);font-weight:600;letter-spacing:.3px}
+.stage.done .dot{background:var(--emerald);border-color:var(--emerald);color:#fff;box-shadow:0 0 0 3px rgba(16,185,129,.2)}
+.stage.done .lbl{color:var(--emerald-2)}
+.stage.current .dot{background:#fff;border-color:var(--emerald);color:var(--emerald-2);box-shadow:0 0 0 3px rgba(16,185,129,.15);animation:pulse-dot 2s ease-in-out infinite}
+.stage.current .lbl{color:var(--emerald-2);font-weight:800}
+.stage:not(:last-child)::after{content:"";position:absolute;top:14px;left:calc(50% + 18px);right:calc(-50% + 18px);height:2px;background:var(--line);z-index:0}
+.stage.done:not(:last-child)::after{background:var(--emerald)}
+.stage:hover .dot{transform:scale(1.1)}
+
+.case-grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+@media (max-width:1080px){.case-grid{grid-template-columns:1fr}}
+.case-col h3{font-size:13px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.case-col h3 .count{font-size:11px;background:var(--emerald-soft);color:var(--emerald-2);padding:1px 8px;border-radius:10px;font-weight:700}
+
+.activity-form{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap}
+.activity-form select{font-size:12px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);font-family:inherit}
+.activity-form input{flex:1;min-width:200px;padding:7px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper);font-size:13px;font-family:inherit}
+.activity-form button{background:var(--emerald);color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.activity-form button:hover{background:var(--emerald-2)}
+
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl-item{position:relative;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:13px}
+.tl-item::before{content:"";position:absolute;left:-22px;top:14px;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--emerald);box-shadow:0 0 0 3px rgba(16,185,129,.15)}
+.tl-item.event::before{background:var(--emerald);border-color:var(--emerald)}
+.tl-item.call::before{background:var(--sky);border-color:var(--sky)}
+.tl-item.meeting::before{background:#7C3AED;border-color:#7C3AED}
+.tl-item .when{font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:4px}
+.tl-item .what{color:var(--ink);line-height:1.5}
+.tl-item .type{font-size:9px;background:var(--emerald-soft);color:var(--emerald-2);padding:1px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-right:6px}
+.tl-item .x{position:absolute;top:8px;right:10px;color:var(--ink-soft);font-size:14px;cursor:pointer;opacity:0;transition:opacity .15s}
+.tl-item:hover .x{opacity:.6}
+.tl-item .x:hover{opacity:1;color:var(--danger)}
+
+.case-side{display:flex;flex-direction:column;gap:14px}
+.side-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+.side-card h4{font-size:12px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.side-card .row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0}
+.side-card .row .k{color:var(--ink-soft);font-weight:500}
+.side-card .row .v{color:var(--ink);font-weight:600;text-align:right}
+.side-card .field{margin-bottom:10px}
+.side-card .field label{display:block;font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:4px}
+.side-card .field input,.side-card .field select{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;font-size:13px;background:var(--paper);font-family:inherit}
+.side-card .field input:focus,.side-card .field select:focus{outline:none;border-color:var(--emerald);background:#fff;box-shadow:0 0 0 2px rgba(16,185,129,.12)}
+.side-card .money{font-size:18px;font-weight:800;color:var(--emerald-2);letter-spacing:-.5px}
+.side-card .save-hint{font-size:11px;color:var(--ink-soft);font-style:italic;margin-top:6px;text-align:center;opacity:0;transition:opacity .3s}
+.side-card .save-hint.show{opacity:1}
+
 @media print{
   .sidebar,.topbar{display:none}
   .app{grid-template-columns:1fr}
@@ -246,6 +314,7 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
       <div class="nav-label">Operations</div>
       <button class="nav-item active" data-page="dashboard"><span class="dot"></span>Dashboard</button>
       <button class="nav-item" data-page="inbox"><span class="dot"></span>Inbox <span class="badge" id="inboxBadge">0</span></button>
+      <button class="nav-item" data-page="case"><span class="dot"></span>Case File</button>
       <button class="nav-item" data-page="intake"><span class="dot"></span>New Intake</button>
 
       <div class="nav-label">Persona Tracks</div>
@@ -384,6 +453,15 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
         <p>No submissions match these filters yet.</p>
         <p style="font-size:13px;margin-top:6px">When the public website's contact forms post to <code>/api/submit</code>, they'll appear here.</p>
       </div>
+    </section>
+
+    <!-- CASE FILE -->
+    <section class="page hidden" id="page-case">
+      <div id="caseEmpty" style="text-align:center;padding:80px 20px;color:var(--ink-soft)">
+        <div style="font-size:48px;margin-bottom:8px">📁</div>
+        <p>No case file open. Click <b>Open case</b> on a contact in the Inbox to begin.</p>
+      </div>
+      <div id="caseBody" style="display:none"></div>
     </section>
 
     <!-- INTAKE -->
@@ -944,14 +1022,208 @@ function boot(){
   setupPartners();
 }
 
-const pages = ['dashboard','inbox','intake','contractor','homeowner','investor','partner','contractor-pool','partner-directory','templates','resources','scripts','role'];
+const pages = ['dashboard','inbox','case','intake','contractor','homeowner','investor','partner','contractor-pool','partner-directory','templates','resources','scripts','role'];
 const titles = {
-  dashboard:'Dashboard', inbox:'Inbox', intake:'New Intake',
+  dashboard:'Dashboard', inbox:'Inbox', case:'Case File', intake:'New Intake',
   contractor:'Contractors / Builders', homeowner:'Homeowners',
   investor:'Investors / REITs', partner:'Partner Organizations',
   'contractor-pool':'Vetted Contractor Pool', 'partner-directory':'Partner Directory',
   templates:'Templates & Letters', resources:'Resource Library', scripts:'Talking Scripts', role:'Concierge Role'
 };
+
+// ============== JOURNEY TEMPLATES (per persona) ==============
+const JOURNEYS = {
+  contractor: {
+    label: 'Contractor / Builder',
+    stages: [
+      {id:'discovery',label:'Discovery'},
+      {id:'scoping',label:'Scope & Quote'},
+      {id:'permit-prep',label:'Permit Prep'},
+      {id:'submitted',label:'Submitted'},
+      {id:'approved',label:'Permit Issued'},
+      {id:'in-progress',label:'In Progress'},
+      {id:'inspection',label:'Inspections'},
+      {id:'complete',label:'Complete'}
+    ],
+    checklist: [
+      {id:'c1',text:'Confirmed property is in BNRI pilot zone (5th–15th, west of Irvine)'},
+      {id:'c2',text:'Pulled Certificate of Survey (or confirmed not required)'},
+      {id:'c3',text:'Identified plan basis: pre-approved BNRI plan # OR custom'},
+      {id:'c4',text:'Calculated fees from 2026 schedule + ~65% BNRI waiver'},
+      {id:'c5',text:'Checked setbacks vs Chapter 28 (variance/SUP needed?)'},
+      {id:'c6',text:'Pulled property history from Beltrami Recorder'},
+      {id:'c7',text:'SmartGov application drafted and reviewed with contractor'},
+      {id:'c8',text:'Generated BNRI fee-waiver cover letter'},
+      {id:'c9',text:'Pre-submittal call with city inspector (if non-standard)'},
+      {id:'c10',text:'Permit submitted to City of Bemidji'},
+      {id:'c11',text:'Permit issued (number captured below)'},
+      {id:'c12',text:'Pre-construction kickoff with contractor'},
+      {id:'c13',text:'Rough framing inspection passed'},
+      {id:'c14',text:'Mechanical / electrical / plumbing rough inspections passed'},
+      {id:'c15',text:'Insulation + drywall inspections passed'},
+      {id:'c16',text:'Final inspection scheduled'},
+      {id:'c17',text:'Final inspection passed — Certificate of Occupancy issued'},
+      {id:'c18',text:'Project closed out: photos captured, final fee reconciliation, contractor pool review updated'}
+    ]
+  },
+  'homeowner-build': {
+    label: 'Homeowner — building',
+    stages: [
+      {id:'discovery',label:'Discovery'},
+      {id:'eligibility',label:'Eligibility'},
+      {id:'financing',label:'Financing'},
+      {id:'plans',label:'Plans + Permits'},
+      {id:'in-progress',label:'Construction'},
+      {id:'inspection',label:'Inspections'},
+      {id:'move-in',label:'Move-In'},
+      {id:'complete',label:'Complete'}
+    ],
+    checklist: [
+      {id:'h1',text:'Confirmed pilot zone eligibility'},
+      {id:'h2',text:'Ran ALICE income screen — flagged for MN Housing Rehab if eligible'},
+      {id:'h3',text:'BNRI $10K grant application submitted'},
+      {id:'h4',text:'10-year tax abatement enrollment opened'},
+      {id:'h5',text:'BNRI 2–3% financing pre-approval obtained'},
+      {id:'h6',text:'MN Housing Start Up / First-Generation pre-screen (if applicable)'},
+      {id:'h7',text:'Plan selected (pre-approved BNRI plan # OR custom design)'},
+      {id:'h8',text:'Vetted contractor matched and contracted'},
+      {id:'h9',text:'Permits filed via SmartGov + fee waiver letter attached'},
+      {id:'h10',text:'Permits issued — number captured'},
+      {id:'h11',text:'Construction kickoff'},
+      {id:'h12',text:'Rough inspections passed'},
+      {id:'h13',text:'Finish work complete'},
+      {id:'h14',text:'Final inspection + Certificate of Occupancy'},
+      {id:'h15',text:'Move-in scheduled'},
+      {id:'h16',text:'Tax abatement confirmed on first roll'},
+      {id:'h17',text:'Closeout: incentive stack reconciled, before/after photos for case study'}
+    ]
+  },
+  'homeowner-buy': {
+    label: 'Homeowner — buying',
+    stages: [
+      {id:'discovery',label:'Discovery'},
+      {id:'pre-approval',label:'Pre-Approval'},
+      {id:'inventory',label:'Inventory'},
+      {id:'offer',label:'Offer'},
+      {id:'closing',label:'Closing'},
+      {id:'move-in',label:'Move-In'},
+      {id:'complete',label:'Complete'}
+    ],
+    checklist: [
+      {id:'b1',text:'Confirmed buyer is targeting in-zone home'},
+      {id:'b2',text:'MN Housing Start Up pre-screen (if first-time buyer)'},
+      {id:'b3',text:'MN Housing First-Generation pre-screen (if applicable)'},
+      {id:'b4',text:'BNRI mortgage partner introduced'},
+      {id:'b5',text:'Pre-approval letter received'},
+      {id:'b6',text:'Inventory list shared (BNRI homes available in zone)'},
+      {id:'b7',text:'Property identified + showing scheduled'},
+      {id:'b8',text:'Offer submitted'},
+      {id:'b9',text:'Offer accepted — closing date set'},
+      {id:'b10',text:'Inspection / appraisal complete'},
+      {id:'b11',text:'Closing complete — keys handed over'},
+      {id:'b12',text:'Tax abatement enrollment (improvements transferred)'},
+      {id:'b13',text:'Move-in support packet sent'},
+      {id:'b14',text:'Closeout: welcome to the neighborhood, BNRI testimonial captured'}
+    ]
+  },
+  'homeowner-relocate': {
+    label: 'Homeowner — relocating',
+    stages: [
+      {id:'discovery',label:'Discovery'},
+      {id:'218-app',label:'218 Application'},
+      {id:'housing',label:'Housing'},
+      {id:'move-in',label:'Move-In'},
+      {id:'complete',label:'Complete'}
+    ],
+    checklist: [
+      {id:'r1',text:'Confirmed 95–100% remote work eligibility'},
+      {id:'r2',text:'218 Relocate application started (must be within 30 days of move)'},
+      {id:'r3',text:'Paul Bunyan Gigabit Internet ordered'},
+      {id:'r4',text:'LaunchPad coworking membership activated'},
+      {id:'r5',text:'In-zone housing identified (rent or buy)'},
+      {id:'r6',text:'$2,500 moving expense reimbursement submitted'},
+      {id:'r7',text:'Networking / community welcome scheduled'},
+      {id:'r8',text:'Closeout: settled in Bemidji, testimonial captured'}
+    ]
+  },
+  'investor-private': {
+    label: 'Private investor',
+    stages: [
+      {id:'discovery',label:'Discovery'},
+      {id:'thesis',label:'Thesis'},
+      {id:'diligence',label:'Diligence'},
+      {id:'acquired',label:'Acquired'},
+      {id:'reno',label:'Renovation'},
+      {id:'exit',label:'Exit'},
+      {id:'complete',label:'Complete'}
+    ],
+    checklist: [
+      {id:'i1',text:'Investor classified: hold/flip/build-to-rent'},
+      {id:'i2',text:'Target parcels pulled from Beltrami GIS'},
+      {id:'i3',text:'ROI model run with BNRI stack (waivers + abatement + financing)'},
+      {id:'i4',text:'Title / lien diligence on each parcel'},
+      {id:'i5',text:'Acquisition closed — parcel list captured below'},
+      {id:'i6',text:'Vetted contractor matched'},
+      {id:'i7',text:'Permits + fee waivers in place'},
+      {id:'i8',text:'Renovation kickoff'},
+      {id:'i9',text:'Final inspection + Certificate of Occupancy'},
+      {id:'i10',text:'Listed for sale OR leased (rent matches ALICE if buy-to-rent)'},
+      {id:'i11',text:'Closeout: ROI realized vs modeled, case study captured'}
+    ]
+  },
+  'investor-reit': {
+    label: 'REIT / fund',
+    stages: [
+      {id:'discovery',label:'Discovery'},
+      {id:'thesis',label:'Thesis'},
+      {id:'diligence',label:'Diligence'},
+      {id:'acquired',label:'Acquired'},
+      {id:'reno',label:'Renovation'},
+      {id:'stabilized',label:'Stabilized'},
+      {id:'complete',label:'Complete'}
+    ],
+    checklist: [
+      {id:'r1',text:'Acquisition criteria captured (units, hold period, ROI threshold)'},
+      {id:'r2',text:'Multi-parcel target list assembled from GIS'},
+      {id:'r3',text:'Bulk ROI model with BNRI stack applied'},
+      {id:'r4',text:'City liaison meeting scheduled (5+ parcels)'},
+      {id:'r5',text:'Title diligence batch run'},
+      {id:'r6',text:'Acquisition closed across N parcels'},
+      {id:'r7',text:'Vetted contractor pool engaged for renovation'},
+      {id:'r8',text:'Permits + fee waivers obtained for entire batch'},
+      {id:'r9',text:'Renovation phases tracked'},
+      {id:'r10',text:'Lease-up / sale execution per parcel'},
+      {id:'r11',text:'Stabilized — ROI reported to fund'},
+      {id:'r12',text:'Closeout: case study, partner testimonial, expansion conversation'}
+    ]
+  },
+  partner: {
+    label: 'Partner organization',
+    stages: [
+      {id:'intro',label:'Intro'},
+      {id:'mou',label:'MOU'},
+      {id:'active',label:'Active'},
+      {id:'renewal',label:'Renewal'}
+    ],
+    checklist: [
+      {id:'p1',text:'Partner type identified + named contact captured'},
+      {id:'p2',text:'Mutual benefit conversation complete'},
+      {id:'p3',text:'MOU drafted'},
+      {id:'p4',text:'MOU signed by both parties'},
+      {id:'p5',text:'Co-branded one-pager delivered for partner channels'},
+      {id:'p6',text:'Referral pipeline established (member intake routed back here)'},
+      {id:'p7',text:'Monthly check-in scheduled'},
+      {id:'p8',text:'Quarterly progress report shared'},
+      {id:'p9',text:'Annual MOU renewal'}
+    ]
+  },
+  other: {
+    label: 'Other',
+    stages: [{id:'discovery',label:'Discovery'},{id:'qualified',label:'Qualified'},{id:'closed',label:'Closed'}],
+    checklist: [{id:'o1',text:'First call complete'},{id:'o2',text:'Need / persona identified'},{id:'o3',text:'Routed to correct track'}]
+  }
+};
+function journeyFor(persona){ return JOURNEYS[persona] || JOURNEYS.other; }
 function showPage(name){
   if (!pages.includes(name)) name = 'dashboard';
   pages.forEach(p => document.getElementById('page-'+p).classList.toggle('hidden', p!==name));
@@ -1056,8 +1328,8 @@ function renderInbox(){
         <select onchange="setIntakeStatus('${it.id}', this.value)">
           ${['new','contacted','qualified','closed'].map(s=>`<option value="${s}" ${it.status===s?'selected':''}>${s}</option>`).join('')}
         </select>
+        <button class="btn-primary" style="margin:0;padding:7px 14px;font-size:12px" onclick="openCase('${it.id}')">Open case →</button>
         <button class="btn-secondary" onclick="addNote('${it.id}')">Note</button>
-        <button class="btn-secondary" onclick="routeFromInbox('${esc(it.persona||'')}')">Open track</button>
         <button class="btn-danger" onclick="deleteIntake('${it.id}')">Delete</button>
       </div>
     </div>
@@ -1097,6 +1369,285 @@ async function deleteIntake(id){
 function routeFromInbox(persona){
   const map = {'contractor':'contractor','homeowner-build':'homeowner','homeowner-buy':'homeowner','homeowner-relocate':'homeowner','investor-private':'investor','investor-reit':'investor','partner':'partner'};
   showPage(map[persona] || 'dashboard');
+}
+
+// ============== CASE FILE ==============
+let _currentCaseId = null;
+async function patchIntake(id, patch){
+  // Mutate local cache
+  const it = _inbox.find(x=>x.id===id);
+  if (it) Object.assign(it, patch);
+  if (location.protocol !== 'file:') {
+    try {
+      await fetch('/api/intakes',{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json'},
+        credentials:'same-origin',
+        body:JSON.stringify({id, ...patch})
+      });
+    } catch(e){ console.warn('patchIntake failed', e); }
+  } else {
+    try{ localStorage.setItem('rmb-intakes', JSON.stringify(_inbox)); }catch(e){}
+  }
+  return it;
+}
+
+function openCase(id){
+  _currentCaseId = id;
+  showPage('case');
+  renderCase();
+}
+
+function renderCase(){
+  const wrap = document.getElementById('caseBody');
+  const empty = document.getElementById('caseEmpty');
+  if (!_currentCaseId) { wrap.style.display='none'; empty.style.display='block'; return; }
+  const it = _inbox.find(x=>x.id===_currentCaseId);
+  if (!it) { wrap.style.display='none'; empty.style.display='block'; return; }
+  empty.style.display='none';
+  wrap.style.display='block';
+
+  const j = journeyFor(it.persona);
+  const initials = (it.name||'?').split(/\s+/).map(s=>s[0]).join('').slice(0,2).toUpperCase();
+  const currentStage = it.stage || j.stages[0].id;
+  const stageIdx = j.stages.findIndex(s=>s.id===currentStage);
+
+  // Per-contact journey checklist (merge master template with stored progress)
+  const stored = (it.journey || []).reduce((m,x)=>(m[x.id]=x,m),{});
+  const items = j.checklist.map(c => ({...c, done: !!(stored[c.id] && stored[c.id].done), doneAt: stored[c.id]?.doneAt}));
+  const doneCount = items.filter(x=>x.done).length;
+
+  const acts = (it.activities || []).slice().sort((a,b)=> (b.at||'').localeCompare(a.at||''));
+  const links = it.links || {};
+
+  wrap.innerHTML = `
+    <div class="case-header">
+      <div class="top">
+        <div class="who">
+          <div class="case-avatar">${esc(initials)}</div>
+          <div>
+            <h1>${esc(it.name||'(no name)')}</h1>
+            <div class="sub">${esc(j.label)} · received ${new Date(it.receivedAt||Date.now()).toLocaleString()}</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="a" onclick="showPage('inbox')">← Back to inbox</button>
+          ${it.persona==='contractor' || it.persona && it.persona.startsWith('homeowner') ? '<button class="a primary" onclick="generateLetterForCase()">Generate fee waiver letter →</button>' : ''}
+        </div>
+      </div>
+      <div class="meta">
+        ${it.email?'<span class="pill">📧 <a href="mailto:'+esc(it.email)+'">'+esc(it.email)+'</a></span>':''}
+        ${it.phone?'<span class="pill">📞 '+esc(it.phone)+'</span>':''}
+        ${it.address?'<span class="pill">📍 '+esc(it.address)+'</span>':''}
+        <span class="pill">Source: ${esc(it.source||'Website')}</span>
+        <span class="pill">Status: ${esc(it.status||'new')}</span>
+      </div>
+    </div>
+
+    <div class="stage-tracker">
+      ${j.stages.map((s,i)=>`
+        <div class="stage ${i<stageIdx?'done':i===stageIdx?'current':''}" onclick="setCaseStage('${s.id}')">
+          <div class="dot">${i<stageIdx?'✓':i+1}</div>
+          <div class="lbl">${esc(s.label)}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="case-grid">
+      <div class="case-col">
+        <h3>Journey checklist <span class="count">${doneCount}/${items.length}</span></h3>
+        <div class="checklist">
+          ${items.map(c=>`
+            <div class="check-item ${c.done?'done':''}">
+              <input type="checkbox" id="case-${c.id}" ${c.done?'checked':''} onchange="toggleJourneyItem('${c.id}', this.checked)">
+              <label for="case-${c.id}">${esc(c.text)}</label>
+              ${c.done && c.doneAt ? '<span class="tag">'+new Date(c.doneAt).toLocaleDateString()+'</span>' : ''}
+            </div>
+          `).join('')}
+        </div>
+
+        <h3 style="margin-top:24px">Activity timeline <span class="count">${acts.length}</span></h3>
+        <div class="activity-form">
+          <select id="actType">
+            <option value="note">📝 Note</option>
+            <option value="call">📞 Call</option>
+            <option value="meeting">🤝 Meeting</option>
+            <option value="event">⚡ Event</option>
+          </select>
+          <input id="actText" placeholder="What happened? (e.g., 'Permit submitted', 'Spoke with city about variance', 'Closing scheduled for 6/15')">
+          <button onclick="addCaseActivity()">Log it</button>
+        </div>
+        <div class="timeline">
+          ${acts.length===0 ? '<p style="color:var(--ink-soft);font-size:13px;padding:14px 0">No activity yet. Log the first call, every key event, every commitment, every blocker. The next Concierge will thank you.</p>' : acts.map(a=>`
+            <div class="tl-item ${esc(a.type||'note')}">
+              <div class="when">${new Date(a.at).toLocaleString()}</div>
+              <div class="what"><span class="type">${esc(a.type||'note')}</span>${esc(a.text)}</div>
+              <span class="x" onclick="removeCaseActivity('${a.id}')" title="Remove">×</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <aside class="case-side">
+        <div class="side-card">
+          <h4>💰 Money</h4>
+          <div class="field"><label>Quoted permit fee ($)</label><input type="number" step="0.01" id="L_quote" value="${esc(links.quote||'')}" onchange="saveLinks()"></div>
+          <div class="field"><label>BNRI waiver % (default 65)</label><input type="number" id="L_waiver" value="${esc(links.waiver||65)}" onchange="saveLinks()"></div>
+          <div class="row"><span class="k">Net fee due</span><span class="v money" id="L_net">—</span></div>
+          <div class="field" style="margin-top:10px"><label>$10K BNRI grant approved?</label>
+            <select id="L_grant" onchange="saveLinks()">
+              <option value="">—</option>
+              <option value="submitted" ${links.grant==='submitted'?'selected':''}>Submitted</option>
+              <option value="approved" ${links.grant==='approved'?'selected':''}>Approved</option>
+              <option value="paid" ${links.grant==='paid'?'selected':''}>Paid</option>
+            </select>
+          </div>
+          <div class="field"><label>10-yr abatement enrolled?</label>
+            <select id="L_abate" onchange="saveLinks()">
+              <option value="">—</option>
+              <option value="started" ${links.abate==='started'?'selected':''}>Started</option>
+              <option value="enrolled" ${links.abate==='enrolled'?'selected':''}>Enrolled</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="side-card">
+          <h4>🏛️ Permit</h4>
+          <div class="field"><label>Permit number</label><input id="L_permit" value="${esc(links.permitNumber||'')}" placeholder="e.g., 2026-0421" onchange="saveLinks()"></div>
+          <div class="field"><label>Submitted date</label><input type="date" id="L_psub" value="${esc(links.permitSubmitted||'')}" onchange="saveLinks()"></div>
+          <div class="field"><label>Issued date</label><input type="date" id="L_piss" value="${esc(links.permitIssued||'')}" onchange="saveLinks()"></div>
+          <div class="field"><label>Final inspection / CO date</label><input type="date" id="L_co" value="${esc(links.coDate||'')}" onchange="saveLinks()"></div>
+        </div>
+
+        <div class="side-card">
+          <h4>🤝 Linked records</h4>
+          <div class="field"><label>Contractor (from pool)</label>
+            <select id="L_contractor" onchange="saveLinks()">
+              <option value="">— Not assigned —</option>
+              ${(_contractors||[]).map(c=>`<option value="${esc(c.id)}" ${links.contractorId===c.id?'selected':''}>${esc(c.company)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field"><label>Partner referral source</label>
+            <select id="L_partner" onchange="saveLinks()">
+              <option value="">— Direct / Website —</option>
+              ${(_partners||[]).map(p=>`<option value="${esc(p.id)}" ${links.partnerId===p.id?'selected':''}>${esc(p.org)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field"><label>Lender / mortgage partner</label><input id="L_lender" value="${esc(links.lender||'')}" placeholder="e.g., Northwoods Bank" onchange="saveLinks()"></div>
+          <div class="field"><label>Plan basis</label><input id="L_plan" value="${esc(links.plan||'')}" placeholder="e.g., BNRI plan #14, or Custom" onchange="saveLinks()"></div>
+        </div>
+
+        <div class="side-card">
+          <h4>📅 Follow-up</h4>
+          <div class="field"><label>Next action by</label><input type="date" id="L_next" value="${esc(links.nextAction||'')}" onchange="saveLinks()"></div>
+          <div class="field"><label>Owner</label><input id="L_owner" value="${esc(links.owner||'Mychal')}" onchange="saveLinks()"></div>
+          <div class="save-hint" id="saveHint">✓ Saved</div>
+        </div>
+      </aside>
+    </div>
+  `;
+
+  // recompute net fee on first render
+  computeNet();
+}
+
+function computeNet(){
+  const q = parseFloat(document.getElementById('L_quote')?.value)||0;
+  const w = parseFloat(document.getElementById('L_waiver')?.value)||0;
+  const net = q - (q * (w/100));
+  const el = document.getElementById('L_net');
+  if (el) el.textContent = q ? '$'+net.toFixed(2) : '—';
+}
+
+async function setCaseStage(stageId){
+  if (!_currentCaseId) return;
+  await patchIntake(_currentCaseId, { stage: stageId });
+  renderCase();
+}
+
+async function toggleJourneyItem(itemId, done){
+  if (!_currentCaseId) return;
+  const it = _inbox.find(x=>x.id===_currentCaseId);
+  if (!it) return;
+  const j = it.journey || [];
+  const idx = j.findIndex(x=>x.id===itemId);
+  const entry = { id: itemId, done, doneAt: done ? new Date().toISOString() : undefined };
+  if (idx>=0) j[idx] = entry; else j.push(entry);
+  await patchIntake(_currentCaseId, { journey: j });
+  renderCase();
+}
+
+async function addCaseActivity(){
+  if (!_currentCaseId) return;
+  const t = document.getElementById('actType').value;
+  const txt = document.getElementById('actText').value.trim();
+  if (!txt) return;
+  const it = _inbox.find(x=>x.id===_currentCaseId);
+  if (!it) return;
+  const acts = it.activities || [];
+  acts.push({
+    id: 'a-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),
+    at: new Date().toISOString(),
+    type: t, text: txt
+  });
+  await patchIntake(_currentCaseId, { activities: acts });
+  renderCase();
+}
+
+async function removeCaseActivity(actId){
+  if (!_currentCaseId) return;
+  const it = _inbox.find(x=>x.id===_currentCaseId);
+  if (!it) return;
+  const acts = (it.activities||[]).filter(a => a.id !== actId);
+  await patchIntake(_currentCaseId, { activities: acts });
+  renderCase();
+}
+
+let _saveLinksTimer = null;
+async function saveLinks(){
+  if (!_currentCaseId) return;
+  computeNet();
+  const links = {
+    quote: parseFloat(document.getElementById('L_quote')?.value)||null,
+    waiver: parseFloat(document.getElementById('L_waiver')?.value)||null,
+    grant: document.getElementById('L_grant')?.value || null,
+    abate: document.getElementById('L_abate')?.value || null,
+    permitNumber: document.getElementById('L_permit')?.value || null,
+    permitSubmitted: document.getElementById('L_psub')?.value || null,
+    permitIssued: document.getElementById('L_piss')?.value || null,
+    coDate: document.getElementById('L_co')?.value || null,
+    contractorId: document.getElementById('L_contractor')?.value || null,
+    partnerId: document.getElementById('L_partner')?.value || null,
+    lender: document.getElementById('L_lender')?.value || null,
+    plan: document.getElementById('L_plan')?.value || null,
+    nextAction: document.getElementById('L_next')?.value || null,
+    owner: document.getElementById('L_owner')?.value || null
+  };
+  clearTimeout(_saveLinksTimer);
+  _saveLinksTimer = setTimeout(async () => {
+    await patchIntake(_currentCaseId, { links });
+    const hint = document.getElementById('saveHint');
+    if (hint) { hint.classList.add('show'); setTimeout(()=>hint.classList.remove('show'), 1400); }
+  }, 350);
+}
+
+function generateLetterForCase(){
+  const it = _inbox.find(x=>x.id===_currentCaseId);
+  if (!it) return;
+  showPage('templates');
+  setTimeout(()=>{
+    if (typeof openLetter === 'function') openLetter('fee-waiver');
+    setTimeout(()=>{
+      const setIf = (id,v) => { const el = document.getElementById(id); if(el) el.value = v; };
+      setIf('letterTo', 'Building Official');
+      setIf('letterOrg', 'City of Bemidji Building Department, 317 4th St NW');
+      setIf('letterAddr', it.address || '');
+      setIf('letterPermit', 'Residential remodel');
+      setIf('letterBase', it.links?.quote || '');
+      setIf('letterWaiver', it.links?.waiver || 65);
+      if (typeof renderLetter === 'function') renderLetter();
+    }, 100);
+  }, 100);
 }
 function setupInbox(){
   document.getElementById('filterStatus').addEventListener('change', renderInbox);
