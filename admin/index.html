@@ -365,7 +365,7 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
       <div class="kpi-row">
         <div class="kpi"><div class="lab">New this week</div><div class="val" id="kpiNew">0</div><div class="sub">Untriaged contacts</div></div>
         <div class="kpi"><div class="lab">Active</div><div class="val" id="kpiActive">0</div><div class="sub">Contacted / qualified</div></div>
-        <div class="kpi"><div class="lab">Pilot Zone</div><div class="val">5th–15th</div><div class="sub">West of Irvine Ave</div></div>
+        <div class="kpi" style="cursor:pointer" onclick="filterInboxOverdue()"><div class="lab">⏰ Overdue</div><div class="val" id="kpiOverdue" style="color:var(--danger)">0</div><div class="sub">Follow-up past due</div></div>
         <div class="kpi"><div class="lab">Fee Waivers</div><div class="val">~65%</div><div class="sub">vs. standard</div></div>
       </div>
 
@@ -441,7 +441,41 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
           <option value="partner">Partner org</option>
           <option value="other">Other</option>
         </select>
-        <input type="text" id="filterSearch" placeholder="Search name, email, address…" style="min-width:240px">
+        <select id="filterStage">
+          <option value="">All stages</option>
+          <option value="discovery">Discovery</option>
+          <option value="scoping">Scope &amp; Quote</option>
+          <option value="eligibility">Eligibility</option>
+          <option value="financing">Financing</option>
+          <option value="pre-approval">Pre-approval</option>
+          <option value="thesis">Thesis</option>
+          <option value="diligence">Diligence</option>
+          <option value="permit-prep">Permit prep</option>
+          <option value="submitted">Submitted</option>
+          <option value="approved">Permit issued</option>
+          <option value="acquired">Acquired</option>
+          <option value="plans">Plans</option>
+          <option value="inventory">Inventory</option>
+          <option value="218-app">218 application</option>
+          <option value="offer">Offer</option>
+          <option value="closing">Closing</option>
+          <option value="reno">Renovation</option>
+          <option value="in-progress">In progress</option>
+          <option value="inspection">Inspections</option>
+          <option value="exit">Exit</option>
+          <option value="stabilized">Stabilized</option>
+          <option value="move-in">Move-in</option>
+          <option value="housing">Housing</option>
+          <option value="intro">Intro</option>
+          <option value="mou">MOU</option>
+          <option value="active">Active</option>
+          <option value="renewal">Renewal</option>
+          <option value="qualified">Qualified</option>
+          <option value="closed">Closed</option>
+          <option value="complete">Complete</option>
+          <option value="overdue">⏰ Overdue follow-up</option>
+        </select>
+        <input type="text" id="filterSearch" placeholder="Search name, email, address…" style="min-width:220px">
         <button class="btn-secondary" id="refreshInbox">Refresh</button>
         <button class="btn-secondary" id="exportInbox">Export CSV</button>
         <span class="count" id="inboxCount">0 records</span>
@@ -1290,16 +1324,26 @@ async function loadInbox(){
   }
   renderInbox();
 }
+function isOverdue(it){
+  const d = it.links && it.links.nextAction;
+  if (!d) return false;
+  return new Date(d) < new Date(new Date().toDateString());
+}
+
 function renderInbox(){
   const status = document.getElementById('filterStatus').value;
   const persona = document.getElementById('filterPersona').value;
+  const stage = document.getElementById('filterStage') ? document.getElementById('filterStage').value : '';
   const search = (document.getElementById('filterSearch').value || '').toLowerCase();
 
-  const list = _inbox.filter(it =>
-    (!status || it.status===status) &&
-    (!persona || it.persona===persona) &&
-    (!search || JSON.stringify(it).toLowerCase().includes(search))
-  );
+  const list = _inbox.filter(it => {
+    if (status && it.status !== status) return false;
+    if (persona && it.persona !== persona) return false;
+    if (stage === 'overdue') { if (!isOverdue(it)) return false; }
+    else if (stage && (it.stage || '') !== stage) return false;
+    if (search && !JSON.stringify(it).toLowerCase().includes(search)) return false;
+    return true;
+  });
 
   const el = document.getElementById('inboxList');
   const empty = document.getElementById('inboxEmpty');
@@ -1307,20 +1351,32 @@ function renderInbox(){
   document.getElementById('inboxBadge').textContent = _inbox.filter(i=>i.status==='new').length;
   document.getElementById('kpiNew').textContent = _inbox.filter(i=>i.status==='new').length;
   document.getElementById('kpiActive').textContent = _inbox.filter(i=>i.status==='contacted'||i.status==='qualified').length;
+  const overdueEl = document.getElementById('kpiOverdue');
+  if (overdueEl) overdueEl.textContent = _inbox.filter(isOverdue).length;
 
   if (list.length === 0) { el.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display='none';
-  el.innerHTML = list.map(it => `
-    <div class="intake-card ${it.status==='new'?'unread':''}">
+  el.innerHTML = list.map(it => {
+    const j = journeyFor(it.persona);
+    const stage = it.stage || (j.stages[0] && j.stages[0].id);
+    const stageLbl = j.stages.find(s => s.id===stage)?.label || '';
+    const stageIdx = j.stages.findIndex(s => s.id===stage);
+    const stageProgress = stageIdx >= 0 ? Math.round(((stageIdx)/(j.stages.length-1))*100) : 0;
+    const overdue = isOverdue(it);
+    const completedAt = stage === 'complete';
+    return `
+    <div class="intake-card ${it.status==='new'?'unread':''}" style="${overdue?'border-left:4px solid var(--danger)':completedAt?'border-left:4px solid var(--emerald-2);background:rgba(16,185,129,.04)':''}">
       <div>
         <div class="intake-meta">
           <span>${new Date(it.receivedAt||it.savedAt||Date.now()).toLocaleString()}</span>
           · <span>${esc(it.persona||'—')}</span>
           · <span class="status-chip status-${it.status||'new'}">${it.status||'new'}</span>
+          ${stageLbl ? `· <span class="status-chip" style="background:${completedAt?'var(--emerald)':'#0A2418'};color:${completedAt?'#fff':'var(--emerald-3)'}">${esc(stageLbl)} · ${stageProgress}%</span>` : ''}
+          ${overdue ? '· <span class="status-chip" style="background:var(--danger);color:#fff">⏰ Overdue</span>' : ''}
           · <span>${esc(it.source||'Website')}</span>
         </div>
         <div class="intake-name">${esc(it.name||'(no name)')}</div>
-        <div class="intake-contact">${esc(it.email||'')} ${it.phone?'· '+esc(it.phone):''} ${it.address?'· '+esc(it.address):''}</div>
+        <div class="intake-contact">${esc(it.email||'')} ${it.phone?'· '+esc(it.phone):''} ${it.address?'· '+esc(it.address):''}${it.links&&it.links.nextAction?' · <b style="color:'+(overdue?'var(--danger)':'var(--emerald-2)')+'">Next: '+esc(it.links.nextAction)+'</b>':''}</div>
         ${it.need ? '<div class="intake-need">'+esc(it.need)+'</div>':''}
         ${it.notes ? '<div class="intake-need" style="background:#FFF5E6"><b>Notes:</b> '+esc(it.notes)+'</div>':''}
       </div>
@@ -1432,7 +1488,9 @@ function renderCase(){
         </div>
         <div class="actions">
           <button class="a" onclick="showPage('inbox')">← Back to inbox</button>
-          ${it.persona==='contractor' || it.persona && it.persona.startsWith('homeowner') ? '<button class="a primary" onclick="generateLetterForCase()">Generate fee waiver letter →</button>' : ''}
+          ${it.email ? '<button class="a" onclick="openInGmail()">📧 Email</button>' : ''}
+          ${it.links && it.links.nextAction ? '<button class="a" onclick="downloadIcs()">📅 Add to calendar</button>' : ''}
+          ${it.stage === 'complete' ? '<button class="a primary" onclick="generateCloseout()">🏆 Closeout certificate →</button>' : (it.persona==='contractor' || (it.persona && it.persona.startsWith('homeowner'))) ? '<button class="a primary" onclick="generateLetterForCase()">Generate fee waiver letter →</button>' : ''}
         </div>
       </div>
       <div class="meta">
@@ -1471,6 +1529,7 @@ function renderCase(){
           <select id="actType">
             <option value="note">📝 Note</option>
             <option value="call">📞 Call</option>
+            <option value="email">📧 Email</option>
             <option value="meeting">🤝 Meeting</option>
             <option value="event">⚡ Event</option>
           </select>
@@ -1649,9 +1708,193 @@ function generateLetterForCase(){
     }, 100);
   }, 100);
 }
+
+// Open Gmail with a search filter for this contact's email
+function openInGmail(){
+  const it = _inbox.find(x=>x.id===_currentCaseId);
+  if (!it || !it.email) return;
+  const q = encodeURIComponent('from:'+it.email+' OR to:'+it.email);
+  window.open('https://mail.google.com/mail/u/0/#search/'+q, '_blank');
+}
+
+// Download a .ics calendar event for the next-action date
+function downloadIcs(){
+  const it = _inbox.find(x=>x.id===_currentCaseId);
+  if (!it || !it.links || !it.links.nextAction) return;
+  const date = it.links.nextAction.replace(/-/g,'');
+  const uid = 'rmb-'+(it.id||Date.now())+'@renewmyblock.com';
+  const summary = 'BNRI follow-up: ' + (it.name||'contact');
+  const desc = [
+    'BNRI Concierge follow-up',
+    '',
+    'Contact: '+(it.name||'')+(it.email?' <'+it.email+'>':''),
+    it.phone ? 'Phone: '+it.phone : '',
+    it.address ? 'Address: '+it.address : '',
+    'Persona: '+(it.persona||'—'),
+    'Stage: '+(it.stage||'—'),
+    it.links.permitNumber ? 'Permit #: '+it.links.permitNumber : '',
+    '',
+    'Open case: https://www.renewmyblock.com/admin/'
+  ].filter(Boolean).join('\\n');
+  const ics = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//RenewMyBlock//Concierge//EN','CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    'UID:'+uid,
+    'DTSTAMP:'+new Date().toISOString().replace(/[-:.]/g,'').slice(0,15)+'Z',
+    'DTSTART;VALUE=DATE:'+date,
+    'DTEND;VALUE=DATE:'+date,
+    'SUMMARY:'+summary,
+    'DESCRIPTION:'+desc,
+    it.address ? 'LOCATION:'+it.address : '',
+    'END:VEVENT','END:VCALENDAR'
+  ].filter(Boolean).join('\r\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
+  a.download = 'bnri-followup-'+(it.name||'contact').replace(/\s+/g,'-')+'.ics';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+// Filter inbox to overdue from dashboard KPI click
+function filterInboxOverdue(){
+  showPage('inbox');
+  setTimeout(()=>{
+    const fs = document.getElementById('filterStage');
+    if (fs) { fs.value = 'overdue'; renderInbox(); }
+  }, 50);
+}
+
+// Generate a Closeout / Project Complete certificate for a finished case
+function generateCloseout(){
+  const it = _inbox.find(x=>x.id===_currentCaseId);
+  if (!it) return;
+  const j = journeyFor(it.persona);
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const links = it.links || {};
+  const fee = links.quote || 0;
+  const waiver = links.waiver || 65;
+  const waived = fee * (waiver/100);
+  const grant = links.grant === 'paid' || links.grant === 'approved' ? 10000 : 0;
+  const totalSavings = waived + grant;
+  const acts = (it.activities||[]).slice().sort((a,b)=> (a.at||'').localeCompare(b.at||''));
+  const completed = j.checklist; // all items in completed cert show as done
+
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>BNRI Closeout — ${esc(it.name||'Project')}</title>
+<style>
+  @page{size:letter;margin:0.6in}
+  body{font-family:'Plus Jakarta Sans','Helvetica Neue',Arial,sans-serif;color:#0F1B14;background:#fff;margin:0;padding:0;line-height:1.5}
+  .cert{max-width:8.5in;margin:0 auto;padding:30px 50px}
+  .head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #10b981;padding-bottom:18px;margin-bottom:24px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .ico{width:46px;height:46px;border-radius:12px;background:#10b981;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px}
+  .brand .nm{font-size:18px;font-weight:800;letter-spacing:-.3px}
+  .brand .sb{font-size:11px;color:#666;letter-spacing:.7px;text-transform:uppercase;margin-top:2px}
+  .stamp{text-align:right}
+  .stamp .lbl{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:#10b981;font-weight:700}
+  .stamp .dt{font-size:13px;color:#444}
+  h1{font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.1;color:#0F1B14;margin:18px 0 6px}
+  h1 em{color:#10b981;font-style:normal}
+  .lede{font-size:15px;color:#444;max-width:640px;margin-bottom:24px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
+  .card{background:#F7F2E7;border-left:4px solid #10b981;border-radius:8px;padding:14px 18px}
+  .card .lbl{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#666;font-weight:700}
+  .card .val{font-size:18px;font-weight:800;color:#0F1B14;margin-top:4px;letter-spacing:-.3px}
+  .card .sub{font-size:12px;color:#666;margin-top:2px}
+  h2{font-size:14px;letter-spacing:.6px;text-transform:uppercase;color:#0F1B14;margin:22px 0 10px;padding-bottom:6px;border-bottom:1px solid #E2DCCC}
+  .money{display:grid;grid-template-columns:1fr auto;gap:6px 14px;font-size:13px}
+  .money .k{color:#444}
+  .money .v{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+  .money .total{padding-top:8px;border-top:1px solid #E2DCCC;color:#10b981;font-size:17px;letter-spacing:-.3px}
+  .ckl{columns:2;column-gap:24px;font-size:12px;color:#444}
+  .ckl div{break-inside:avoid;margin-bottom:5px;padding-left:18px;position:relative}
+  .ckl div::before{content:"✓";position:absolute;left:0;color:#10b981;font-weight:800}
+  .tl{font-size:12px;color:#444}
+  .tl .ev{padding:6px 0;border-bottom:1px dashed #E2DCCC}
+  .tl .ev:last-child{border-bottom:none}
+  .tl .dt{font-weight:700;color:#0F1B14}
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+  .ba .ph{aspect-ratio:4/3;background:#F0EDE3;border:1px dashed #B5AC92;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+  .sig{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:40px;font-size:12px;color:#444}
+  .sig .ln{border-top:1px solid #888;padding-top:5px}
+  .foot{margin-top:24px;text-align:center;font-size:10px;color:#999;letter-spacing:.6px;text-transform:uppercase}
+  .badge{display:inline-block;background:#10b981;color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px}
+  @media print{ .noprint{display:none} body{background:#fff} }
+  .noprint{position:fixed;top:14px;right:14px;display:flex;gap:8px;z-index:100}
+  .noprint button{background:#10b981;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(16,185,129,.3)}
+  .noprint button.alt{background:#fff;color:#0F1B14;border:1px solid #E2DCCC}
+</style></head><body>
+  <div class="noprint">
+    <button onclick="window.print()">🖨️ Print / Save PDF</button>
+    <button class="alt" onclick="window.close()">Close</button>
+  </div>
+  <div class="cert">
+    <div class="head">
+      <div class="brand">
+        <div class="ico">B</div>
+        <div>
+          <div class="nm">Bemidji Neighborhood Renewal Incentive</div>
+          <div class="sb">RenewMyBlock Concierge · Closeout Certificate</div>
+        </div>
+      </div>
+      <div class="stamp">
+        <div class="lbl">Issued</div>
+        <div class="dt">${date}</div>
+      </div>
+    </div>
+
+    <span class="badge">✓ Project Complete</span>
+    <h1><em>${esc(it.name||'Project complete')}</em></h1>
+    <p class="lede">This certifies that the project below was completed under the BNRI program in accordance with the City of Bemidji's permitting and inspection requirements, with the BNRI incentive stack applied.</p>
+
+    <div class="grid">
+      <div class="card"><div class="lbl">Property</div><div class="val">${esc(it.address||'—')}</div><div class="sub">Pilot zone · 5th–15th St, west of Irvine Ave</div></div>
+      <div class="card"><div class="lbl">Persona track</div><div class="val">${esc(j.label)}</div><div class="sub">Source: ${esc(it.source||'—')}</div></div>
+      <div class="card"><div class="lbl">Permit number</div><div class="val">${esc(links.permitNumber||'—')}</div><div class="sub">${links.permitIssued?'Issued '+esc(links.permitIssued):''}${links.coDate?' · CO '+esc(links.coDate):''}</div></div>
+      <div class="card"><div class="lbl">Plan basis</div><div class="val">${esc(links.plan||'—')}</div><div class="sub">${links.contractorId?'Contractor: '+esc((_contractors.find(c=>c.id===links.contractorId)||{}).company||'—'):''}</div></div>
+    </div>
+
+    <h2>BNRI savings delivered</h2>
+    <div class="money">
+      <div class="k">Standard permit fee</div><div class="v">$${fee.toFixed(2)}</div>
+      <div class="k">BNRI fee waiver (${waiver}%)</div><div class="v">−$${waived.toFixed(2)}</div>
+      ${grant ? '<div class="k">$10K BNRI grant</div><div class="v">−$10,000.00</div>' : ''}
+      ${links.abate==='enrolled' ? '<div class="k">10-year tax abatement</div><div class="v">Enrolled</div>' : ''}
+      <div class="k total">Total BNRI value delivered</div><div class="v total">$${totalSavings.toFixed(2)}+</div>
+    </div>
+
+    <h2>Journey completed</h2>
+    <div class="ckl">
+      ${completed.map(c=>'<div>'+esc(c.text)+'</div>').join('')}
+    </div>
+
+    <h2>Key milestones</h2>
+    <div class="tl">
+      ${acts.length===0 ? '<div class="ev">Activity log not available.</div>' :
+        acts.slice(0, 12).map(a=>'<div class="ev"><span class="dt">'+new Date(a.at).toLocaleDateString()+'</span> · '+esc(a.text)+'</div>').join('')}
+    </div>
+
+    <h2>Before &amp; After</h2>
+    <div class="ba">
+      <div class="ph">Before photo (paste in)</div>
+      <div class="ph">After photo (paste in)</div>
+    </div>
+
+    <div class="sig">
+      <div class="ln">Mychal Stittsworth · Founder, BNRI<br><span style="color:#888">RenewMyBlock.com / Bemidji, MN</span></div>
+      <div class="ln">Homeowner / Contractor signature<br><span style="color:#888">Date: ${date}</span></div>
+    </div>
+
+    <div class="foot">RenewMyBlock.com · 2,500 homes · One conversation at a time · Generated by BNRI Concierge</div>
+  </div>
+</body></html>`;
+
+  const w = window.open('', '_blank');
+  if (!w) { alert('Pop-up blocked. Please allow pop-ups to view the certificate.'); return; }
+  w.document.write(html); w.document.close();
+}
 function setupInbox(){
   document.getElementById('filterStatus').addEventListener('change', renderInbox);
   document.getElementById('filterPersona').addEventListener('change', renderInbox);
+  const fs = document.getElementById('filterStage'); if (fs) fs.addEventListener('change', renderInbox);
   document.getElementById('filterSearch').addEventListener('input', renderInbox);
   document.getElementById('refreshInbox').addEventListener('click', loadInbox);
   document.getElementById('exportInbox').addEventListener('click', () => {
@@ -1779,6 +2022,15 @@ function renderPartners(){
   const grid = document.getElementById('partnerGrid');
   grid.innerHTML = list.map(p => {
     const mouChip = p.mou==='Signed'?'green' : p.mou==='Sent'?'blue' : p.mou==='Drafting'?'gold' : '';
+    // Compute referrals attributed to this partner via case-file links
+    const refs = (_inbox||[]).filter(it => it.links && it.links.partnerId === p.id);
+    const closed = refs.filter(r => r.stage === 'complete' || r.status === 'closed').length;
+    const dollars = refs.reduce((sum,r) => {
+      const links = r.links||{}; const fee = links.quote||0; const w = links.waiver||65;
+      const waived = fee*(w/100);
+      const grant = links.grant==='paid'||links.grant==='approved' ? 10000 : 0;
+      return sum + waived + grant;
+    }, 0);
     return `
       <div class="card">
         <div class="card-title">${esc(p.org)}</div>
@@ -1791,6 +2043,17 @@ function renderPartners(){
           <span class="chip ${mouChip}">MOU: ${esc(p.mou||'Not started')}</span>
           ${p.lastTouch?'<span class="chip">Last: '+esc(p.lastTouch)+'</span>':''}
         </div>
+        ${refs.length > 0 ? `
+        <div style="margin-top:14px;padding:10px 12px;background:var(--emerald-soft);border-radius:8px;border-left:3px solid var(--emerald)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.7px;font-weight:700;color:var(--emerald-2)">Referrals</div>
+            <div style="font-size:11px;color:var(--emerald-2);font-weight:700">${refs.length} · ${closed}/${refs.length} closed${dollars>0?' · $'+Math.round(dollars).toLocaleString()+' delivered':''}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            ${refs.slice(0,5).map(r=>`<div style="font-size:12px;display:flex;justify-content:space-between;cursor:pointer" onclick="openCase('${r.id}')"><span>↪ ${esc(r.name||'(unnamed)')}</span><span style="color:var(--ink-soft)">${esc(r.stage||r.status||'—')}</span></div>`).join('')}
+            ${refs.length > 5 ? '<div style="font-size:11px;color:var(--ink-soft);font-style:italic">+ '+(refs.length-5)+' more</div>' : ''}
+          </div>
+        </div>` : '<div style="margin-top:14px;padding:8px 12px;background:var(--cream);border-radius:6px;font-size:11px;color:var(--ink-soft);font-style:italic">No referrals attributed yet — set this org as referral source on a case to track conversion.</div>'}
         <div style="margin-top:10px;display:flex;gap:6px">
           <button class="btn-secondary" onclick="editPartner('${p.id}')">Edit</button>
           <button class="btn-danger" onclick="deletePartner('${p.id}')">×</button>
