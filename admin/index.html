@@ -314,7 +314,7 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
     <nav class="nav">
       <div class="nav-label">Operations</div>
       <button class="nav-item active" data-page="dashboard"><span class="dot"></span>Dashboard</button>
-      <button class="nav-item" data-page="inbox"><span class="dot"></span>Inbox <span class="badge" id="inboxBadge">0</span></button>
+      <button class="nav-item" data-page="inbox"><span class="dot"></span>Inbox <span class="badge zero" id="inboxBadge">0</span></button>
       <button class="nav-item" data-page="case"><span class="dot"></span>Case File</button>
       <button class="nav-item" data-page="intake"><span class="dot"></span>New Intake</button>
 
@@ -1059,6 +1059,10 @@ function boot(){
   setupContractors();
   // Partner directory
   setupPartners();
+
+  // Pre-warm inbox so sidebar badge + dashboard KPIs are accurate before
+  // the Concierge clicks Inbox for the first time. Fail silently if offline.
+  loadInbox().catch(()=>{});
 }
 
 const pages = ['dashboard','inbox','case','intake','contractor','homeowner','investor','partner','contractor-pool','partner-directory','templates','resources','scripts','role'];
