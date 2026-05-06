@@ -8,42 +8,76 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --forest:#1F3A2E;--forest-2:#2A4F3E;--gold:#C99A3B;--gold-soft:#EBD9A8;
+  --forest:#0F1B14;--forest-2:#142922;
+  --emerald:#10b981;--emerald-2:#059669;--emerald-3:#34d399;--emerald-soft:#D1FAE5;
+  --gold:#C99A3B;--gold-soft:#EBD9A8;
   --cream:#F7F2E7;--paper:#FBF8F1;--ink:#1A1F1B;--ink-soft:#4A524C;--line:#E2DCCC;--danger:#B5483B;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{
-  font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);
-  min-height:100vh;display:grid;place-items:center;padding:20px;
-  background-image:radial-gradient(circle at 80% 10%,rgba(201,154,59,.10) 0%,transparent 50%),
-                   radial-gradient(circle at 10% 90%,rgba(31,58,46,.08) 0%,transparent 50%);
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#000;color:#EFE9D8;
+  min-height:100vh;display:grid;place-items:center;padding:20px;position:relative;overflow:hidden;
 }
+body::before{
+  content:"";position:fixed;inset:0;
+  background:
+    radial-gradient(circle at 78% 18%, rgba(16,185,129,.22) 0%, transparent 45%),
+    radial-gradient(circle at 12% 88%, rgba(16,185,129,.12) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(16,185,129,.05) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+.wrap{position:relative;z-index:1;width:100%;max-width:880px;display:grid;grid-template-columns:1fr 420px;gap:50px;align-items:center}
+@media (max-width:800px){.wrap{grid-template-columns:1fr;gap:32px;max-width:440px}}
+
+.lockup{color:#fff}
+.lockup .badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:11px;
+  background:rgba(16,185,129,.15);color:var(--emerald-3);padding:5px 12px;border-radius:20px;
+  font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:18px;
+  border:1px solid rgba(16,185,129,.3);
+}
+.lockup .badge::before{
+  content:"";width:6px;height:6px;border-radius:50%;background:var(--emerald-3);
+  box-shadow:0 0 8px var(--emerald-3);animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.lockup h1{
+  font-size:48px;font-weight:800;letter-spacing:-1.2px;line-height:1.05;margin-bottom:14px;
+}
+.lockup h1 .accent{color:var(--emerald-3)}
+.lockup p{color:rgba(255,255,255,.65);font-size:15px;line-height:1.6;max-width:420px;margin-bottom:24px}
+.lockup .stats{display:flex;gap:28px;flex-wrap:wrap;padding-top:20px;border-top:1px solid rgba(255,255,255,.1)}
+.lockup .stats .s .n{color:var(--emerald-3);font-weight:800;font-size:20px;letter-spacing:-.5px;line-height:1}
+.lockup .stats .s .l{color:rgba(255,255,255,.5);font-size:10px;text-transform:uppercase;letter-spacing:1.2px;margin-top:5px;font-weight:600}
+
 .card{
-  width:100%;max-width:420px;background:#fff;border:1px solid var(--line);
-  border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,.06);padding:36px 32px;
+  width:100%;background:#fff;border:1px solid var(--line);
+  border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.55);padding:36px 32px;color:var(--ink);
 }
-.brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}
 .brand-icon{
-  width:44px;height:44px;border-radius:12px;
-  background:linear-gradient(135deg,var(--gold) 0%,#A87F2E 100%);
-  display:grid;place-items:center;font-weight:800;color:#1F1408;font-size:18px;
+  width:46px;height:46px;border-radius:13px;
+  background:var(--emerald);
+  display:grid;place-items:center;font-weight:800;color:#fff;font-size:24px;line-height:1;
+  box-shadow:0 0 0 3px rgba(16,185,129,.18);
 }
-.brand-name{font-weight:800;font-size:16px}
-.brand-sub{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
-h1{font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px}
-.lede{color:var(--ink-soft);font-size:14px;margin-bottom:24px;line-height:1.55}
+.brand-name{font-weight:800;font-size:18px;letter-spacing:-.3px}
+.brand-sub{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.7px;margin-top:2px;font-weight:600}
+h2{font-size:22px;font-weight:800;margin-bottom:6px;letter-spacing:-.3px}
+.lede{color:var(--ink-soft);font-size:14px;margin-bottom:22px;line-height:1.55}
 label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
 input[type=password],input[type=text]{
-  width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
-  font-family:inherit;font-size:15px;background:var(--paper);transition:border-color .15s,background .15s;
+  width:100%;padding:13px 15px;border:1px solid var(--line);border-radius:10px;
+  font-family:inherit;font-size:15px;background:var(--paper);transition:border-color .15s,background .15s,box-shadow .15s;
 }
-input:focus{outline:none;border-color:var(--forest);background:#fff}
+input:focus{outline:none;border-color:var(--emerald);background:#fff;box-shadow:0 0 0 3px rgba(16,185,129,.12)}
 .btn{
-  width:100%;background:var(--forest);color:#fff;padding:13px 20px;border:none;border-radius:10px;
+  width:100%;background:var(--emerald);color:#fff;padding:14px 20px;border:none;border-radius:10px;
   font-weight:700;font-size:15px;cursor:pointer;margin-top:18px;letter-spacing:.3px;font-family:inherit;
-  transition:background .15s,transform .05s;
+  transition:background .15s,transform .05s,box-shadow .15s;
+  box-shadow:0 4px 14px rgba(16,185,129,.3);
 }
-.btn:hover{background:var(--forest-2)}
+.btn:hover{background:var(--emerald-2);box-shadow:0 6px 20px rgba(16,185,129,.4)}
 .btn:active{transform:translateY(1px)}
 .btn:disabled{opacity:.6;cursor:not-allowed}
 .error{
@@ -51,47 +85,71 @@ input:focus{outline:none;border-color:var(--forest);background:#fff}
   font-size:13px;margin-top:14px;display:none;border-left:3px solid var(--danger);
 }
 .error.show{display:block}
-.foot{margin-top:24px;font-size:12px;color:var(--ink-soft);text-align:center;line-height:1.6}
-.foot a{color:var(--forest);font-weight:600;text-decoration:none}
+.foot{margin-top:22px;font-size:12px;color:var(--ink-soft);text-align:center;line-height:1.6}
+.foot a{color:var(--emerald-2);font-weight:600;text-decoration:none}
 .foot a:hover{text-decoration:underline}
 .divider{height:1px;background:var(--line);margin:22px 0}
 .note{
   background:var(--cream);padding:12px 14px;border-radius:8px;font-size:12px;color:var(--ink-soft);
-  line-height:1.55;
+  line-height:1.55;border-left:3px solid var(--emerald);
 }
+.back{
+  position:fixed;top:24px;left:24px;z-index:2;color:rgba(255,255,255,.5);font-size:12px;
+  text-decoration:none;letter-spacing:.5px;text-transform:uppercase;font-weight:600;
+  display:flex;align-items:center;gap:6px;
+}
+.back:hover{color:var(--emerald-3)}
 </style>
 </head>
 <body>
 
-<div class="card">
-  <div class="brand">
-    <div class="brand-icon">R</div>
-    <div>
-      <div class="brand-name">RenewMyBlock</div>
-      <div class="brand-sub">Concierge · BNRI Admin</div>
+<a href="/" class="back">← Back to RenewMyBlock</a>
+
+<div class="wrap">
+
+  <div class="lockup">
+    <span class="badge">Concierge HQ · BNRI</span>
+    <h1>Renew the block.<br><span class="accent">One conversation at a time.</span></h1>
+    <p>The Bemidji Neighborhood Renewal Incentive Concierge — a single point of contact for every contractor, homeowner, investor, and partner working to revitalize 2,500 homes in Bemidji's heart.</p>
+    <div class="stats">
+      <div class="s"><div class="n">2,500</div><div class="l">Target homes</div></div>
+      <div class="s"><div class="n">~65%</div><div class="l">Fee waivers</div></div>
+      <div class="s"><div class="n">10 yrs</div><div class="l">Tax abatement</div></div>
+      <div class="s"><div class="n">14</div><div class="l">Partner orgs</div></div>
     </div>
   </div>
 
-  <h1>Concierge sign in</h1>
-  <p class="lede">Enter your shared admin passcode to access the BNRI Concierge dashboard, inbox, and partner resources.</p>
+  <div class="card">
+    <div class="brand">
+      <div class="brand-icon">B</div>
+      <div>
+        <div class="brand-name">BNRI</div>
+        <div class="brand-sub">Concierge · RenewMyBlock</div>
+      </div>
+    </div>
 
-  <form id="loginForm" autocomplete="off">
-    <label for="pw">Passcode</label>
-    <input type="password" id="pw" name="pw" required autocomplete="current-password" placeholder="••••••••">
+    <h2>Sign in</h2>
+    <p class="lede">Enter your shared admin passcode to access the dashboard, inbox, partner directory, and template library.</p>
 
-    <button type="submit" class="btn" id="loginBtn">Sign in</button>
-    <div class="error" id="err"></div>
-  </form>
+    <form id="loginForm" autocomplete="off">
+      <label for="pw">Passcode</label>
+      <input type="password" id="pw" name="pw" required autocomplete="current-password" placeholder="••••••••">
 
-  <div class="divider"></div>
+      <button type="submit" class="btn" id="loginBtn">Sign in</button>
+      <div class="error" id="err"></div>
+    </form>
 
-  <div class="note">
-    <strong style="color:var(--ink)">v1 access:</strong> shared passcode for the Concierge team. Per-user accounts for the 14 partner organizations are coming in v2.
+    <div class="divider"></div>
+
+    <div class="note">
+      <strong style="color:var(--ink)">v1 access:</strong> shared passcode for the Concierge team. Per-user accounts for the 14 partner organizations are coming in v2.
+    </div>
+
+    <div class="foot">
+      Trouble signing in? Contact <a href="mailto:mychal@renewmyblock.com">mychal@renewmyblock.com</a>
+    </div>
   </div>
 
-  <div class="foot">
-    Trouble signing in? Contact <a href="mailto:mychal@renewmyblock.com">mychal@renewmyblock.com</a>
-  </div>
 </div>
 
 <script>
@@ -115,7 +173,6 @@ form.addEventListener('submit', async (e) => {
     });
 
     if (res.ok) {
-      // success — go to dashboard
       const next = new URLSearchParams(location.search).get('next') || '/admin/';
       location.href = next;
       return;
@@ -125,9 +182,7 @@ form.addEventListener('submit', async (e) => {
     err.textContent = data.error || 'Incorrect passcode. Try again.';
     err.classList.add('show');
   } catch (e) {
-    // Local-file fallback (no API available — for testing)
     if (location.protocol === 'file:') {
-      // Allow any non-empty pw locally for dev
       if (pw.length > 0) {
         try { localStorage.setItem('rmb-auth', '1'); } catch(_){}
         location.href = './index.html';

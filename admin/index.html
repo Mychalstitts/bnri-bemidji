@@ -8,7 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --forest:#1F3A2E;--forest-2:#2A4F3E;--moss:#4F7A5C;--gold:#C99A3B;--gold-soft:#EBD9A8;
+  --forest:#0F1B14;--forest-2:#142922;--moss:#4F7A5C;
+  --emerald:#10b981;--emerald-2:#059669;--emerald-3:#34d399;--emerald-soft:#D1FAE5;
+  --gold:#C99A3B;--gold-soft:#EBD9A8;
   --cream:#F7F2E7;--paper:#FBF8F1;--ink:#1A1F1B;--ink-soft:#4A524C;--line:#E2DCCC;
   --danger:#B5483B;--sky:#3F6E8C;
   --shadow:0 1px 2px rgba(26,31,27,.04), 0 6px 24px rgba(26,31,27,.06);
@@ -23,22 +25,22 @@ a:hover{text-decoration:underline}
 #authLoading{position:fixed;inset:0;background:var(--paper);display:grid;place-items:center;z-index:1000;font-size:14px;color:var(--ink-soft)}
 
 .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
-.sidebar{background:var(--forest);color:#EFE9D8;padding:24px 0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.sidebar{background:var(--forest);color:#EFE9D8;padding:24px 0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;border-right:1px solid rgba(16,185,129,.08)}
 .brand{padding:0 24px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
 .brand-mark{display:flex;align-items:center;gap:10px}
-.brand-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold) 0%,#A87F2E 100%);display:grid;place-items:center;font-weight:800;color:#1F1408}
-.brand-name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.brand-icon{width:38px;height:38px;border-radius:12px;background:var(--emerald);display:grid;place-items:center;font-weight:800;color:#fff;font-size:22px;line-height:1;box-shadow:0 0 0 3px rgba(16,185,129,.15)}
+.brand-name{font-weight:800;font-size:18px;letter-spacing:-.3px}
 .brand-sub{font-size:11px;opacity:.65;margin-top:2px;letter-spacing:.4px;text-transform:uppercase}
 
 .nav{padding:14px 12px;flex:1;overflow-y:auto}
 .nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;opacity:.5;padding:14px 12px 6px}
 .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:14px;color:#D8D2C0;cursor:pointer;width:100%;text-align:left;transition:background .15s}
 .nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
-.nav-item.active{background:var(--gold);color:#1F1408;font-weight:600}
+.nav-item.active{background:var(--emerald);color:#0A2418;font-weight:700}
 .nav-item .dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.5}
 .nav-item.active .dot{opacity:1}
-.nav-item .badge{margin-left:auto;font-size:10px;background:#fff;color:var(--forest);padding:1px 7px;border-radius:9px;font-weight:700}
-.nav-item.active .badge{background:#1F1408;color:var(--gold)}
+.nav-item .badge{margin-left:auto;font-size:10px;background:var(--emerald);color:#0A2418;padding:1px 7px;border-radius:9px;font-weight:700}
+.nav-item.active .badge{background:#0A2418;color:var(--emerald-3)}
 
 .sidebar-foot{padding:14px 24px;font-size:11px;opacity:.6;border-top:1px solid rgba(255,255,255,.08)}
 
@@ -46,6 +48,7 @@ a:hover{text-decoration:underline}
 .topbar{position:sticky;top:0;z-index:10;background:rgba(251,248,241,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 36px;display:flex;align-items:center;gap:14px}
 .topbar h1{font-size:18px;font-weight:700;flex:1}
 .topbar .pill{font-size:11px;background:var(--forest);color:#fff;padding:4px 10px;border-radius:20px;letter-spacing:.4px;text-transform:uppercase;font-weight:600}
+.topbar .pill.emerald{background:var(--emerald);color:#0A2418}
 .topbar .pill.gold{background:var(--gold);color:#1F1408}
 .topbar .pill.warn{background:var(--danger);color:#fff}
 .topbar .logout{font-size:12px;color:var(--ink-soft);font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--line)}
@@ -116,9 +119,10 @@ a:hover{text-decoration:underline}
 
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:14px 0 28px}
 @media (max-width:980px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
-.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:left}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:left;position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--emerald);opacity:.55}
 .kpi .lab{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ink-soft);font-weight:600}
-.kpi .val{font-size:24px;font-weight:800;margin-top:6px;color:var(--forest);letter-spacing:-.5px}
+.kpi .val{font-size:26px;font-weight:800;margin-top:6px;color:var(--emerald-2);letter-spacing:-.5px}
 .kpi .sub{font-size:12px;color:var(--ink-soft);margin-top:2px}
 
 .script{background:var(--forest);color:#EFE9D8;border-radius:14px;padding:22px;font-size:14px;line-height:1.65;margin:16px 0}
@@ -132,18 +136,27 @@ a:hover{text-decoration:underline}
 .intake-form textarea,.form-card textarea{min-height:90px;resize:vertical}
 .intake-form .row,.form-card .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media (max-width:600px){.intake-form .row,.form-card .row{grid-template-columns:1fr}}
-.btn-primary{background:var(--gold);color:#1F1408;padding:11px 22px;border-radius:8px;font-weight:700;margin-top:18px;font-size:14px;letter-spacing:.3px}
-.btn-primary:hover{background:#D4A745}
+.btn-primary{background:var(--emerald);color:#fff;padding:11px 22px;border-radius:8px;font-weight:700;margin-top:18px;font-size:14px;letter-spacing:.3px}
+.btn-primary:hover{background:var(--emerald-2)}
 .btn-secondary{background:#fff;border:1px solid var(--line);color:var(--ink);padding:9px 18px;border-radius:8px;font-weight:600;font-size:13px;margin-right:8px}
 .btn-secondary:hover{background:var(--cream)}
 .btn-danger{background:#FBEAE7;color:var(--danger);padding:7px 14px;border-radius:6px;font-weight:600;font-size:12px;border:1px solid #E5BFB8}
 .btn-danger:hover{background:#F4D9D4}
 
-.hero{background:linear-gradient(135deg,var(--forest) 0%,var(--forest-2) 100%);color:#EFE9D8;border-radius:18px;padding:34px 32px;margin-bottom:28px;position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(201,154,59,.25) 0%,transparent 70%)}
-.hero h1{font-size:30px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;position:relative}
-.hero p{opacity:.85;max-width:680px;font-size:15px;position:relative}
-.hero .badge{display:inline-block;font-size:11px;background:var(--gold);color:#1F1408;padding:4px 12px;border-radius:20px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
+.hero{background:linear-gradient(135deg,#000 0%,#0A2418 100%);color:#EFE9D8;border-radius:20px;padding:42px 36px;margin-bottom:28px;position:relative;overflow:hidden;border:1px solid rgba(16,185,129,.12)}
+.hero::before{content:"";position:absolute;top:-100px;right:-100px;width:380px;height:380px;background:radial-gradient(circle,rgba(16,185,129,.32) 0%,transparent 65%);pointer-events:none}
+.hero::after{content:"";position:absolute;bottom:-60px;left:-60px;width:220px;height:220px;background:radial-gradient(circle,rgba(16,185,129,.08) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-size:38px;font-weight:800;letter-spacing:-1px;margin-bottom:10px;position:relative;line-height:1.1}
+.hero h1 .accent{color:var(--emerald-3)}
+.hero p{opacity:.78;max-width:680px;font-size:15.5px;position:relative;line-height:1.6}
+.hero p strong{color:#fff;font-weight:700}
+.hero .badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;background:rgba(16,185,129,.15);color:var(--emerald-3);padding:5px 12px;border-radius:20px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:18px;border:1px solid rgba(16,185,129,.3)}
+.hero .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--emerald-3);box-shadow:0 0 8px var(--emerald-3);animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.hero .stat-strip{display:flex;flex-wrap:wrap;gap:36px;margin-top:24px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08);position:relative}
+.hero .stat-strip .s{display:flex;flex-direction:column}
+.hero .stat-strip .s .n{font-size:24px;font-weight:800;color:var(--emerald-3);letter-spacing:-.5px;line-height:1}
+.hero .stat-strip .s .l{font-size:10px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1.2px;margin-top:6px;font-weight:600}
 
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .chip{font-size:11px;background:var(--cream);padding:4px 10px;border-radius:14px;color:var(--ink-soft);font-weight:600}
@@ -208,10 +221,10 @@ a:hover{text-decoration:underline}
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-mark">
-        <div class="brand-icon">R</div>
+        <div class="brand-icon">B</div>
         <div>
-          <div class="brand-name">RenewMyBlock</div>
-          <div class="brand-sub">Concierge · BNRI</div>
+          <div class="brand-name">BNRI</div>
+          <div class="brand-sub">Concierge · RenewMyBlock</div>
         </div>
       </div>
     </div>
@@ -245,7 +258,8 @@ a:hover{text-decoration:underline}
   <main class="main">
     <header class="topbar">
       <h1 id="pageTitle">Dashboard</h1>
-      <span class="pill">Pilot Zone Active</span>
+      <span class="pill emerald">Pilot Zone Active</span>
+      <span class="pill">2,500 Homes</span>
       <span class="pill gold">14 Partners</span>
       <span class="pill warn" id="apiBadge" style="display:none">Local mode</span>
       <button class="logout" id="logoutBtn">Sign out</button>
@@ -254,9 +268,16 @@ a:hover{text-decoration:underline}
     <!-- DASHBOARD -->
     <section class="page" id="page-dashboard">
       <div class="hero">
-        <span class="badge">Concierge HQ</span>
-        <h1>Welcome back, Concierge.</h1>
-        <p>Every contact that arrives through RenewMyBlock.com lands in your <b>Inbox</b>. Your job is to triage by persona, hand back a packet that maximizes their BNRI benefit, and keep them moving — through the city, through financing, through to closing.</p>
+        <span class="badge">Concierge HQ · Live</span>
+        <h1>Welcome back.<br><span class="accent">Let's renew the block.</span></h1>
+        <p>Every contact that arrives through <strong>RenewMyBlock.com</strong> lands in your <strong>Inbox</strong>. Triage by persona. Hand back a packet that maximizes their BNRI benefit. Keep them moving — through the city, through financing, through to closing. <strong>2,500 homes</strong> start one conversation at a time.</p>
+        <div class="stat-strip">
+          <div class="s"><div class="n">2,500</div><div class="l">Target homes</div></div>
+          <div class="s"><div class="n">$300–500M</div><div class="l">Projected impact</div></div>
+          <div class="s"><div class="n">~65%</div><div class="l">Fee waivers</div></div>
+          <div class="s"><div class="n">10 yrs</div><div class="l">Tax abatement</div></div>
+          <div class="s"><div class="n">2–3%</div><div class="l">BNRI financing</div></div>
+        </div>
       </div>
 
       <div class="kpi-row">
