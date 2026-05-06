@@ -366,7 +366,7 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
       <div class="kpi-row">
         <div class="kpi"><div class="lab">New this week</div><div class="val" id="kpiNew">0</div><div class="sub">Untriaged contacts</div></div>
         <div class="kpi"><div class="lab">Active</div><div class="val" id="kpiActive">0</div><div class="sub">Contacted / qualified</div></div>
-        <div class="kpi" style="cursor:pointer" onclick="filterInboxOverdue()"><div class="lab">⏰ Overdue</div><div class="val" id="kpiOverdue" style="color:var(--danger)">0</div><div class="sub">Follow-up past due</div></div>
+        <div class="kpi" id="kpiOverdueCard" style="cursor:pointer" onclick="filterInboxOverdue()"><div class="lab">⏰ Overdue</div><div class="val" id="kpiOverdue">0</div><div class="sub">Follow-up past due</div></div>
         <div class="kpi"><div class="lab">Fee Waivers</div><div class="val">~65%</div><div class="sub">vs. standard</div></div>
       </div>
 
@@ -740,8 +740,19 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
         </table>
       </div>
 
-      <div id="contractorEmpty" style="display:none;padding:40px 20px;text-align:center;color:var(--ink-soft)">
-        <p style="font-size:14px">No contractors in the pool yet. Click <b>+ Add contractor</b> to start.</p>
+      <div id="contractorEmpty" style="display:none">
+        <div style="background:linear-gradient(135deg,#000 0%,#0A2418 100%);border:1px solid rgba(16,185,129,.15);border-radius:18px;padding:48px 36px;text-align:center;color:#EFE9D8;position:relative;overflow:hidden;margin-top:8px">
+          <div style="position:absolute;top:-80px;right:-80px;width:280px;height:280px;background:radial-gradient(circle,rgba(16,185,129,.18) 0%,transparent 65%);pointer-events:none"></div>
+          <div style="position:relative">
+            <div style="width:64px;height:64px;border-radius:18px;background:rgba(16,185,129,.15);color:var(--emerald-3);display:grid;place-items:center;font-size:30px;margin:0 auto 18px;border:1px solid rgba(16,185,129,.3)">🔨</div>
+            <h3 style="font-size:24px;font-weight:800;letter-spacing:-.4px;margin-bottom:8px">Build your contractor bench.</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,.65);max-width:480px;margin:0 auto 22px;line-height:1.6">
+              The vetted pool is what makes the Investor and Homeowner tracks actually deliver — instead of "find your own contractor," you hand them a name. Add the shops who already know the BNRI process and the city's plan reviewer.
+            </p>
+            <button class="btn-primary" style="margin:0;background:var(--emerald);box-shadow:0 8px 22px rgba(16,185,129,.4)" onclick="document.getElementById('addContractorBtn').click()">+ Add your first contractor</button>
+            <p style="font-size:11px;color:rgba(255,255,255,.4);margin-top:18px;letter-spacing:.5px">Capture: company · contact · specialty · BNRI status · rating · last project</p>
+          </div>
+        </div>
       </div>
 
       <!-- Add/edit form (collapsed) -->
@@ -883,8 +894,8 @@ a.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,185,129,.
         </div>
       </div>
 
-      <h2 class="h2">Live Letter Generator</h2>
       <div id="letterPreviewWrap" style="display:none">
+      <h2 class="h2">Live Letter Generator</h2>
         <div class="form-card" style="margin-bottom:14px">
           <div class="row">
             <div><label>Recipient name</label><input type="text" id="letterTo" placeholder="e.g., John Smith, Building Official"></div>
@@ -1365,7 +1376,16 @@ function renderInbox(){
   document.getElementById('kpiNew').textContent = newCount;
   document.getElementById('kpiActive').textContent = _inbox.filter(i=>i.status==='contacted'||i.status==='qualified').length;
   const overdueEl = document.getElementById('kpiOverdue');
-  if (overdueEl) overdueEl.textContent = _inbox.filter(isOverdue).length;
+  const overdueCard = document.getElementById('kpiOverdueCard');
+  const overdueCount = _inbox.filter(isOverdue).length;
+  if (overdueEl) {
+    overdueEl.textContent = overdueCount;
+    overdueEl.style.color = overdueCount > 0 ? 'var(--danger)' : 'var(--ink-soft)';
+  }
+  if (overdueCard) {
+    overdueCard.style.cursor = overdueCount > 0 ? 'pointer' : 'default';
+    overdueCard.style.opacity = overdueCount > 0 ? '1' : '.7';
+  }
 
   if (list.length === 0) { el.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display='none';
