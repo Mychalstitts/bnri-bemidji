@@ -1389,7 +1389,8 @@ function renderInbox(){
         <button class="btn-danger" onclick="deleteIntake('${it.id}')">Delete</button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 function esc(s){return String(s||'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 async function setIntakeStatus(id, status){
