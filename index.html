@@ -1783,10 +1783,10 @@
             <h3 class="text-center text-3xl font-medium mb-10 reveal">Tell us how you'd like to help renew Bemidji</h3>
             <form onsubmit="handleSubmit(event)" class="space-y-8 reveal">
                 <div class="grid grid-cols-2 gap-6">
-                    <input type="text" placeholder="Your name" class="bg-zinc-900 border border-white/10 focus:border-emerald-400 rounded-3xl px-8 py-6 outline-none text-sm">
-                    <input type="email" placeholder="Email address" class="bg-zinc-900 border border-white/10 focus:border-emerald-400 rounded-3xl px-8 py-6 outline-none text-sm">
+                    <input type="text" name="name" placeholder="Your name" class="bg-zinc-900 border border-white/10 focus:border-emerald-400 rounded-3xl px-8 py-6 outline-none text-sm">
+                    <input type="email" name="email" placeholder="Email address" class="bg-zinc-900 border border-white/10 focus:border-emerald-400 rounded-3xl px-8 py-6 outline-none text-sm">
                 </div>
-                <textarea placeholder="Tell us about your project, partnership idea, or how you'd like to get involved..." rows="6" class="w-full bg-zinc-900 border border-white/10 focus:border-emerald-400 rounded-3xl px-8 py-6 outline-none text-sm resize-none"></textarea>
+                <textarea name="description" placeholder="Tell us about your project, partnership idea, or how you'd like to get involved..." rows="6" class="w-full bg-zinc-900 border border-white/10 focus:border-emerald-400 rounded-3xl px-8 py-6 outline-none text-sm resize-none"></textarea>
                 <button type="submit"
                         class="w-full py-7 bg-emerald-600 hover:bg-emerald-500 transition-colors rounded-3xl text-lg font-semibold">
                     SEND MESSAGE TO THE BNRI TEAM
@@ -1954,6 +1954,57 @@
             if (arrow) arrow.style.transform = form.classList.contains('expanded') ? 'rotate(90deg)' : '';
         }
 
+        // Map a public form type to a Concierge persona key
+        function _conciergePersona(type, formData) {
+            if (type === 'business-inquiry') return 'partner';
+            if (type === 'Builder/Contractor') return 'contractor';
+            if (type === 'Investor/Bank/REIT') {
+                const t = (formData.get('investorType') || '').toString().toLowerCase();
+                return t.includes('reit') || t.includes('fund') ? 'investor-reit' : 'investor-private';
+            }
+            if (type === 'Homeowner') {
+                const scope = (formData.get('projectScope') || '').toString().toLowerCase();
+                if (scope.includes('buy') || scope.includes('move')) return 'homeowner-buy';
+                if (scope.includes('relocat')) return 'homeowner-relocate';
+                return 'homeowner-build';
+            }
+            return 'other';
+        }
+
+        // POST a form submission to the BNRI Concierge admin inbox.
+        // Fire-and-forget — does not block the existing Formspree flow.
+        async function postToConcierge(form, type) {
+            try {
+                const fd = new FormData(form);
+                const payload = {
+                    name: fd.get('name') || fd.get('contact_name') || '',
+                    email: fd.get('email') || '',
+                    phone: fd.get('phone') || '',
+                    address: fd.get('address') || '',
+                    persona: _conciergePersona(type, fd),
+                    need: [
+                        fd.get('description') || fd.get('details') || '',
+                        fd.get('company') ? `Company: ${fd.get('company')}` : '',
+                        fd.get('organization') ? `Organization: ${fd.get('organization')}` : '',
+                        fd.get('industry') ? `Industry: ${fd.get('industry')}` : '',
+                        fd.get('specialty') ? `Specialty: ${fd.get('specialty')}` : '',
+                        fd.get('investorType') ? `Investor type: ${fd.get('investorType')}` : '',
+                        fd.get('investmentRange') ? `Investment range: ${fd.get('investmentRange')}` : '',
+                        fd.get('projectScope') ? `Project scope: ${fd.get('projectScope')}` : ''
+                    ].filter(Boolean).join('\n'),
+                    source: 'Website (' + type + ')'
+                };
+                await fetch('/api/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) {
+                // Concierge submit is best-effort; don't block the visible flow.
+                console.warn('Concierge submit failed (non-fatal):', e);
+            }
+        }
+
         // Application form submission &mdash; collects data and stores locally
         async function submitApplication(e, type) {
             e.preventDefault();
@@ -1964,6 +2015,9 @@
             // Show sending state
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>SENDING...';
             btn.disabled = true;
+
+            // Mirror submission to BNRI Concierge admin inbox (fire-and-forget)
+            postToConcierge(form, type);
 
             const formData = new FormData(form);
             formData.append('_form_type', type);
@@ -2007,6 +2061,9 @@
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>SENDING...';
             btn.disabled = true;
+
+            // Mirror submission to BNRI Concierge admin inbox (fire-and-forget)
+            postToConcierge(form, 'general-contact');
 
             try {
                 const res = await fetch('https://formspree.io/f/xkopyneo', {
