@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RenewMyBlock Concierge — BNRI Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#1F3A2E;--forest-2:#2A4F3E;--moss:#4F7A5C;--gold:#C99A3B;--gold-soft:#EBD9A8;
+  --cream:#F7F2E7;--paper:#FBF8F1;--ink:#1A1F1B;--ink-soft:#4A524C;--line:#E2DCCC;
+  --danger:#B5483B;--sky:#3F6E8C;
+  --shadow:0 1px 2px rgba(26,31,27,.04), 0 6px 24px rgba(26,31,27,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+a{color:var(--forest-2);text-decoration:none}
+a:hover{text-decoration:underline}
+
+#authLoading{position:fixed;inset:0;background:var(--paper);display:grid;place-items:center;z-index:1000;font-size:14px;color:var(--ink-soft)}
+
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.sidebar{background:var(--forest);color:#EFE9D8;padding:24px 0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.brand{padding:0 24px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand-mark{display:flex;align-items:center;gap:10px}
+.brand-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold) 0%,#A87F2E 100%);display:grid;place-items:center;font-weight:800;color:#1F1408}
+.brand-name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.brand-sub{font-size:11px;opacity:.65;margin-top:2px;letter-spacing:.4px;text-transform:uppercase}
+
+.nav{padding:14px 12px;flex:1;overflow-y:auto}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;opacity:.5;padding:14px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:14px;color:#D8D2C0;cursor:pointer;width:100%;text-align:left;transition:background .15s}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item.active{background:var(--gold);color:#1F1408;font-weight:600}
+.nav-item .dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.5}
+.nav-item.active .dot{opacity:1}
+.nav-item .badge{margin-left:auto;font-size:10px;background:#fff;color:var(--forest);padding:1px 7px;border-radius:9px;font-weight:700}
+.nav-item.active .badge{background:#1F1408;color:var(--gold)}
+
+.sidebar-foot{padding:14px 24px;font-size:11px;opacity:.6;border-top:1px solid rgba(255,255,255,.08)}
+
+.main{padding:0;overflow-x:hidden}
+.topbar{position:sticky;top:0;z-index:10;background:rgba(251,248,241,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 36px;display:flex;align-items:center;gap:14px}
+.topbar h1{font-size:18px;font-weight:700;flex:1}
+.topbar .pill{font-size:11px;background:var(--forest);color:#fff;padding:4px 10px;border-radius:20px;letter-spacing:.4px;text-transform:uppercase;font-weight:600}
+.topbar .pill.gold{background:var(--gold);color:#1F1408}
+.topbar .pill.warn{background:var(--danger);color:#fff}
+.topbar .logout{font-size:12px;color:var(--ink-soft);font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--line)}
+.topbar .logout:hover{background:#fff}
+
+.page{padding:32px 36px 80px;max-width:1240px}
+.page.hidden{display:none}
+
+.eyebrow{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--moss);font-weight:700;margin-bottom:8px}
+.h1{font-size:34px;font-weight:800;letter-spacing:-.5px;line-height:1.15;margin-bottom:10px}
+.h2{font-size:22px;font-weight:700;margin:32px 0 14px;letter-spacing:-.2px}
+.h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.lede{font-size:16px;color:var(--ink-soft);max-width:760px;margin-bottom:24px}
+
+.grid{display:grid;gap:16px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+@media (max-width:1100px){.grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:720px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
+.card.dark{background:var(--forest);color:#EFE9D8;border-color:transparent}
+.card.gold{background:var(--gold-soft);border-color:#D4BC78}
+.card.flat{box-shadow:none}
+.card-title{font-weight:700;font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.card-meta{font-size:12px;color:var(--ink-soft);margin-bottom:10px}
+.card .num{font-size:30px;font-weight:800;letter-spacing:-1px;color:var(--forest)}
+.card.dark .num{color:var(--gold)}
+
+.persona-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:24px 0}
+@media (max-width:880px){.persona-grid{grid-template-columns:1fr}}
+.persona-tile{border-radius:16px;padding:24px;border:1px solid var(--line);background:#fff;cursor:pointer;text-align:left;transition:transform .15s,box-shadow .15s,border-color .15s;display:flex;flex-direction:column;gap:10px}
+.persona-tile:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(26,31,27,.10);border-color:var(--gold)}
+.persona-tile .icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px}
+.persona-tile.contractor .icon{background:#E8F0E8;color:var(--forest)}
+.persona-tile.homeowner .icon{background:#FBF0DC;color:#7A5A1A}
+.persona-tile.investor .icon{background:#E5EFF6;color:var(--sky)}
+.persona-tile.partner .icon{background:#F2E8E5;color:var(--danger)}
+.persona-tile h3{font-size:18px;font-weight:700}
+.persona-tile p{font-size:13px;color:var(--ink-soft)}
+.persona-tile .arrow{margin-top:auto;color:var(--moss);font-weight:600;font-size:13px}
+
+.checklist{display:flex;flex-direction:column;gap:8px;margin:8px 0 16px}
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:10px;transition:background .15s}
+.check-item:hover{background:var(--cream)}
+.check-item input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--forest);cursor:pointer}
+.check-item label{flex:1;cursor:pointer;font-size:14px;line-height:1.5}
+.check-item .tag{font-size:10px;background:var(--cream);padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-soft);font-weight:600}
+.check-item.done label{text-decoration:line-through;color:var(--ink-soft);opacity:.65}
+
+.acc{margin:8px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.acc-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;font-weight:600;font-size:14px}
+.acc-head .acc-tag{font-size:10px;text-transform:uppercase;letter-spacing:.6px;background:var(--cream);padding:3px 8px;border-radius:6px;color:var(--ink-soft);font-weight:700}
+.acc-body{padding:0 18px 16px;font-size:14px;color:var(--ink-soft);display:none;border-top:1px solid var(--line)}
+.acc-body.open{display:block;padding-top:14px}
+.acc.open .acc-head{background:var(--cream)}
+.acc-body ul{padding-left:18px;margin:8px 0}
+.acc-body li{margin:4px 0}
+.acc-body .btn{display:inline-block;background:var(--forest);color:#fff;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;margin-top:8px;letter-spacing:.3px}
+.acc-body .btn:hover{background:var(--forest-2);text-decoration:none}
+.acc-body .btn.gold{background:var(--gold);color:#1F1408}
+
+.callout{padding:14px 18px;border-radius:10px;background:#FFF5E6;border-left:4px solid var(--gold);font-size:13px;margin:14px 0}
+.callout.danger{background:#FBEAE7;border-left-color:var(--danger)}
+.callout.success{background:#E8F2EA;border-left-color:var(--moss)}
+.callout strong{display:block;margin-bottom:4px;color:var(--ink)}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:14px 0 28px}
+@media (max-width:980px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:left}
+.kpi .lab{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ink-soft);font-weight:600}
+.kpi .val{font-size:24px;font-weight:800;margin-top:6px;color:var(--forest);letter-spacing:-.5px}
+.kpi .sub{font-size:12px;color:var(--ink-soft);margin-top:2px}
+
+.script{background:var(--forest);color:#EFE9D8;border-radius:14px;padding:22px;font-size:14px;line-height:1.65;margin:16px 0}
+.script h4{color:var(--gold);margin-bottom:8px;font-size:13px;text-transform:uppercase;letter-spacing:1px}
+.script p{margin:8px 0}
+.script .quote{font-style:italic;border-left:3px solid var(--gold);padding-left:14px;margin:10px 0}
+
+.intake-form,.form-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;max-width:760px}
+.intake-form label,.form-card label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
+.intake-form input,.intake-form select,.intake-form textarea,.form-card input,.form-card select,.form-card textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;background:var(--paper)}
+.intake-form textarea,.form-card textarea{min-height:90px;resize:vertical}
+.intake-form .row,.form-card .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:600px){.intake-form .row,.form-card .row{grid-template-columns:1fr}}
+.btn-primary{background:var(--gold);color:#1F1408;padding:11px 22px;border-radius:8px;font-weight:700;margin-top:18px;font-size:14px;letter-spacing:.3px}
+.btn-primary:hover{background:#D4A745}
+.btn-secondary{background:#fff;border:1px solid var(--line);color:var(--ink);padding:9px 18px;border-radius:8px;font-weight:600;font-size:13px;margin-right:8px}
+.btn-secondary:hover{background:var(--cream)}
+.btn-danger{background:#FBEAE7;color:var(--danger);padding:7px 14px;border-radius:6px;font-weight:600;font-size:12px;border:1px solid #E5BFB8}
+.btn-danger:hover{background:#F4D9D4}
+
+.hero{background:linear-gradient(135deg,var(--forest) 0%,var(--forest-2) 100%);color:#EFE9D8;border-radius:18px;padding:34px 32px;margin-bottom:28px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(201,154,59,.25) 0%,transparent 70%)}
+.hero h1{font-size:30px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;position:relative}
+.hero p{opacity:.85;max-width:680px;font-size:15px;position:relative}
+.hero .badge{display:inline-block;font-size:11px;background:var(--gold);color:#1F1408;padding:4px 12px;border-radius:20px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-size:11px;background:var(--cream);padding:4px 10px;border-radius:14px;color:var(--ink-soft);font-weight:600}
+.chip.gold{background:var(--gold-soft);color:#7A5A1A}
+.chip.green{background:#E8F2EA;color:var(--forest)}
+.chip.blue{background:#E5EFF6;color:var(--sky)}
+.chip.danger{background:#FBEAE7;color:var(--danger)}
+
+/* Inbox */
+.inbox-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.inbox-toolbar select,.inbox-toolbar input[type=text]{padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;background:#fff}
+.inbox-toolbar .count{margin-left:auto;font-size:12px;color:var(--ink-soft)}
+.inbox-list{display:flex;flex-direction:column;gap:10px}
+.intake-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+.intake-card.unread{border-left:4px solid var(--gold)}
+.intake-meta{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;font-weight:600}
+.intake-name{font-size:15px;font-weight:700;margin-bottom:4px}
+.intake-contact{font-size:13px;color:var(--ink-soft);margin-bottom:8px}
+.intake-need{font-size:13px;color:var(--ink);background:var(--cream);padding:8px 12px;border-radius:8px;margin-top:6px;line-height:1.55}
+.status-chip{font-size:10px;padding:3px 9px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.status-new{background:var(--gold-soft);color:#7A5A1A}
+.status-contacted{background:#E5EFF6;color:var(--sky)}
+.status-qualified{background:#E8F2EA;color:var(--forest)}
+.status-closed{background:#EFEBE2;color:var(--ink-soft)}
+.intake-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.intake-actions select{font-size:12px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:#fff}
+
+/* Contractor pool table */
+.pool-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--line);font-size:13px}
+.pool-table th{background:var(--forest);color:#EFE9D8;text-align:left;padding:12px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:700}
+.pool-table td{padding:12px 14px;border-top:1px solid var(--line);vertical-align:top}
+.pool-table tr:hover{background:var(--cream)}
+.pool-table .rating{color:var(--gold);letter-spacing:1px}
+
+/* Templates */
+.tpl-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.tpl-card .ico{width:36px;height:36px;border-radius:8px;background:var(--gold-soft);color:#7A5A1A;display:grid;place-items:center;font-size:18px}
+.tpl-card h3{font-size:14px;font-weight:700}
+.tpl-card p{font-size:12px;color:var(--ink-soft)}
+.tpl-card .links{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+.tpl-card .links a{font-size:11px;background:var(--forest);color:#fff;padding:6px 12px;border-radius:6px;font-weight:600;letter-spacing:.3px}
+.tpl-card .links a:hover{background:var(--forest-2);text-decoration:none}
+.tpl-card .links a.gold{background:var(--gold);color:#1F1408}
+
+/* Letter preview iframe */
+.letter-preview{width:100%;min-height:520px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-top:12px}
+
+@media print{
+  .sidebar,.topbar{display:none}
+  .app{grid-template-columns:1fr}
+  .page{padding:20px}
+  .page.hidden{display:block;page-break-before:always}
+}
+</style>
+</head>
+<body>
+
+<div id="authLoading">Verifying access…</div>
+
+<div class="app" style="display:none" id="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <div class="brand-icon">R</div>
+        <div>
+          <div class="brand-name">RenewMyBlock</div>
+          <div class="brand-sub">Concierge · BNRI</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-label">Operations</div>
+      <button class="nav-item active" data-page="dashboard"><span class="dot"></span>Dashboard</button>
+      <button class="nav-item" data-page="inbox"><span class="dot"></span>Inbox <span class="badge" id="inboxBadge">0</span></button>
+      <button class="nav-item" data-page="intake"><span class="dot"></span>New Intake</button>
+
+      <div class="nav-label">Persona Tracks</div>
+      <button class="nav-item" data-page="contractor"><span class="dot"></span>Contractors / Builders</button>
+      <button class="nav-item" data-page="homeowner"><span class="dot"></span>Homeowners</button>
+      <button class="nav-item" data-page="investor"><span class="dot"></span>Investors / REITs</button>
+      <button class="nav-item" data-page="partner"><span class="dot"></span>Partner Orgs</button>
+
+      <div class="nav-label">Directories</div>
+      <button class="nav-item" data-page="contractor-pool"><span class="dot"></span>Vetted Contractor Pool</button>
+      <button class="nav-item" data-page="partner-directory"><span class="dot"></span>Partner Directory</button>
+
+      <div class="nav-label">Reference</div>
+      <button class="nav-item" data-page="templates"><span class="dot"></span>Templates &amp; Letters</button>
+      <button class="nav-item" data-page="resources"><span class="dot"></span>Resource Library</button>
+      <button class="nav-item" data-page="scripts"><span class="dot"></span>Talking Scripts</button>
+      <button class="nav-item" data-page="role"><span class="dot"></span>Concierge Role</button>
+    </nav>
+
+    <div class="sidebar-foot">v1.1 · May 2026<br>Bemidji NRI</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <h1 id="pageTitle">Dashboard</h1>
+      <span class="pill">Pilot Zone Active</span>
+      <span class="pill gold">14 Partners</span>
+      <span class="pill warn" id="apiBadge" style="display:none">Local mode</span>
+      <button class="logout" id="logoutBtn">Sign out</button>
+    </header>
+
+    <!-- DASHBOARD -->
+    <section class="page" id="page-dashboard">
+      <div class="hero">
+        <span class="badge">Concierge HQ</span>
+        <h1>Welcome back, Concierge.</h1>
+        <p>Every contact that arrives through RenewMyBlock.com lands in your <b>Inbox</b>. Your job is to triage by persona, hand back a packet that maximizes their BNRI benefit, and keep them moving — through the city, through financing, through to closing.</p>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi"><div class="lab">New this week</div><div class="val" id="kpiNew">0</div><div class="sub">Untriaged contacts</div></div>
+        <div class="kpi"><div class="lab">Active</div><div class="val" id="kpiActive">0</div><div class="sub">Contacted / qualified</div></div>
+        <div class="kpi"><div class="lab">Pilot Zone</div><div class="val">5th–15th</div><div class="sub">West of Irvine Ave</div></div>
+        <div class="kpi"><div class="lab">Fee Waivers</div><div class="val">~65%</div><div class="sub">vs. standard</div></div>
+      </div>
+
+      <h2 class="h2">Pick a persona to start</h2>
+      <p class="lede">Click a tile to open that persona's full track — master checklist, city/county quick-links, financing programs, and a hand-off script.</p>
+
+      <div class="persona-grid">
+        <button class="persona-tile contractor" data-page="contractor">
+          <div class="icon">🔨</div>
+          <h3>Contractors / Builders</h3>
+          <p>Pre-submittal checklist, pre-approved plan library, fee waiver paperwork, building dept fast lane.</p>
+          <div class="chips"><span class="chip green">Permits</span><span class="chip gold">Fee waivers</span><span class="chip">Inspections</span></div>
+          <span class="arrow">Open track →</span>
+        </button>
+        <button class="persona-tile homeowner" data-page="homeowner">
+          <div class="icon">🏡</div>
+          <h3>Homeowners</h3>
+          <p>Building, buying, or moving in. Permits, $10K grant, BNRI financing, 218 Relocate, ALICE, MN Housing.</p>
+          <div class="chips"><span class="chip green">Grants</span><span class="chip gold">Financing</span><span class="chip blue">218 Relocate</span></div>
+          <span class="arrow">Open track →</span>
+        </button>
+        <button class="persona-tile investor" data-page="investor">
+          <div class="icon">📈</div>
+          <h3>Investors / REITs</h3>
+          <p>Bulk acquisition, multi-parcel coordination, ROI modeling, contractor matching, exit planning.</p>
+          <div class="chips"><span class="chip blue">Bulk deals</span><span class="chip">ROI models</span><span class="chip">Tax strategy</span></div>
+          <span class="arrow">Open track →</span>
+        </button>
+        <button class="persona-tile partner" data-page="partner">
+          <div class="icon">🤝</div>
+          <h3>Partner Organizations</h3>
+          <p>Coordination with the 14 stakeholder orgs — chamber, city, lenders, BSU, tribal, school district.</p>
+          <div class="chips"><span class="chip">MOUs</span><span class="chip">Co-marketing</span><span class="chip">Referrals</span></div>
+          <span class="arrow">Open track →</span>
+        </button>
+      </div>
+
+      <h2 class="h2">Quick links</h2>
+      <div class="grid grid-3">
+        <a class="card" href="https://ci-bemidji-mn.smartgovcommunity.com/" target="_blank"><div class="card-title">🏛️ City Permit Portal</div><div class="card-meta">SmartGov Community · Bemidji</div><p style="font-size:13px;color:var(--ink-soft)">Apply, check status, schedule inspections.</p></a>
+        <a class="card" href="https://www.ci.bemidji.mn.us/uploads/dm/48184/2026_Fee_Schedule.pdf" target="_blank"><div class="card-title">💲 2026 Fee Schedule</div><div class="card-meta">PDF · City of Bemidji</div><p style="font-size:13px;color:var(--ink-soft)">Current building & permit fees (basis for BNRI waivers).</p></a>
+        <a class="card" href="https://www.co.beltrami.mn.us/business-development/land-records-recorded-documents/land-records-online/" target="_blank"><div class="card-title">📜 Beltrami Land Records</div><div class="card-meta">TAPESTRY / LAREDO</div><p style="font-size:13px;color:var(--ink-soft)">Property history, deeds, liens for diligence.</p></a>
+      </div>
+
+      <div class="callout danger" style="margin-top:28px">
+        <strong>⚠️ Messaging correction needed</strong>
+        Federal Opportunity Zone designations do <b>not</b> currently include Beltrami County (verified May 2026). Investor pitch on the website should swap "Opportunity Zones" for the BNRI-specific 10-year tax abatement + state programs that <i>do</i> apply.
+      </div>
+    </section>
+
+    <!-- INBOX -->
+    <section class="page hidden" id="page-inbox">
+      <div class="eyebrow">Live Form Submissions</div>
+      <h1 class="h1">Inbox</h1>
+      <p class="lede">Every contact form submission from RenewMyBlock.com lands here. Set a status, jot notes, and route to the right persona track.</p>
+
+      <div class="inbox-toolbar">
+        <select id="filterStatus">
+          <option value="">All statuses</option>
+          <option value="new">New</option>
+          <option value="contacted">Contacted</option>
+          <option value="qualified">Qualified</option>
+          <option value="closed">Closed</option>
+        </select>
+        <select id="filterPersona">
+          <option value="">All personas</option>
+          <option value="contractor">Contractor</option>
+          <option value="homeowner-build">Homeowner — building</option>
+          <option value="homeowner-buy">Homeowner — buying</option>
+          <option value="homeowner-relocate">Homeowner — relocating</option>
+          <option value="investor-private">Private investor</option>
+          <option value="investor-reit">REIT / fund</option>
+          <option value="partner">Partner org</option>
+          <option value="other">Other</option>
+        </select>
+        <input type="text" id="filterSearch" placeholder="Search name, email, address…" style="min-width:240px">
+        <button class="btn-secondary" id="refreshInbox">Refresh</button>
+        <button class="btn-secondary" id="exportInbox">Export CSV</button>
+        <span class="count" id="inboxCount">0 records</span>
+      </div>
+
+      <div class="inbox-list" id="inboxList"></div>
+      <div id="inboxEmpty" style="display:none;padding:60px 20px;text-align:center;color:var(--ink-soft)">
+        <div style="font-size:48px;margin-bottom:8px">📭</div>
+        <p>No submissions match these filters yet.</p>
+        <p style="font-size:13px;margin-top:6px">When the public website's contact forms post to <code>/api/submit</code>, they'll appear here.</p>
+      </div>
+    </section>
+
+    <!-- INTAKE -->
+    <section class="page hidden" id="page-intake">
+      <div class="eyebrow">First Contact</div>
+      <h1 class="h1">New Intake</h1>
+      <p class="lede">Use this form when a contact comes in by phone, email, or referral. Submitting saves into the same Inbox as the public form, and routes you to the correct persona track.</p>
+
+      <form class="intake-form" id="intakeForm">
+        <div class="row">
+          <div><label>Name</label><input type="text" name="name" required></div>
+          <div><label>Email</label><input type="email" name="email"></div>
+        </div>
+        <div class="row">
+          <div><label>Phone</label><input type="tel" name="phone"></div>
+          <div><label>Source</label>
+            <select name="source"><option>Phone</option><option>Email</option><option>Walk-in</option><option>Partner referral</option><option>Website (manual entry)</option><option>Other</option></select>
+          </div>
+        </div>
+        <label>Persona</label>
+        <select name="persona" required>
+          <option value="">— Choose —</option>
+          <option value="contractor">Contractor / Builder</option>
+          <option value="homeowner-build">Homeowner — building own</option>
+          <option value="homeowner-buy">Homeowner — buying in zone</option>
+          <option value="homeowner-relocate">Homeowner — relocating in (218)</option>
+          <option value="investor-private">Private investor (1–4 props)</option>
+          <option value="investor-reit">REIT / fund / syndicate</option>
+          <option value="partner">Partner organization</option>
+          <option value="other">Other</option>
+        </select>
+        <label>Project / property address (if known)</label>
+        <input type="text" name="address" placeholder="e.g., 8th St & Park Ave, Bemidji">
+        <label>What do they need?</label>
+        <textarea name="need" placeholder="Brief — fee waiver questions, financing, parcels they're eyeing, etc."></textarea>
+        <button type="submit" class="btn-primary">Save intake &amp; open persona track</button>
+      </form>
+      <div id="intakeSaved" style="margin-top:18px"></div>
+    </section>
+
+    <!-- CONTRACTOR TRACK -->
+    <section class="page hidden" id="page-contractor">
+      <div class="eyebrow">Persona Track</div>
+      <h1 class="h1">Contractors &amp; Builders</h1>
+      <p class="lede">Goal: get the contractor through the city building department <i>fast</i>, with maximum BNRI benefit applied. Every checklist item below is a friction point you can remove for them before they arrive at City Hall.</p>
+
+      <div class="kpi-row">
+        <div class="kpi"><div class="lab">Building Office</div><div class="val">317 4th St NW</div><div class="sub">Bemidji, MN 56601</div></div>
+        <div class="kpi"><div class="lab">Inspection Notice</div><div class="val">24 hrs</div><div class="sub">Schedule via portal</div></div>
+        <div class="kpi"><div class="lab">Plan Review</div><div class="val">65%</div><div class="sub">of permit fee</div></div>
+        <div class="kpi"><div class="lab">Pre-Approved Plans</div><div class="val">48</div><div class="sub">Phoenix Clean &amp; Lean</div></div>
+      </div>
+
+      <h2 class="h2">Master checklist</h2>
+      <div class="checklist" data-persona="contractor">
+        <div class="check-item"><input type="checkbox" id="c1"><label for="c1">Confirm property is inside the BNRI pilot zone (5th–15th St, west of Irvine Ave) — pull GIS map</label><span class="tag">Eligibility</span></div>
+        <div class="check-item"><input type="checkbox" id="c2"><label for="c2">Pull Certificate of Survey (required for all new builds; confirm if remodel triggers it)</label><span class="tag">Required</span></div>
+        <div class="check-item"><input type="checkbox" id="c3"><label for="c3">Identify whether project uses one of the 48 pre-approved BNRI plans (auto-fast-track) or custom design (full plan review)</label><span class="tag">BNRI</span></div>
+        <div class="check-item"><input type="checkbox" id="c4"><label for="c4">Calculate base fees from 2026 City Fee Schedule, then apply BNRI ~65% waiver line-by-line for the contractor's quote</label><span class="tag">Money</span></div>
+        <div class="check-item"><input type="checkbox" id="c5"><label for="c5">Check setbacks against Chapter 28 Development Code — flag if a Variance, Special Use Permit, or Rezoning will be needed (filing deadline: last working day of month for public hearing)</label><span class="tag">Zoning</span></div>
+        <div class="check-item"><input type="checkbox" id="c6"><label for="c6">Pull existing property history from Beltrami County Recorder (deeds, liens, easements)</label><span class="tag">Diligence</span></div>
+        <div class="check-item"><input type="checkbox" id="c7"><label for="c7">Pre-fill the SmartGov online application with property data; send draft to contractor for review before submit</label><span class="tag">Portal</span></div>
+        <div class="check-item"><input type="checkbox" id="c8"><label for="c8">Generate BNRI fee-waiver cover letter (use template) and attach to permit application</label><span class="tag">BNRI</span></div>
+        <div class="check-item"><input type="checkbox" id="c9"><label for="c9">Schedule pre-submittal call with city building inspector if project is non-standard (saves 1–2 weeks of back-and-forth)</label><span class="tag">Speed</span></div>
+        <div class="check-item"><input type="checkbox" id="c10"><label for="c10">Hand off the BNRI Contractor Packet (this checklist + city forms + waiver letter + 2026 fee table)</label><span class="tag">Hand-off</span></div>
+      </div>
+
+      <h2 class="h2">Resources</h2>
+      <div class="acc"><div class="acc-head">🏛️ City of Bemidji Building Department <span class="acc-tag">Primary</span></div><div class="acc-body"><p><b>Office:</b> 317 4th St NW, Bemidji, MN 56601</p><p><b>Online portal:</b> <a href="https://ci-bemidji-mn.smartgovcommunity.com/" target="_blank">ci-bemidji-mn.smartgovcommunity.com</a></p><ul><li>All construction, remodeling, or demolition inside city limits requires a permit.</li><li>Inspections require <b>24 hour</b> advance notice.</li><li>Plan review fee = <b>65% of permit fee</b> for new builds and occupancy-change remodels.</li><li>Certificate of Survey required for new residential builds.</li></ul><a class="btn" href="https://www.ci.bemidji.mn.us/?SEC=B63BCABF-0142-434F-8E09-A5C5206A6EF5" target="_blank">Open Building page</a></div></div>
+      <div class="acc"><div class="acc-head">📋 Planning &amp; Zoning — Variances &amp; Special Use <span class="acc-tag">Conditional</span></div><div class="acc-body"><p>Variance / Special Use / Rezoning applications must be filed by the last working day of the month to make that month's hearing.</p><a class="btn" href="https://www.ci.bemidji.mn.us/vertical/sites/%7BDC40720D-A823-4643-91CD-6456402D11F6%7D/uploads/Chapter_28_Development_Code_Packet_Rev_12-2024_Ver_4_Final_-_Printable.pdf" target="_blank">Chapter 28 (PDF)</a> <a class="btn" href="https://www.ci.bemidji.mn.us/?SEC=4FEE759C-D875-4D1F-9F61-567BB93CA9DE" target="_blank">P&Z page</a></div></div>
+      <div class="acc"><div class="acc-head">💲 2026 Fee Schedule + BNRI Waiver Worksheet <span class="acc-tag">Money</span></div><div class="acc-body"><p>Pull line items from the 2026 schedule, apply the BNRI ~65% waiver, and produce a one-page worksheet the contractor can show their client.</p><a class="btn" href="https://www.ci.bemidji.mn.us/uploads/dm/48184/2026_Fee_Schedule.pdf" target="_blank">2026 Fee Schedule (PDF)</a> <a class="btn gold" href="#" onclick="showPage('templates');return false;">Open template library →</a></div></div>
+      <div class="acc"><div class="acc-head">🏗️ MN DLI Permit Calculator <span class="acc-tag">Reference</span></div><div class="acc-body"><a class="btn" href="https://www.dli.mn.gov/business/get-licenses-and-permits/building-permit-plan-review-and-surcharge-fee-calculator" target="_blank">DLI Fee Calculator</a></div></div>
+      <div class="acc"><div class="acc-head">📜 Beltrami County Records &amp; GIS <span class="acc-tag">Diligence</span></div><div class="acc-body"><p><b>Recorder:</b> 701 Minnesota Ave NW, Ste 120 · 218-333-8345</p><p><b>Assessor:</b> 701 Minnesota Ave NW, Ste 130 · 218-333-4113</p><a class="btn" href="https://www.co.beltrami.mn.us/business-development/land-records-recorded-documents/" target="_blank">Land Records</a> <a class="btn" href="https://gishub-beltramicounty.hub.arcgis.com/" target="_blank">GIS Hub</a></div></div>
+
+      <div class="callout success"><strong>✓ Concierge value-add</strong>A contractor working in Bemidji typically loses 2–4 weeks to permit back-and-forth. The job of this track is to deliver them a packet that gets through plan review on the first pass.</div>
+    </section>
+
+    <!-- HOMEOWNER TRACK -->
+    <section class="page hidden" id="page-homeowner">
+      <div class="eyebrow">Persona Track</div>
+      <h1 class="h1">Homeowners</h1>
+      <p class="lede">Three sub-paths inside one track: building their own, buying a remodeled home in the zone, or relocating into the zone. Concierge identifies which on the first call.</p>
+
+      <div class="kpi-row">
+        <div class="kpi"><div class="lab">BNRI Grant</div><div class="val">$10,000</div><div class="sub">Per qualifying home</div></div>
+        <div class="kpi"><div class="lab">BNRI Financing</div><div class="val">2–3%</div><div class="sub">Below-market rate</div></div>
+        <div class="kpi"><div class="lab">218 Relocate</div><div class="val">$2,500</div><div class="sub">Telecommuter package</div></div>
+        <div class="kpi"><div class="lab">ALICE in Bemidji</div><div class="val">53%</div><div class="sub">of households</div></div>
+      </div>
+
+      <h2 class="h2">Master checklist</h2>
+      <div class="checklist" data-persona="homeowner">
+        <div class="check-item"><input type="checkbox" id="h1"><label for="h1">Identify sub-path: building, buying move-in-ready, or relocating</label><span class="tag">Triage</span></div>
+        <div class="check-item"><input type="checkbox" id="h2"><label for="h2">Confirm property/target address inside BNRI pilot zone</label><span class="tag">Eligibility</span></div>
+        <div class="check-item"><input type="checkbox" id="h3"><label for="h3">Run ALICE income screen — flag if eligible for additional MN Housing Rehab Loan</label><span class="tag">Stack</span></div>
+        <div class="check-item"><input type="checkbox" id="h4"><label for="h4">Open BNRI $10K grant application</label><span class="tag">BNRI</span></div>
+        <div class="check-item"><input type="checkbox" id="h5"><label for="h5">Open 10-year tax abatement enrollment (improvement value)</label><span class="tag">BNRI</span></div>
+        <div class="check-item"><input type="checkbox" id="h6"><label for="h6">If buying: pre-screen for MN Housing Start Up (3% down, up to $17K DPA)</label><span class="tag">Buy</span></div>
+        <div class="check-item"><input type="checkbox" id="h7"><label for="h7">If buying & first-gen: MN Housing First-Generation Homebuyer ($35K DPA)</label><span class="tag">Buy</span></div>
+        <div class="check-item"><input type="checkbox" id="h8"><label for="h8">If telecommuter: open 218 Relocate within 1 month of move + confirm Paul Bunyan internet</label><span class="tag">Relocate</span></div>
+        <div class="check-item"><input type="checkbox" id="h9"><label for="h9">Schedule walk-through with mortgage partner (lender list)</label><span class="tag">Money</span></div>
+        <div class="check-item"><input type="checkbox" id="h10"><label for="h10">Send Homeowner Welcome Packet (incentive stack summary, contacts, calendar)</label><span class="tag">Hand-off</span></div>
+      </div>
+
+      <h2 class="h2">Stackable incentives</h2>
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-title">🎁 BNRI direct (any homeowner in zone)</div>
+          <ul style="font-size:13px;color:var(--ink-soft);padding-left:18px;margin-top:8px">
+            <li>~65% city fee waivers</li><li>10-year tax abatement on improvement value</li><li>$10,000 grant per qualifying home</li><li>2–3% BNRI financing rate</li><li>Access to 48 pre-approved plans</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <div class="card-title">🪜 MN Housing — stack on top</div>
+          <ul style="font-size:13px;color:#5A4214;padding-left:18px;margin-top:8px">
+            <li><b>Start Up:</b> 3% down, up to $17K DPA (first-time)</li>
+            <li><b>First-Generation:</b> $35K DPA, first-come</li>
+            <li><b>Rehab Loan:</b> low-income safety/energy/accessibility</li>
+          </ul>
+          <a class="btn" href="https://www.mnhousing.gov/" target="_blank" style="margin-top:10px">MN Housing</a>
+        </div>
+      </div>
+
+      <h2 class="h2">Resources</h2>
+      <div class="acc"><div class="acc-head">🏠 Bemidji HRA <span class="acc-tag">Local</span></div><div class="acc-body"><p>Northland Apartments / Bemidji HRA office — local administering body for housing programs.</p><a class="btn" href="https://www.facebook.com/BemidjiHRA/" target="_blank">Bemidji HRA</a></div></div>
+      <div class="acc"><div class="acc-head">🚚 218 Relocate (Greater Bemidji) <span class="acc-tag">Telecommuter</span></div><div class="acc-body"><p><b>Package:</b> up to $2,500 moving expenses, free 1-year Paul Bunyan Gigabit Internet, free LaunchPad coworking, networking memberships.</p><p><b>Eligibility:</b> 95–100% remote work, internet through Paul Bunyan, application within 1 month of relocation.</p><a class="btn" href="https://www.218relocate.com/relocation-incentive-package-2/" target="_blank">218relocate.com</a></div></div>
+      <div class="acc"><div class="acc-head">💚 ALICE qualification <span class="acc-tag">Income</span></div><div class="acc-body"><p>53% of City of Bemidji households fall under ALICE. Determines eligibility for stackable workforce-housing programs and MN Housing Rehab.</p><a class="btn" href="https://www.greaterbemidji.com/" target="_blank">Greater Bemidji</a></div></div>
+      <div class="acc"><div class="acc-head">🏦 MN Housing — Start Up, First-Gen, Rehab <span class="acc-tag">Stack</span></div><div class="acc-body"><ul><li><b>Start Up:</b> 3% down, up to $17K downpayment + closing.</li><li><b>First-Generation:</b> up to $35K, first-come.</li><li><b>Rehab Loan:</b> low-income safety/habitability/energy/accessibility.</li></ul><a class="btn" href="https://www.mnhousing.gov/home/homeownership/buy-home-refinance" target="_blank">Buy &amp; Refinance</a></div></div>
+    </section>
+
+    <!-- INVESTOR TRACK -->
+    <section class="page hidden" id="page-investor">
+      <div class="eyebrow">Persona Track</div>
+      <h1 class="h1">Investors / REITs</h1>
+      <p class="lede">From a single private investor doing one flip up to a REIT looking at multi-parcel acquisition. Concierge sizes the deal, runs ROI, and matches them with contractors.</p>
+
+      <div class="callout danger">
+        <strong>⚠️ Opportunity Zone status</strong>
+        Beltrami County does <b>not</b> currently host a federally designated Opportunity Zone (verified May 2026). Do not pitch OZ tax benefits. Lead instead with the BNRI 10-year tax abatement, fee waivers, and MN-specific programs.
+      </div>
+
+      <h2 class="h2">Master checklist</h2>
+      <div class="checklist" data-persona="investor">
+        <div class="check-item"><input type="checkbox" id="i1"><label for="i1">Classify investor type: REIT, fund, syndicate, or single private investor</label><span class="tag">Triage</span></div>
+        <div class="check-item"><input type="checkbox" id="i2"><label for="i2">Confirm investment thesis: hold (rental), flip (sell-on), or build-to-rent</label><span class="tag">Strategy</span></div>
+        <div class="check-item"><input type="checkbox" id="i3"><label for="i3">Pull target parcels from GIS — verify all inside pilot zone</label><span class="tag">Eligibility</span></div>
+        <div class="check-item"><input type="checkbox" id="i4"><label for="i4">Run ROI model: BNRI fee waivers + 10-yr abatement + 2-3% financing layered against acquisition + reno + rent/sale price</label><span class="tag">Money</span></div>
+        <div class="check-item"><input type="checkbox" id="i5"><label for="i5">Pull title / lien history from Beltrami Recorder for each parcel</label><span class="tag">Diligence</span></div>
+        <div class="check-item"><input type="checkbox" id="i6"><label for="i6">Match with vetted BNRI contractor pool</label><span class="tag">Match</span></div>
+        <div class="check-item"><input type="checkbox" id="i7"><label for="i7">Schedule city liaison meeting if buying 5+ parcels</label><span class="tag">City</span></div>
+        <div class="check-item"><input type="checkbox" id="i8"><label for="i8">Confirm exit strategy &amp; ALICE-qualified rental price points if buy-to-rent</label><span class="tag">Exit</span></div>
+        <div class="check-item"><input type="checkbox" id="i9"><label for="i9">Hand off Investor Packet (zone map, parcel list, ROI sheet, contractor matches, abatement enrollment forms)</label><span class="tag">Hand-off</span></div>
+      </div>
+
+      <h2 class="h2">Tax &amp; incentive stack — what's true today</h2>
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-title">✅ Confirmed for Bemidji</div>
+          <ul style="font-size:13px;color:var(--ink-soft);padding-left:18px;margin-top:8px">
+            <li><b>BNRI 10-year tax abatement</b> on improvement value</li>
+            <li><b>~65% city fee waivers</b></li>
+            <li><b>2–3% BNRI financing</b></li>
+            <li><b>$10K grant</b> per qualifying home</li>
+            <li><b>48 pre-approved plans</b> — cuts plan review time</li>
+          </ul>
+        </div>
+        <div class="card" style="background:#FBEAE7;border-color:#E5BFB8">
+          <div class="card-title" style="color:var(--danger)">❌ Do NOT pitch</div>
+          <ul style="font-size:13px;color:var(--ink-soft);padding-left:18px;margin-top:8px">
+            <li>Federal Opportunity Zone benefits (Beltrami County is not an OZ)</li>
+            <li>Any OZ-related deferral, step-up, or 10-year capital gain exclusion</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 class="h2">Resources</h2>
+      <div class="acc"><div class="acc-head">📊 Beltrami County GIS — parcel maps <span class="acc-tag">Acquisition</span></div><div class="acc-body"><a class="btn" href="https://gishub-beltramicounty.hub.arcgis.com/" target="_blank">GIS Hub</a></div></div>
+      <div class="acc"><div class="acc-head">📜 Title &amp; lien diligence <span class="acc-tag">Required</span></div><div class="acc-body"><a class="btn" href="https://www.co.beltrami.mn.us/business-development/land-records-recorded-documents/" target="_blank">Beltrami Land Records</a></div></div>
+      <div class="acc"><div class="acc-head">🤝 Vetted contractor pool <span class="acc-tag">Match</span></div><div class="acc-body"><p>Match the investor with contractors who already know the Phoenix Clean &amp; Lean process and the city's plan reviewer preferences.</p><a class="btn gold" href="#" onclick="showPage('contractor-pool');return false;">Open Contractor Pool →</a></div></div>
+    </section>
+
+    <!-- PARTNER TRACK -->
+    <section class="page hidden" id="page-partner">
+      <div class="eyebrow">Persona Track</div>
+      <h1 class="h1">Partner Organizations</h1>
+      <p class="lede">Coordination resources for the 14 stakeholder organizations. Most partner inquiries are about referrals, co-marketing, or formalizing the relationship via MOU.</p>
+
+      <div class="kpi-row">
+        <div class="kpi"><div class="lab">Active Partners</div><div class="val">14</div><div class="sub">Engaged orgs</div></div>
+        <div class="kpi"><div class="lab">MOU Status</div><div class="val">Track</div><div class="sub">Per partner</div></div>
+        <div class="kpi"><div class="lab">Co-marketing</div><div class="val">Open</div><div class="sub">Joint comms ready</div></div>
+        <div class="kpi"><div class="lab">Referrals</div><div class="val">Active</div><div class="sub">Inbound from partners</div></div>
+      </div>
+
+      <h2 class="h2">Master checklist</h2>
+      <div class="checklist" data-persona="partner">
+        <div class="check-item"><input type="checkbox" id="p1"><label for="p1">Identify which partner org the inquiry is from</label><span class="tag">Triage</span></div>
+        <div class="check-item"><input type="checkbox" id="p2"><label for="p2">Determine inquiry type: referral, co-marketing, MOU question, partner-event invite, or escalation</label><span class="tag">Type</span></div>
+        <div class="check-item"><input type="checkbox" id="p3"><label for="p3">Pull last touchpoint with that partner from Partner Directory</label><span class="tag">History</span></div>
+        <div class="check-item"><input type="checkbox" id="p4"><label for="p4">If referral: route to correct persona track</label><span class="tag">Route</span></div>
+        <div class="check-item"><input type="checkbox" id="p5"><label for="p5">If MOU: pull MOU template, fill partner-specific terms, send to Mychal for signature</label><span class="tag">MOU</span></div>
+        <div class="check-item"><input type="checkbox" id="p6"><label for="p6">If co-marketing: hand them the BNRI brand kit + boilerplate copy</label><span class="tag">Brand</span></div>
+        <div class="check-item"><input type="checkbox" id="p7"><label for="p7">Update partner status in Partner Directory</label><span class="tag">CRM</span></div>
+      </div>
+
+      <p class="lede">For the full per-partner CRM, open <a href="#" onclick="showPage('partner-directory');return false;"><b>Partner Directory</b></a>.</p>
+    </section>
+
+    <!-- CONTRACTOR POOL -->
+    <section class="page hidden" id="page-contractor-pool">
+      <div class="eyebrow">Vetted Contractor Pool</div>
+      <h1 class="h1">Contractor Pool</h1>
+      <p class="lede">Private list of contractors who already know the BNRI process. Match investors and homeowners with the right shop. Click a column header to sort.</p>
+
+      <div class="inbox-toolbar">
+        <button class="btn-secondary" id="addContractorBtn">+ Add contractor</button>
+        <button class="btn-secondary" id="exportContractors">Export CSV</button>
+        <input type="text" id="contractorSearch" placeholder="Search contractors…" style="min-width:240px">
+        <span class="count" id="contractorCount">0 contractors</span>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="pool-table" id="contractorTable">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Contact</th>
+              <th>Phone / Email</th>
+              <th>Specialty</th>
+              <th>BNRI status</th>
+              <th>Rating</th>
+              <th>Last project</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="contractorBody"></tbody>
+        </table>
+      </div>
+
+      <div id="contractorEmpty" style="display:none;padding:40px 20px;text-align:center;color:var(--ink-soft)">
+        <p style="font-size:14px">No contractors in the pool yet. Click <b>+ Add contractor</b> to start.</p>
+      </div>
+
+      <!-- Add/edit form (collapsed) -->
+      <div id="contractorFormWrap" style="display:none;margin-top:18px">
+        <h3 class="h3" id="contractorFormTitle">Add contractor</h3>
+        <form class="form-card" id="contractorForm">
+          <div class="row">
+            <div><label>Company name</label><input type="text" name="company" required></div>
+            <div><label>Primary contact</label><input type="text" name="contact"></div>
+          </div>
+          <div class="row">
+            <div><label>Phone</label><input type="tel" name="phone"></div>
+            <div><label>Email</label><input type="email" name="email"></div>
+          </div>
+          <div class="row">
+            <div><label>Specialty</label><input type="text" name="specialty" placeholder="e.g., Single-family rehab, multi-unit, demo"></div>
+            <div><label>BNRI status</label>
+              <select name="status">
+                <option>Vetted &amp; recommended</option>
+                <option>Vetted — niche</option>
+                <option>In review</option>
+                <option>Conditional</option>
+                <option>Unknown</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div><label>Rating (1–5)</label><input type="number" name="rating" min="1" max="5" step="1"></div>
+            <div><label>Last project</label><input type="text" name="lastProject" placeholder="e.g., 824 5th St — Mar 2026"></div>
+          </div>
+          <label>Notes</label>
+          <textarea name="notes" placeholder="Strengths, weaknesses, who at the city likes working with them…"></textarea>
+          <input type="hidden" name="id">
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <button type="submit" class="btn-primary">Save contractor</button>
+            <button type="button" class="btn-secondary" id="cancelContractor">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- PARTNER DIRECTORY -->
+    <section class="page hidden" id="page-partner-directory">
+      <div class="eyebrow">Partner CRM</div>
+      <h1 class="h1">Partner Directory</h1>
+      <p class="lede">The 14 partner organizations + room for more. Track named contact, last touchpoint, MOU status, and notes.</p>
+
+      <div class="inbox-toolbar">
+        <button class="btn-secondary" id="addPartnerBtn">+ Add partner</button>
+        <button class="btn-secondary" id="exportPartners">Export CSV</button>
+        <button class="btn-secondary" id="seedPartners">Reset to default 14 stub list</button>
+        <input type="text" id="partnerSearch" placeholder="Search partners…" style="min-width:240px">
+        <span class="count" id="partnerCount">0 partners</span>
+      </div>
+
+      <div class="grid grid-2" id="partnerGrid"></div>
+
+      <div id="partnerFormWrap" style="display:none;margin-top:18px">
+        <h3 class="h3" id="partnerFormTitle">Add partner</h3>
+        <form class="form-card" id="partnerForm">
+          <div class="row">
+            <div><label>Organization</label><input type="text" name="org" required></div>
+            <div><label>Type</label>
+              <select name="type">
+                <option>Government</option><option>Economic Dev</option><option>Business / Chamber</option>
+                <option>Education</option><option>Healthcare</option><option>Lender</option>
+                <option>Tribal</option><option>School District</option><option>Nonprofit</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div><label>Named contact</label><input type="text" name="contact"></div>
+            <div><label>Title</label><input type="text" name="title"></div>
+          </div>
+          <div class="row">
+            <div><label>Phone</label><input type="tel" name="phone"></div>
+            <div><label>Email</label><input type="email" name="email"></div>
+          </div>
+          <div class="row">
+            <div><label>Last touchpoint</label><input type="date" name="lastTouch"></div>
+            <div><label>MOU status</label>
+              <select name="mou"><option>Not started</option><option>Drafting</option><option>Sent</option><option>Signed</option><option>Not applicable</option></select>
+            </div>
+          </div>
+          <label>Notes</label>
+          <textarea name="notes" placeholder="What they bring, what they need, joint initiatives…"></textarea>
+          <input type="hidden" name="id">
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <button type="submit" class="btn-primary">Save partner</button>
+            <button type="button" class="btn-secondary" id="cancelPartner">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- TEMPLATES -->
+    <section class="page hidden" id="page-templates">
+      <div class="eyebrow">Templates &amp; Letters</div>
+      <h1 class="h1">Template Library</h1>
+      <p class="lede">Editable documents the Concierge sends out. Click a card to open the live letter generator (fills in addressee from Inbox), or download the static template.</p>
+
+      <h2 class="h2">Generators</h2>
+      <div class="grid grid-3">
+        <div class="tpl-card">
+          <div class="ico">📜</div>
+          <h3>Contractor Fee Waiver Letter</h3>
+          <p>Cover letter the contractor attaches to their permit application. Auto-fills addressee, project, fee table.</p>
+          <div class="links"><a href="#" onclick="openLetter('fee-waiver');return false;" class="gold">Generate</a><a href="../templates/contractor-fee-waiver.docx" target="_blank">Download .docx</a></div>
+        </div>
+        <div class="tpl-card">
+          <div class="ico">📄</div>
+          <h3>Partner MOU Template</h3>
+          <p>Memorandum of Understanding between BNRI and a partner organization. Standard mutual-benefit language.</p>
+          <div class="links"><a href="#" onclick="openLetter('mou');return false;" class="gold">Generate</a><a href="../templates/partner-mou.docx" target="_blank">Download .docx</a></div>
+        </div>
+        <div class="tpl-card">
+          <div class="ico">📊</div>
+          <h3>Investor One-Pager</h3>
+          <p>BNRI incentive stack + ROI framework. <b>OZ language already removed.</b> Hand to a REIT or private investor.</p>
+          <div class="links"><a href="../templates/investor-onepager.pdf" target="_blank" class="gold">View PDF</a><a href="../templates/investor-onepager.md" target="_blank">View source</a></div>
+        </div>
+        <div class="tpl-card">
+          <div class="ico">🎁</div>
+          <h3>Homeowner Welcome Packet</h3>
+          <p>Incentive stack summary, key contacts, next-step calendar. The leave-behind after the first call.</p>
+          <div class="links"><a href="../templates/homeowner-welcome-packet.docx" target="_blank" class="gold">Download .docx</a><a href="../templates/homeowner-welcome-packet.md" target="_blank">View source</a></div>
+        </div>
+        <div class="tpl-card">
+          <div class="ico">✅</div>
+          <h3>Inspection Prep Checklist</h3>
+          <p>Printable checklist to hand a contractor or owner-builder before their building inspection.</p>
+          <div class="links"><a href="../templates/inspection-prep.docx" target="_blank" class="gold">Download .docx</a></div>
+        </div>
+        <div class="tpl-card">
+          <div class="ico">📐</div>
+          <h3>BNRI Fee Waiver Worksheet</h3>
+          <p>Per-project line-item worksheet — base fee → BNRI waiver → net fee, signed by liaison.</p>
+          <div class="links"><a href="../templates/fee-waiver-worksheet.docx" target="_blank" class="gold">Download .docx</a></div>
+        </div>
+      </div>
+
+      <h2 class="h2">Live Letter Generator</h2>
+      <div id="letterPreviewWrap" style="display:none">
+        <div class="form-card" style="margin-bottom:14px">
+          <div class="row">
+            <div><label>Recipient name</label><input type="text" id="letterTo" placeholder="e.g., John Smith, Building Official"></div>
+            <div><label>Recipient organization</label><input type="text" id="letterOrg" placeholder="e.g., City of Bemidji Building Department"></div>
+          </div>
+          <div class="row">
+            <div><label>Project address</label><input type="text" id="letterAddr" placeholder="e.g., 824 5th St NW, Bemidji"></div>
+            <div><label>Permit type</label><input type="text" id="letterPermit" placeholder="e.g., Residential remodel"></div>
+          </div>
+          <div class="row">
+            <div><label>Base permit fee ($)</label><input type="number" id="letterBase" step="0.01" placeholder="e.g., 850.00"></div>
+            <div><label>BNRI waiver % (default 65)</label><input type="number" id="letterWaiver" value="65" min="0" max="100"></div>
+          </div>
+          <button type="button" class="btn-primary" onclick="renderLetter()">Render letter</button>
+          <button type="button" class="btn-secondary" onclick="window.print()">Print</button>
+        </div>
+        <iframe id="letterFrame" class="letter-preview"></iframe>
+      </div>
+    </section>
+
+    <!-- RESOURCES -->
+    <section class="page hidden" id="page-resources">
+      <div class="eyebrow">All Resources</div>
+      <h1 class="h1">Resource Library</h1>
+      <p class="lede">Every external link the Concierge needs, in one place. Sorted by jurisdiction.</p>
+      <h2 class="h2">City of Bemidji</h2>
+      <div class="grid grid-2">
+        <a class="card" href="https://ci-bemidji-mn.smartgovcommunity.com/" target="_blank"><div class="card-title">SmartGov Permit Portal</div><div class="card-meta">Online permitting &amp; inspections</div></a>
+        <a class="card" href="https://www.ci.bemidji.mn.us/?SEC=B63BCABF-0142-434F-8E09-A5C5206A6EF5" target="_blank"><div class="card-title">Building Permits &amp; Rental Inspections</div><div class="card-meta">Department landing page</div></a>
+        <a class="card" href="https://www.ci.bemidji.mn.us/uploads/dm/48184/2026_Fee_Schedule.pdf" target="_blank"><div class="card-title">2026 Fee Schedule (PDF)</div><div class="card-meta">All fees — basis for BNRI waivers</div></a>
+        <a class="card" href="https://www.ci.bemidji.mn.us/?SEC=4FEE759C-D875-4D1F-9F61-567BB93CA9DE" target="_blank"><div class="card-title">Planning &amp; Zoning</div><div class="card-meta">Variances, special use, rezoning</div></a>
+        <a class="card" href="https://www.ci.bemidji.mn.us/vertical/sites/%7BDC40720D-A823-4643-91CD-6456402D11F6%7D/uploads/Chapter_28_Development_Code_Packet_Rev_12-2024_Ver_4_Final_-_Printable.pdf" target="_blank"><div class="card-title">Chapter 28 Development Code (PDF)</div><div class="card-meta">Setbacks, zoning, definitions</div></a>
+        <a class="card" href="https://www.ci.bemidji.mn.us/?SEC=7A4AAE3E-0DD5-4C68-807B-3D70B3F29EB6" target="_blank"><div class="card-title">City Assessor's Office</div><div class="card-meta">Bemidji municipal assessor</div></a>
+      </div>
+      <h2 class="h2">Beltrami County</h2>
+      <div class="grid grid-2">
+        <a class="card" href="https://www.co.beltrami.mn.us/departments/recorder/" target="_blank"><div class="card-title">County Recorder</div><div class="card-meta">701 Minnesota Ave NW · 218-333-8345</div></a>
+        <a class="card" href="https://www.co.beltrami.mn.us/departments/assessor/" target="_blank"><div class="card-title">County Assessor</div><div class="card-meta">701 Minnesota Ave NW · 218-333-4113</div></a>
+        <a class="card" href="https://www.co.beltrami.mn.us/business-development/land-records-recorded-documents/land-records-online/" target="_blank"><div class="card-title">Land Records Online</div><div class="card-meta">TAPESTRY (pay-go) · LAREDO (sub)</div></a>
+        <a class="card" href="https://gishub-beltramicounty.hub.arcgis.com/" target="_blank"><div class="card-title">Beltrami GIS Hub</div><div class="card-meta">Parcel maps, zoning overlays</div></a>
+      </div>
+      <h2 class="h2">State of Minnesota</h2>
+      <div class="grid grid-2">
+        <a class="card" href="https://www.mnhousing.gov/" target="_blank"><div class="card-title">Minnesota Housing</div><div class="card-meta">MHFA — homebuyer &amp; rehab loans</div></a>
+        <a class="card" href="https://www.mnhousing.gov/home/homeownership/buy-home-refinance" target="_blank"><div class="card-title">Buy a Home &amp; Refinance</div><div class="card-meta">Start Up · First-Generation · Rehab</div></a>
+        <a class="card" href="https://dli.mn.gov/business/get-licenses-and-permits/permits" target="_blank"><div class="card-title">MN DLI — Permits</div><div class="card-meta">State permit info &amp; calculators</div></a>
+        <a class="card" href="https://www.dli.mn.gov/business/get-licenses-and-permits/building-permit-plan-review-and-surcharge-fee-calculator" target="_blank"><div class="card-title">DLI Permit Fee Calculator</div><div class="card-meta">State surcharge &amp; plan review math</div></a>
+      </div>
+      <h2 class="h2">Greater Bemidji &amp; community</h2>
+      <div class="grid grid-2">
+        <a class="card" href="https://www.greaterbemidji.com/" target="_blank"><div class="card-title">Greater Bemidji</div><div class="card-meta">EDO — workforce, ALICE work</div></a>
+        <a class="card" href="https://www.218relocate.com/relocation-incentive-package-2/" target="_blank"><div class="card-title">218 Relocate</div><div class="card-meta">Telecommuter relocation grant</div></a>
+        <a class="card" href="https://www.facebook.com/BemidjiHRA/" target="_blank"><div class="card-title">Bemidji HRA</div><div class="card-meta">Housing &amp; Redevelopment Authority</div></a>
+      </div>
+    </section>
+
+    <!-- SCRIPTS -->
+    <section class="page hidden" id="page-scripts">
+      <div class="eyebrow">Talking Points</div>
+      <h1 class="h1">Concierge Scripts</h1>
+      <p class="lede">Short, memorable scripts the Concierge can adapt on a first call. Stay confident, stay specific, never overpromise.</p>
+      <div class="script"><h4>Opening — any persona</h4><p class="quote">"Thanks for reaching out about RenewMyBlock. I'm the BNRI Concierge — my job is to make sure you walk away with every benefit you're entitled to and a clean path through the city. Mind if I ask three quick questions so I can pull the right packet for you?"</p></div>
+      <div class="script"><h4>Contractor</h4><p>"You're going to deal with the city building department either way. The difference with BNRI is we pre-position your packet — fee waivers calculated, plan review pre-coordinated, and if you use one of our 48 pre-approved plans we cut the review time substantially."</p><p class="quote">"What we need from you: address, scope, and whether you've already pulled a Certificate of Survey. I'll handle the rest."</p></div>
+      <div class="script"><h4>Homeowner — building own</h4><p>"Three things stack on top of each other: the BNRI ~65% city fee waiver, a ten-year tax abatement on the improvement value, and a $10,000 grant. If you qualify for MN Housing's Start Up or First-Generation programs, that stacks on top again."</p><p class="quote">"Most owner-builders get stuck on the permit portal. I'll walk you through it on a screenshare — twenty minutes."</p></div>
+      <div class="script"><h4>Homeowner — relocating</h4><p>"218 Relocate gives you up to $2,500 plus a year of Paul Bunyan gigabit internet and free coworking — but you have to apply within thirty days of your move. Let's get that started before anything else."</p></div>
+      <div class="script"><h4>Investor / REIT</h4><p>"To be straight with you — Beltrami County isn't a federal Opportunity Zone, so I can't pitch you OZ tax deferral. What I <em>can</em> show you is the BNRI ten-year tax abatement on improvement value, ~65% fee waivers, sub-3% financing, and a vetted contractor pool that's done this work before. On a five-parcel deal that math is competitive with most OZ plays."</p><p class="quote">"Send me your acquisition criteria and I'll come back with parcels that fit, ROI modeled with the BNRI stack applied."</p></div>
+      <div class="script"><h4>Partner organization</h4><p>"Your members are exactly who BNRI is built for. Here's how we make it easy on you: any contact you send our way, I personally take the first call — your member never has to navigate the program alone. Want me to send over a co-branded one-pager you can put in your next newsletter?"</p></div>
+      <div class="script"><h4>Closing — any persona</h4><p class="quote">"I'm going to send you a packet today with everything we just discussed, the next three steps, and the names of the people you'll be working with. If you get stuck on anything, you call me — not the city. That's what I'm here for."</p></div>
+    </section>
+
+    <!-- ROLE -->
+    <section class="page hidden" id="page-role">
+      <div class="eyebrow">Position Description</div>
+      <h1 class="h1">RenewMyBlock Concierge — Role</h1>
+      <p class="lede">A working description of the Concierge position. Use this for hiring, contracting, or training.</p>
+      <h2 class="h2">Mission</h2>
+      <p>Be the single point of contact for every person and organization that touches BNRI. Translate a confusing program into a clean experience. Maximize the benefit each contact receives. Keep them moving — through permits, through financing, through to closing.</p>
+      <h2 class="h2">Daily responsibilities</h2>
+      <div class="grid grid-2">
+        <div class="card"><div class="card-title">📥 Inbox triage</div><p style="font-size:13px;color:var(--ink-soft)">Review website contact forms, route by persona, log every contact.</p></div>
+        <div class="card"><div class="card-title">📞 First calls</div><p style="font-size:13px;color:var(--ink-soft)">15-minute discovery calls with each new contact within 24 hours.</p></div>
+        <div class="card"><div class="card-title">📦 Packet preparation</div><p style="font-size:13px;color:var(--ink-soft)">Persona-specific packet with checklist, forms, fee waiver letter, partner referrals.</p></div>
+        <div class="card"><div class="card-title">🏛️ City liaison</div><p style="font-size:13px;color:var(--ink-soft)">Coordinate with Bemidji building dept and P&Z to keep applications moving.</p></div>
+        <div class="card"><div class="card-title">🤝 Partner stewardship</div><p style="font-size:13px;color:var(--ink-soft)">Monthly touch with each of the 14 partner orgs; co-marketing, MOUs, referrals.</p></div>
+        <div class="card"><div class="card-title">📊 Reporting</div><p style="font-size:13px;color:var(--ink-soft)">Weekly metrics to Mychal: contacts, conversions to permit pulled, dollars committed.</p></div>
+      </div>
+      <h2 class="h2">Success metrics</h2>
+      <div class="kpi-row">
+        <div class="kpi"><div class="lab">Contact response</div><div class="val">&lt; 24h</div><div class="sub">First contact to first call</div></div>
+        <div class="kpi"><div class="lab">First-pass approval</div><div class="val">&gt; 80%</div><div class="sub">Permits approved without rework</div></div>
+        <div class="kpi"><div class="lab">Contact → permit</div><div class="val">Track</div><div class="sub">Conversion ratio</div></div>
+        <div class="kpi"><div class="lab">Partner touch</div><div class="val">Monthly</div><div class="sub">All 14 orgs</div></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+// ============== AUTH GATE ==============
+(async function authCheck(){
+  const isFile = location.protocol === 'file:';
+  if (isFile) {
+    // Local-only: allow if local-auth flag set
+    const ok = (function(){try{return localStorage.getItem('rmb-auth')==='1'}catch(e){return false}})();
+    if (!ok) { location.href = './login.html'; return; }
+    document.getElementById('apiBadge').style.display='inline-block';
+    show();
+    return;
+  }
+  try {
+    const res = await fetch('/api/check-auth', { credentials: 'same-origin' });
+    if (!res.ok) throw 0;
+    show();
+  } catch (e) {
+    location.href = '/admin/login.html?next=' + encodeURIComponent(location.pathname);
+  }
+  function show(){
+    document.getElementById('authLoading').style.display = 'none';
+    document.getElementById('app').style.display = 'grid';
+    boot();
+  }
+})();
+
+// ============== BOOT ==============
+function boot(){
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    try {
+      if (location.protocol !== 'file:') {
+        await fetch('/api/logout', { method:'POST', credentials:'same-origin' });
+      }
+      try { localStorage.removeItem('rmb-auth'); } catch(e){}
+      location.href = location.protocol==='file:' ? './login.html' : '/admin/login.html';
+    } catch(e) { location.href = './login.html'; }
+  });
+
+  // Page nav
+  document.querySelectorAll('[data-page]').forEach(el => {
+    el.addEventListener('click', () => showPage(el.dataset.page));
+  });
+  try { const last = localStorage.getItem('rmb-page'); if (last) showPage(last); } catch(e){}
+
+  // Accordions
+  document.querySelectorAll('.acc-head').forEach(h => {
+    h.addEventListener('click', () => {
+      const acc = h.parentElement; acc.classList.toggle('open');
+      acc.querySelector('.acc-body').classList.toggle('open');
+    });
+  });
+
+  // Checklists
+  document.querySelectorAll('.checklist').forEach(list => {
+    const persona = list.dataset.persona;
+    list.querySelectorAll('.check-item').forEach(item => {
+      const cb = item.querySelector('input[type=checkbox]');
+      const id = cb.id;
+      const key = 'rmb-chk-'+persona+'-'+id;
+      try { if (localStorage.getItem(key)==='1'){cb.checked=true;item.classList.add('done')} } catch(e){}
+      cb.addEventListener('change', () => {
+        item.classList.toggle('done', cb.checked);
+        try { localStorage.setItem(key, cb.checked?'1':'0') } catch(e){}
+      });
+    });
+  });
+
+  // Intake form
+  setupIntake();
+  // Inbox
+  setupInbox();
+  // Contractor pool
+  setupContractors();
+  // Partner directory
+  setupPartners();
+}
+
+const pages = ['dashboard','inbox','intake','contractor','homeowner','investor','partner','contractor-pool','partner-directory','templates','resources','scripts','role'];
+const titles = {
+  dashboard:'Dashboard', inbox:'Inbox', intake:'New Intake',
+  contractor:'Contractors / Builders', homeowner:'Homeowners',
+  investor:'Investors / REITs', partner:'Partner Organizations',
+  'contractor-pool':'Vetted Contractor Pool', 'partner-directory':'Partner Directory',
+  templates:'Templates & Letters', resources:'Resource Library', scripts:'Talking Scripts', role:'Concierge Role'
+};
+function showPage(name){
+  if (!pages.includes(name)) name = 'dashboard';
+  pages.forEach(p => document.getElementById('page-'+p).classList.toggle('hidden', p!==name));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page===name));
+  document.getElementById('pageTitle').textContent = titles[name] || 'Concierge';
+  window.scrollTo(0,0);
+  try { localStorage.setItem('rmb-page', name) } catch(e){}
+  if (name === 'inbox') loadInbox();
+}
+
+// ============== INTAKE ==============
+function setupIntake(){
+  const form = document.getElementById('intakeForm');
+  if (!form) return;
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.source = data.source || 'Manual entry';
+    let saved = null;
+    try {
+      if (location.protocol !== 'file:') {
+        const res = await fetch('/api/submit', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          credentials:'same-origin', body: JSON.stringify(data)
+        });
+        if (res.ok) saved = await res.json();
+      }
+    } catch(e){}
+    if (!saved) {
+      // local fallback
+      let log = []; try{log=JSON.parse(localStorage.getItem('rmb-intakes')||'[]')}catch(e){}
+      const record = { ...data, id: 'local-'+Date.now(), receivedAt: new Date().toISOString(), status:'new', notes:'' };
+      log.unshift(record);
+      try { localStorage.setItem('rmb-intakes', JSON.stringify(log.slice(0,500))) } catch(e){}
+    }
+    document.getElementById('intakeSaved').innerHTML =
+      '<div class="callout success"><strong>✓ Intake saved</strong>'+
+      'Saved <b>'+(data.name||'unnamed')+'</b> · '+(data.persona||'')+'. Opening the persona track…</div>';
+    const map = {
+      'contractor':'contractor',
+      'homeowner-build':'homeowner','homeowner-buy':'homeowner','homeowner-relocate':'homeowner',
+      'investor-private':'investor','investor-reit':'investor',
+      'partner':'partner'
+    };
+    const target = map[data.persona] || 'inbox';
+    setTimeout(()=>showPage(target), 900);
+    form.reset();
+  });
+}
+
+// ============== INBOX ==============
+let _inbox = [];
+async function loadInbox(){
+  if (location.protocol === 'file:') {
+    try { _inbox = JSON.parse(localStorage.getItem('rmb-intakes')||'[]'); } catch(e){ _inbox=[] }
+  } else {
+    try {
+      const res = await fetch('/api/intakes', { credentials:'same-origin' });
+      if (res.ok) { const data = await res.json(); _inbox = data.items || []; }
+      else if (res.status === 401) { location.href = '/admin/login.html'; return; }
+    } catch(e) {
+      try { _inbox = JSON.parse(localStorage.getItem('rmb-intakes')||'[]'); } catch(e){ _inbox=[] }
+    }
+  }
+  renderInbox();
+}
+function renderInbox(){
+  const status = document.getElementById('filterStatus').value;
+  const persona = document.getElementById('filterPersona').value;
+  const search = (document.getElementById('filterSearch').value || '').toLowerCase();
+
+  const list = _inbox.filter(it =>
+    (!status || it.status===status) &&
+    (!persona || it.persona===persona) &&
+    (!search || JSON.stringify(it).toLowerCase().includes(search))
+  );
+
+  const el = document.getElementById('inboxList');
+  const empty = document.getElementById('inboxEmpty');
+  document.getElementById('inboxCount').textContent = list.length+' record'+(list.length===1?'':'s');
+  document.getElementById('inboxBadge').textContent = _inbox.filter(i=>i.status==='new').length;
+  document.getElementById('kpiNew').textContent = _inbox.filter(i=>i.status==='new').length;
+  document.getElementById('kpiActive').textContent = _inbox.filter(i=>i.status==='contacted'||i.status==='qualified').length;
+
+  if (list.length === 0) { el.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  el.innerHTML = list.map(it => `
+    <div class="intake-card ${it.status==='new'?'unread':''}">
+      <div>
+        <div class="intake-meta">
+          <span>${new Date(it.receivedAt||it.savedAt||Date.now()).toLocaleString()}</span>
+          · <span>${esc(it.persona||'—')}</span>
+          · <span class="status-chip status-${it.status||'new'}">${it.status||'new'}</span>
+          · <span>${esc(it.source||'Website')}</span>
+        </div>
+        <div class="intake-name">${esc(it.name||'(no name)')}</div>
+        <div class="intake-contact">${esc(it.email||'')} ${it.phone?'· '+esc(it.phone):''} ${it.address?'· '+esc(it.address):''}</div>
+        ${it.need ? '<div class="intake-need">'+esc(it.need)+'</div>':''}
+        ${it.notes ? '<div class="intake-need" style="background:#FFF5E6"><b>Notes:</b> '+esc(it.notes)+'</div>':''}
+      </div>
+      <div class="intake-actions">
+        <select onchange="setIntakeStatus('${it.id}', this.value)">
+          ${['new','contacted','qualified','closed'].map(s=>`<option value="${s}" ${it.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+        <button class="btn-secondary" onclick="addNote('${it.id}')">Note</button>
+        <button class="btn-secondary" onclick="routeFromInbox('${esc(it.persona||'')}')">Open track</button>
+        <button class="btn-danger" onclick="deleteIntake('${it.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+function esc(s){return String(s||'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+async function setIntakeStatus(id, status){
+  const it = _inbox.find(x=>x.id===id); if (it) it.status = status;
+  if (location.protocol !== 'file:') {
+    try { await fetch('/api/intakes',{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({id,status})}); } catch(e){}
+  } else {
+    try{ localStorage.setItem('rmb-intakes', JSON.stringify(_inbox)); }catch(e){}
+  }
+  renderInbox();
+}
+async function addNote(id){
+  const it = _inbox.find(x=>x.id===id); if (!it) return;
+  const note = prompt('Note for '+(it.name||'this contact'), it.notes||'');
+  if (note === null) return;
+  it.notes = note;
+  if (location.protocol !== 'file:') {
+    try { await fetch('/api/intakes',{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({id,notes:note})}); } catch(e){}
+  } else {
+    try{ localStorage.setItem('rmb-intakes', JSON.stringify(_inbox)); }catch(e){}
+  }
+  renderInbox();
+}
+async function deleteIntake(id){
+  if (!confirm('Delete this submission permanently?')) return;
+  if (location.protocol !== 'file:') {
+    try { await fetch('/api/intakes?id='+encodeURIComponent(id),{method:'DELETE',credentials:'same-origin'}); } catch(e){}
+  }
+  _inbox = _inbox.filter(x=>x.id!==id);
+  try{ localStorage.setItem('rmb-intakes', JSON.stringify(_inbox)); }catch(e){}
+  renderInbox();
+}
+function routeFromInbox(persona){
+  const map = {'contractor':'contractor','homeowner-build':'homeowner','homeowner-buy':'homeowner','homeowner-relocate':'homeowner','investor-private':'investor','investor-reit':'investor','partner':'partner'};
+  showPage(map[persona] || 'dashboard');
+}
+function setupInbox(){
+  document.getElementById('filterStatus').addEventListener('change', renderInbox);
+  document.getElementById('filterPersona').addEventListener('change', renderInbox);
+  document.getElementById('filterSearch').addEventListener('input', renderInbox);
+  document.getElementById('refreshInbox').addEventListener('click', loadInbox);
+  document.getElementById('exportInbox').addEventListener('click', () => {
+    const cols = ['receivedAt','status','persona','name','email','phone','address','source','need','notes'];
+    const rows = [cols.join(',')].concat(
+      _inbox.map(it => cols.map(c => '"'+String(it[c]||'').replace(/"/g,'""')+'"').join(','))
+    );
+    download('inbox-'+new Date().toISOString().slice(0,10)+'.csv', rows.join('\n'));
+  });
+}
+function download(name, data){
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,'+encodeURIComponent(data);
+  a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+// ============== CONTRACTORS ==============
+let _contractors = [];
+function loadContractors(){
+  try { _contractors = JSON.parse(localStorage.getItem('rmb-contractors')||'[]'); } catch(e){ _contractors=[] }
+}
+function saveContractors(){
+  try { localStorage.setItem('rmb-contractors', JSON.stringify(_contractors)); } catch(e){}
+}
+function renderContractors(){
+  const search = (document.getElementById('contractorSearch').value||'').toLowerCase();
+  const list = _contractors.filter(c => !search || JSON.stringify(c).toLowerCase().includes(search));
+  document.getElementById('contractorCount').textContent = list.length+' contractor'+(list.length===1?'':'s');
+  const tbody = document.getElementById('contractorBody');
+  document.getElementById('contractorEmpty').style.display = list.length===0 ? 'block' : 'none';
+  document.getElementById('contractorTable').style.display = list.length===0 ? 'none' : 'table';
+  tbody.innerHTML = list.map(c => `
+    <tr>
+      <td><b>${esc(c.company)}</b><br><small style="color:var(--ink-soft)">${esc(c.notes||'').slice(0,80)}</small></td>
+      <td>${esc(c.contact||'—')}</td>
+      <td>${c.phone?esc(c.phone)+'<br>':''}${c.email?'<a href="mailto:'+esc(c.email)+'">'+esc(c.email)+'</a>':''}</td>
+      <td>${esc(c.specialty||'—')}</td>
+      <td><span class="chip ${c.status==='Vetted & recommended'?'green':c.status==='In review'?'gold':''}">${esc(c.status||'—')}</span></td>
+      <td class="rating">${'★'.repeat(parseInt(c.rating||0))}${'☆'.repeat(Math.max(0,5-parseInt(c.rating||0)))}</td>
+      <td>${esc(c.lastProject||'—')}</td>
+      <td><button class="btn-secondary" onclick="editContractor('${c.id}')">Edit</button> <button class="btn-danger" onclick="deleteContractor('${c.id}')">×</button></td>
+    </tr>
+  `).join('');
+}
+function setupContractors(){
+  loadContractors(); renderContractors();
+  document.getElementById('contractorSearch').addEventListener('input', renderContractors);
+  document.getElementById('addContractorBtn').addEventListener('click', () => {
+    document.getElementById('contractorFormTitle').textContent = 'Add contractor';
+    document.getElementById('contractorForm').reset();
+    document.getElementById('contractorForm').elements.id.value = '';
+    document.getElementById('contractorFormWrap').style.display = 'block';
+    window.scrollTo({top:document.getElementById('contractorFormWrap').offsetTop, behavior:'smooth'});
+  });
+  document.getElementById('cancelContractor').addEventListener('click', ()=>{
+    document.getElementById('contractorFormWrap').style.display='none';
+  });
+  document.getElementById('contractorForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target).entries());
+    if (data.id) {
+      const idx = _contractors.findIndex(c=>c.id===data.id);
+      if (idx>=0) _contractors[idx] = { ...data };
+    } else {
+      data.id = 'c-'+Date.now();
+      _contractors.unshift(data);
+    }
+    saveContractors(); renderContractors();
+    document.getElementById('contractorFormWrap').style.display='none';
+  });
+  document.getElementById('exportContractors').addEventListener('click', () => {
+    const cols = ['company','contact','phone','email','specialty','status','rating','lastProject','notes'];
+    const rows = [cols.join(',')].concat(_contractors.map(c => cols.map(k=>'"'+String(c[k]||'').replace(/"/g,'""')+'"').join(',')));
+    download('contractors-'+new Date().toISOString().slice(0,10)+'.csv', rows.join('\n'));
+  });
+}
+function editContractor(id){
+  const c = _contractors.find(x=>x.id===id); if (!c) return;
+  const form = document.getElementById('contractorForm');
+  document.getElementById('contractorFormTitle').textContent = 'Edit '+c.company;
+  ['company','contact','phone','email','specialty','status','rating','lastProject','notes','id'].forEach(k=>{
+    if (form.elements[k]) form.elements[k].value = c[k]||'';
+  });
+  document.getElementById('contractorFormWrap').style.display='block';
+  window.scrollTo({top:document.getElementById('contractorFormWrap').offsetTop, behavior:'smooth'});
+}
+function deleteContractor(id){
+  if (!confirm('Remove this contractor?')) return;
+  _contractors = _contractors.filter(c=>c.id!==id);
+  saveContractors(); renderContractors();
+}
+
+// ============== PARTNERS ==============
+const DEFAULT_PARTNERS = [
+  { org:'City of Bemidji', type:'Government', notes:'Permits, abatement, zoning. Primary regulatory partner.', mou:'Not started' },
+  { org:'Greater Bemidji', type:'Economic Dev', notes:'EDO. 218 Relocate program, ALICE work, workforce housing.', mou:'Not started' },
+  { org:'Bemidji Area Chamber of Commerce', type:'Business / Chamber', notes:'Member network — contractor & realtor channel.', mou:'Not started' },
+  { org:'Bemidji State University', type:'Education', notes:'Architecture/construction student pipeline; faculty input.', mou:'Not started' },
+  { org:'Sanford Health', type:'Healthcare', notes:'Major employer — staff relocation referrals; workforce housing demand.', mou:'Not started' },
+  { org:'Local lenders consortium', type:'Lender', notes:'BNRI 2-3% mortgage products; consolidate real bank list.', mou:'Not started' },
+  { org:'Red Lake Nation', type:'Tribal', notes:'Cross-jurisdictional housing coordination.', mou:'Not started' },
+  { org:'Leech Lake Band of Ojibwe', type:'Tribal', notes:'Cross-jurisdictional housing coordination.', mou:'Not started' },
+  { org:'Bemidji Area Schools (ISD 31)', type:'School District', notes:'Family attraction; enrollment growth aligns with revitalization.', mou:'Not started' },
+  { org:'Beltrami County', type:'Government', notes:'Recorder, Assessor, GIS — county-level diligence partner.', mou:'Not started' },
+  { org:'Bemidji HRA', type:'Government', notes:'Housing & Redevelopment Authority — local administering body.', mou:'Not started' },
+  { org:'United Way of Bemidji Area', type:'Nonprofit', notes:'ALICE data partner; community outreach.', mou:'Not started' },
+  { org:'Paul Bunyan Communications', type:'Other', notes:'Gigabit internet — anchor for 218 Relocate package.', mou:'Not started' },
+  { org:'Northwest Minnesota Foundation', type:'Nonprofit', notes:'Regional foundation — potential grant capital partner.', mou:'Not started' },
+];
+let _partners = [];
+function loadPartners(){
+  try {
+    const stored = localStorage.getItem('rmb-partners');
+    _partners = stored ? JSON.parse(stored) : DEFAULT_PARTNERS.map((p,i)=>({...p, id:'p-seed-'+i}));
+  } catch(e){ _partners = []; }
+}
+function savePartners(){
+  try { localStorage.setItem('rmb-partners', JSON.stringify(_partners)); } catch(e){}
+}
+function renderPartners(){
+  const search = (document.getElementById('partnerSearch').value||'').toLowerCase();
+  const list = _partners.filter(p => !search || JSON.stringify(p).toLowerCase().includes(search));
+  document.getElementById('partnerCount').textContent = list.length+' partner'+(list.length===1?'':'s');
+  const grid = document.getElementById('partnerGrid');
+  grid.innerHTML = list.map(p => {
+    const mouChip = p.mou==='Signed'?'green' : p.mou==='Sent'?'blue' : p.mou==='Drafting'?'gold' : '';
+    return `
+      <div class="card">
+        <div class="card-title">${esc(p.org)}</div>
+        <div class="card-meta">${esc(p.type||'—')}</div>
+        ${p.contact?'<div style="font-size:13px"><b>'+esc(p.contact)+'</b>'+(p.title?' · '+esc(p.title):'')+'</div>':''}
+        ${p.email?'<div style="font-size:12px;color:var(--ink-soft)"><a href="mailto:'+esc(p.email)+'">'+esc(p.email)+'</a></div>':''}
+        ${p.phone?'<div style="font-size:12px;color:var(--ink-soft)">'+esc(p.phone)+'</div>':''}
+        ${p.notes?'<p style="font-size:12px;color:var(--ink-soft);margin-top:8px;line-height:1.5">'+esc(p.notes)+'</p>':''}
+        <div class="chips" style="margin-top:10px">
+          <span class="chip ${mouChip}">MOU: ${esc(p.mou||'Not started')}</span>
+          ${p.lastTouch?'<span class="chip">Last: '+esc(p.lastTouch)+'</span>':''}
+        </div>
+        <div style="margin-top:10px;display:flex;gap:6px">
+          <button class="btn-secondary" onclick="editPartner('${p.id}')">Edit</button>
+          <button class="btn-danger" onclick="deletePartner('${p.id}')">×</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+function setupPartners(){
+  loadPartners(); renderPartners();
+  document.getElementById('partnerSearch').addEventListener('input', renderPartners);
+  document.getElementById('addPartnerBtn').addEventListener('click', () => {
+    document.getElementById('partnerFormTitle').textContent = 'Add partner';
+    document.getElementById('partnerForm').reset();
+    document.getElementById('partnerForm').elements.id.value='';
+    document.getElementById('partnerFormWrap').style.display='block';
+    window.scrollTo({top:document.getElementById('partnerFormWrap').offsetTop, behavior:'smooth'});
+  });
+  document.getElementById('cancelPartner').addEventListener('click', ()=>{
+    document.getElementById('partnerFormWrap').style.display='none';
+  });
+  document.getElementById('partnerForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target).entries());
+    if (data.id) {
+      const idx = _partners.findIndex(p=>p.id===data.id);
+      if (idx>=0) _partners[idx] = { ...data };
+    } else {
+      data.id = 'p-'+Date.now();
+      _partners.unshift(data);
+    }
+    savePartners(); renderPartners();
+    document.getElementById('partnerFormWrap').style.display='none';
+  });
+  document.getElementById('exportPartners').addEventListener('click', () => {
+    const cols = ['org','type','contact','title','phone','email','lastTouch','mou','notes'];
+    const rows = [cols.join(',')].concat(_partners.map(p => cols.map(k=>'"'+String(p[k]||'').replace(/"/g,'""')+'"').join(',')));
+    download('partners-'+new Date().toISOString().slice(0,10)+'.csv', rows.join('\n'));
+  });
+  document.getElementById('seedPartners').addEventListener('click', () => {
+    if (!confirm('Reset to the default 14-partner stub list? Local edits will be lost.')) return;
+    _partners = DEFAULT_PARTNERS.map((p,i)=>({...p, id:'p-seed-'+i}));
+    savePartners(); renderPartners();
+  });
+}
+function editPartner(id){
+  const p = _partners.find(x=>x.id===id); if (!p) return;
+  const form = document.getElementById('partnerForm');
+  document.getElementById('partnerFormTitle').textContent = 'Edit '+p.org;
+  ['org','type','contact','title','phone','email','lastTouch','mou','notes','id'].forEach(k=>{
+    if (form.elements[k]) form.elements[k].value = p[k]||'';
+  });
+  document.getElementById('partnerFormWrap').style.display='block';
+  window.scrollTo({top:document.getElementById('partnerFormWrap').offsetTop, behavior:'smooth'});
+}
+function deletePartner(id){
+  if (!confirm('Remove this partner?')) return;
+  _partners = _partners.filter(p=>p.id!==id);
+  savePartners(); renderPartners();
+}
+
+// ============== LETTER GENERATOR ==============
+function openLetter(kind){
+  document.getElementById('letterPreviewWrap').style.display='block';
+  if (kind === 'fee-waiver') {
+    document.getElementById('letterTo').value = 'Building Official';
+    document.getElementById('letterOrg').value = 'City of Bemidji Building Department, 317 4th St NW';
+    document.getElementById('letterAddr').value = '';
+    document.getElementById('letterPermit').value = 'Residential remodel';
+    document.getElementById('letterBase').value = '';
+  }
+  if (kind === 'mou') {
+    document.getElementById('letterTo').value = '[Partner contact name]';
+    document.getElementById('letterOrg').value = '[Partner organization]';
+    document.getElementById('letterAddr').value = '';
+    document.getElementById('letterPermit').value = 'MOU';
+    document.getElementById('letterBase').value = '';
+  }
+  window.letterKind = kind;
+  renderLetter();
+  window.scrollTo({top:document.getElementById('letterPreviewWrap').offsetTop, behavior:'smooth'});
+}
+function renderLetter(){
+  const to = document.getElementById('letterTo').value || '[Recipient]';
+  const org = document.getElementById('letterOrg').value || '[Organization]';
+  const addr = document.getElementById('letterAddr').value || '[Project address]';
+  const permit = document.getElementById('letterPermit').value || '[Permit type]';
+  const base = parseFloat(document.getElementById('letterBase').value)||0;
+  const waiver = parseFloat(document.getElementById('letterWaiver').value)||65;
+  const waiverAmt = base * (waiver/100);
+  const net = base - waiverAmt;
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+  let html = '';
+  if (window.letterKind === 'mou') {
+    html = `<!doctype html><html><head><style>
+      body{font-family:Georgia,serif;padding:60px 80px;color:#222;line-height:1.6;font-size:13px}
+      h1{font-size:18px;text-align:center;margin-bottom:30px}
+      .right{text-align:right;font-size:12px;color:#555}
+      h2{font-size:14px;margin-top:24px;margin-bottom:8px}
+      .sig{margin-top:60px;display:grid;grid-template-columns:1fr 1fr;gap:40px}
+      .sig div{border-top:1px solid #888;padding-top:6px;font-size:11px;color:#555}
+    </style></head><body>
+    <p class="right">${date}</p>
+    <h1>Memorandum of Understanding</h1>
+    <p>Between <b>Bemidji Neighborhood Renewal Incentive (BNRI)</b> — represented by Mychal Stittsworth — and <b>${org}</b>, represented by <b>${to}</b>.</p>
+    <h2>Purpose</h2>
+    <p>This MOU establishes a working relationship between the parties to advance the BNRI mission of revitalizing Bemidji's downtown housing core, with mutual benefit to both organizations and the community of Bemidji.</p>
+    <h2>Mutual commitments</h2>
+    <p><b>BNRI will:</b> serve ${org}'s constituents through the RenewMyBlock Concierge, provide co-branded communications and one-pagers for use in ${org}'s channels, and recognize ${org} publicly as a founding partner.</p>
+    <p><b>${org} will:</b> refer constituents who would benefit from the program, share the BNRI summary in scheduled communications, and provide a named liaison for monthly check-ins.</p>
+    <h2>Term</h2>
+    <p>This MOU is effective on signature and may be renewed annually. Either party may terminate with 30 days' written notice.</p>
+    <h2>Non-binding</h2>
+    <p>This is a non-binding statement of intent. It does not create a legal partnership or financial obligation.</p>
+    <div class="sig">
+      <div>Mychal Stittsworth, Founder, BNRI<br>Date</div>
+      <div>${to}, ${org}<br>Date</div>
+    </div>
+    </body></html>`;
+  } else {
+    html = `<!doctype html><html><head><style>
+      body{font-family:Georgia,serif;padding:60px 80px;color:#222;line-height:1.55;font-size:13px}
+      .head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1F3A2E;padding-bottom:14px;margin-bottom:26px}
+      .head h2{font-size:16px;color:#1F3A2E;margin-bottom:2px}
+      .head .sub{font-size:11px;color:#888;letter-spacing:.5px;text-transform:uppercase}
+      .right{text-align:right;font-size:12px;color:#555}
+      h2{font-size:14px;margin-top:24px;margin-bottom:8px;color:#1F3A2E}
+      table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+      th{background:#F7F2E7;text-align:left;padding:8px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+      td{padding:8px 10px;border-bottom:1px solid #e2dccc}
+      td.num{text-align:right;font-variant-numeric:tabular-nums}
+      .total{font-weight:700;color:#1F3A2E}
+      .sig{margin-top:50px;border-top:1px solid #888;padding-top:6px;font-size:11px;color:#555;width:300px}
+    </style></head><body>
+      <div class="head">
+        <div>
+          <h2>Bemidji Neighborhood Renewal Incentive</h2>
+          <div class="sub">RenewMyBlock Concierge · BNRI</div>
+        </div>
+        <p class="right">${date}</p>
+      </div>
+      <p>${to}<br>${org}</p>
+      <p><b>Re: BNRI Fee Waiver — ${permit} at ${addr}</b></p>
+      <p>Dear ${to},</p>
+      <p>This letter confirms that the project described below qualifies for the Bemidji Neighborhood Renewal Incentive (BNRI) fee waiver schedule. The project is located within the BNRI pilot zone (5th–15th Street, west of Irvine Avenue) and meets the eligibility criteria established for the program.</p>
+      <h2>Project</h2>
+      <p>Address: ${addr}<br>Permit type: ${permit}</p>
+      <h2>Fee calculation</h2>
+      <table>
+        <tr><th>Line item</th><th class="num">Amount</th></tr>
+        <tr><td>Standard permit fee (per 2026 City Fee Schedule)</td><td class="num">$${base.toFixed(2)}</td></tr>
+        <tr><td>BNRI waiver (${waiver}%)</td><td class="num">−$${waiverAmt.toFixed(2)}</td></tr>
+        <tr class="total"><td>Net fee due</td><td class="num">$${net.toFixed(2)}</td></tr>
+      </table>
+      <p>Please apply this waiver to the referenced permit application. The applicant has been pre-coordinated with the RenewMyBlock Concierge and is using a BNRI-aligned plan/process. Plan review (where applicable) is calculated at 65% of the standard permit fee per City policy.</p>
+      <p>Thank you for your continued partnership in revitalizing Bemidji's downtown core.</p>
+      <p>Respectfully,</p>
+      <div class="sig">Mychal Stittsworth, Founder<br>RenewMyBlock / BNRI<br>mychal@renewmyblock.com</div>
+    </body></html>`;
+  }
+
+  const f = document.getElementById('letterFrame');
+  f.srcdoc = html;
+}
+</script>
+</body>
+</html>

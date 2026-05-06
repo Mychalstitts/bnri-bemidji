@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concierge Login · RenewMyBlock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#1F3A2E;--forest-2:#2A4F3E;--gold:#C99A3B;--gold-soft:#EBD9A8;
+  --cream:#F7F2E7;--paper:#FBF8F1;--ink:#1A1F1B;--ink-soft:#4A524C;--line:#E2DCCC;--danger:#B5483B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);
+  min-height:100vh;display:grid;place-items:center;padding:20px;
+  background-image:radial-gradient(circle at 80% 10%,rgba(201,154,59,.10) 0%,transparent 50%),
+                   radial-gradient(circle at 10% 90%,rgba(31,58,46,.08) 0%,transparent 50%);
+}
+.card{
+  width:100%;max-width:420px;background:#fff;border:1px solid var(--line);
+  border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,.06);padding:36px 32px;
+}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.brand-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold) 0%,#A87F2E 100%);
+  display:grid;place-items:center;font-weight:800;color:#1F1408;font-size:18px;
+}
+.brand-name{font-weight:800;font-size:16px}
+.brand-sub{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+h1{font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px}
+.lede{color:var(--ink-soft);font-size:14px;margin-bottom:24px;line-height:1.55}
+label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
+input[type=password],input[type=text]{
+  width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+  font-family:inherit;font-size:15px;background:var(--paper);transition:border-color .15s,background .15s;
+}
+input:focus{outline:none;border-color:var(--forest);background:#fff}
+.btn{
+  width:100%;background:var(--forest);color:#fff;padding:13px 20px;border:none;border-radius:10px;
+  font-weight:700;font-size:15px;cursor:pointer;margin-top:18px;letter-spacing:.3px;font-family:inherit;
+  transition:background .15s,transform .05s;
+}
+.btn:hover{background:var(--forest-2)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.error{
+  background:#FBEAE7;color:var(--danger);padding:10px 14px;border-radius:8px;
+  font-size:13px;margin-top:14px;display:none;border-left:3px solid var(--danger);
+}
+.error.show{display:block}
+.foot{margin-top:24px;font-size:12px;color:var(--ink-soft);text-align:center;line-height:1.6}
+.foot a{color:var(--forest);font-weight:600;text-decoration:none}
+.foot a:hover{text-decoration:underline}
+.divider{height:1px;background:var(--line);margin:22px 0}
+.note{
+  background:var(--cream);padding:12px 14px;border-radius:8px;font-size:12px;color:var(--ink-soft);
+  line-height:1.55;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="brand">
+    <div class="brand-icon">R</div>
+    <div>
+      <div class="brand-name">RenewMyBlock</div>
+      <div class="brand-sub">Concierge · BNRI Admin</div>
+    </div>
+  </div>
+
+  <h1>Concierge sign in</h1>
+  <p class="lede">Enter your shared admin passcode to access the BNRI Concierge dashboard, inbox, and partner resources.</p>
+
+  <form id="loginForm" autocomplete="off">
+    <label for="pw">Passcode</label>
+    <input type="password" id="pw" name="pw" required autocomplete="current-password" placeholder="••••••••">
+
+    <button type="submit" class="btn" id="loginBtn">Sign in</button>
+    <div class="error" id="err"></div>
+  </form>
+
+  <div class="divider"></div>
+
+  <div class="note">
+    <strong style="color:var(--ink)">v1 access:</strong> shared passcode for the Concierge team. Per-user accounts for the 14 partner organizations are coming in v2.
+  </div>
+
+  <div class="foot">
+    Trouble signing in? Contact <a href="mailto:mychal@renewmyblock.com">mychal@renewmyblock.com</a>
+  </div>
+</div>
+
+<script>
+const form = document.getElementById('loginForm');
+const err = document.getElementById('err');
+const btn = document.getElementById('loginBtn');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  err.classList.remove('show');
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+
+  const pw = document.getElementById('pw').value;
+
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    });
+
+    if (res.ok) {
+      // success — go to dashboard
+      const next = new URLSearchParams(location.search).get('next') || '/admin/';
+      location.href = next;
+      return;
+    }
+
+    const data = await res.json().catch(() => ({}));
+    err.textContent = data.error || 'Incorrect passcode. Try again.';
+    err.classList.add('show');
+  } catch (e) {
+    // Local-file fallback (no API available — for testing)
+    if (location.protocol === 'file:') {
+      // Allow any non-empty pw locally for dev
+      if (pw.length > 0) {
+        try { localStorage.setItem('rmb-auth', '1'); } catch(_){}
+        location.href = './index.html';
+        return;
+      }
+    }
+    err.textContent = 'Network error. Please try again.';
+    err.classList.add('show');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sign in';
+  }
+});
+</script>
+
+</body>
+</html>
