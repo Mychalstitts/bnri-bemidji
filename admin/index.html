@@ -1489,7 +1489,8 @@ function renderCase(){
         </div>
         <div class="actions">
           <button class="a" onclick="showPage('inbox')">← Back to inbox</button>
-          ${it.email ? '<button class="a" onclick="openInGmail()">📧 Email</button>' : ''}
+          ${it.email ? '<button class="a" onclick="openInGmail()">📧 History</button>' : ''}
+          ${it.email && it.stage !== 'complete' ? '<button class="a" onclick="emailChecklistDialog()">✉️ Email checklist</button>' : ''}
           ${it.links && it.links.nextAction ? '<button class="a" onclick="downloadIcs()">📅 Add to calendar</button>' : ''}
           ${it.stage === 'complete' ? '<button class="a primary" onclick="generateCloseout()">🏆 Closeout certificate →</button>' : (it.persona==='contractor' || (it.persona && it.persona.startsWith('homeowner'))) ? '<button class="a primary" onclick="generateLetterForCase()">Generate fee waiver letter →</button>' : ''}
         </div>
@@ -1762,6 +1763,94 @@ function filterInboxOverdue(){
     const fs = document.getElementById('filterStage');
     if (fs) { fs.value = 'overdue'; renderInbox(); }
   }, 50);
+}
+
+// Email a checklist for a target stage to the contact.
+// Mints a signed token via /api/checklist?mint=1, builds a public URL,
+// and opens the user's email client with the message pre-filled.
+async function emailChecklistDialog(){
+  const it = _inbox.find(x=>x.id===_currentCaseId);
+  if (!it || !it.email) { alert('This contact has no email on file.'); return; }
+  const j = journeyFor(it.persona);
+  const currentIdx = Math.max(0, j.stages.findIndex(s => s.id === (it.stage||j.stages[0].id)));
+  const targetIdx = Math.min(j.stages.length-1, currentIdx + 1);
+
+  // Build a small inline picker
+  const picker = j.stages.map((s,i) => `<option value="${esc(s.id)}" ${i===targetIdx?'selected':''}>${i+1}. ${esc(s.label)}</option>`).join('');
+  const dialog = document.createElement('div');
+  dialog.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:grid;place-items:center;padding:20px;backdrop-filter:blur(4px)';
+  dialog.innerHTML = `
+    <div style="background:#fff;border-radius:14px;padding:26px;max-width:480px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.3);font-family:'Plus Jakarta Sans',sans-serif">
+      <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--moss);font-weight:700;margin-bottom:6px">Send self-serve checklist</div>
+      <h2 style="font-size:22px;font-weight:800;letter-spacing:-.3px;margin-bottom:6px">Email a checklist to ${esc(it.name||'this contact')}</h2>
+      <p style="font-size:13px;color:var(--ink-soft);line-height:1.55;margin-bottom:18px">They'll get a unique link to a branded checklist page. Each item they check saves automatically. When they hit "I'm done," this case advances to the stage you choose, and an activity entry is logged here.</p>
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">Advance to stage</label>
+      <select id="dlgStage" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:var(--paper);font-family:inherit;margin-bottom:14px">${picker}</select>
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">Recipient</label>
+      <input id="dlgEmail" value="${esc(it.email)}" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:var(--paper);font-family:inherit;margin-bottom:14px">
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
+        <button id="dlgCancel" class="btn-secondary" style="margin:0">Cancel</button>
+        <button id="dlgSend" class="btn-primary" style="margin:0">✉️ Open email draft</button>
+      </div>
+      <div id="dlgErr" style="color:var(--danger);font-size:12px;margin-top:8px;display:none"></div>
+    </div>
+  `;
+  document.body.appendChild(dialog);
+
+  dialog.querySelector('#dlgCancel').onclick = () => dialog.remove();
+  dialog.querySelector('#dlgSend').onclick = async () => {
+    const stageId = dialog.querySelector('#dlgStage').value;
+    const recipient = dialog.querySelector('#dlgEmail').value.trim();
+    const stageInfo = j.stages.find(s => s.id === stageId);
+    const errEl = dialog.querySelector('#dlgErr');
+    errEl.style.display = 'none';
+    try {
+      const res = await fetch('/api/checklist?mint=1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ caseId: _currentCaseId, targetStage: stageId })
+      });
+      if (!res.ok) {
+        const e = await res.json().catch(()=>({}));
+        throw new Error(e.error || 'Could not generate link.');
+      }
+      const data = await res.json();
+      const url = location.origin + '/checklist/?token=' + encodeURIComponent(data.token);
+      const subject = 'Your BNRI checklist — '+stageInfo.label+' phase';
+      const body = [
+        'Hi '+(it.name||'there')+',',
+        '',
+        'Here is your personal BNRI checklist to advance to the '+stageInfo.label+' phase. Each item you check saves automatically. When you complete every item, click the button at the bottom and I will be notified to set up the next step with you.',
+        '',
+        'Open your checklist:',
+        url,
+        '',
+        'You can come back to this link any time — bookmark it or save this email.',
+        '',
+        'Any questions, just reply to this email.',
+        '',
+        '— Mychal Stittsworth',
+        'RenewMyBlock Concierge / BNRI',
+        'mychal@renewmyblock.com'
+      ].join('\\n');
+      // Log the send as an activity locally
+      const acts = it.activities || [];
+      acts.push({ id:'a-'+Date.now(), at:new Date().toISOString(), type:'email',
+        text:'Sent self-serve checklist for '+stageInfo.label+' phase to '+recipient });
+      await patchIntake(_currentCaseId, { activities: acts });
+      const mailto = 'mailto:'+encodeURIComponent(recipient)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+      window.location.href = mailto;
+      dialog.remove();
+      renderCase();
+      // Also stash the URL on clipboard fallback
+      try { navigator.clipboard.writeText(url); } catch(_){}
+      setTimeout(()=>alert('Email draft opened in your default mail app.\\nIf nothing happened, the checklist link has been copied to your clipboard:\\n\\n'+url), 250);
+    } catch (e) {
+      errEl.textContent = e.message;
+      errEl.style.display = 'block';
+    }
+  };
 }
 
 // Generate a Closeout / Project Complete certificate for a finished case
