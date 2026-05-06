@@ -17,12 +17,52 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'PATCH') {
-      const { id, status, notes, persona } = req.body || {};
+      const body = req.body || {};
+      const { id } = body;
       if (!id) return res.status(400).json({ error: 'id required' });
       const patch = {};
-      if (status) patch.status = String(status).slice(0, 40);
-      if (typeof notes === 'string') patch.notes = notes.slice(0, 4000);
-      if (persona) patch.persona = String(persona).slice(0, 40);
+      if (body.status) patch.status = String(body.status).slice(0, 40);
+      if (typeof body.notes === 'string') patch.notes = body.notes.slice(0, 4000);
+      if (body.persona) patch.persona = String(body.persona).slice(0, 40);
+      if (body.stage) patch.stage = String(body.stage).slice(0, 40);
+      // journey: array of {id, done, doneAt, by} — cap at 50 items
+      if (Array.isArray(body.journey)) {
+        patch.journey = body.journey.slice(0, 50).map(j => ({
+          id: String(j.id || '').slice(0, 40),
+          done: !!j.done,
+          doneAt: j.doneAt ? String(j.doneAt).slice(0, 40) : undefined
+        })).filter(j => j.id);
+      }
+      // activities: array of {id, at, type, text} — cap at 200
+      if (Array.isArray(body.activities)) {
+        patch.activities = body.activities.slice(0, 200).map(a => ({
+          id: String(a.id || '').slice(0, 40),
+          at: String(a.at || new Date().toISOString()).slice(0, 40),
+          type: String(a.type || 'note').slice(0, 20),
+          text: String(a.text || '').slice(0, 2000)
+        })).filter(a => a.id);
+      }
+      // links: object of free-form contact-record references — clamp string sizes
+      if (body.links && typeof body.links === 'object') {
+        const L = {};
+        for (const k of Object.keys(body.links).slice(0, 30)) {
+          const v = body.links[k];
+          if (v == null) { L[k] = null; continue; }
+          if (typeof v === 'string') L[k] = v.slice(0, 200);
+          else if (typeof v === 'number' || typeof v === 'boolean') L[k] = v;
+          else if (typeof v === 'object') {
+            const sub = {};
+            for (const kk of Object.keys(v).slice(0, 20)) {
+              const vv = v[kk];
+              if (typeof vv === 'string') sub[kk] = vv.slice(0, 200);
+              else if (typeof vv === 'number' || typeof vv === 'boolean') sub[kk] = vv;
+              else if (vv == null) sub[kk] = null;
+            }
+            L[k] = sub;
+          }
+        }
+        patch.links = L;
+      }
       const updated = await updateIntake(id, patch);
       if (!updated) return res.status(404).json({ error: 'Not found' });
       return res.status(200).json({ ok: true, item: updated });
