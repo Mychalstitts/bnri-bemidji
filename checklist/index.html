@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your BNRI Checklist · RenewMyBlock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#0F1B14;--forest-2:#142922;
+  --emerald:#10b981;--emerald-2:#059669;--emerald-3:#34d399;--emerald-soft:#D1FAE5;
+  --cream:#F7F2E7;--paper:#FBF8F1;--ink:#1A1F1B;--ink-soft:#4A524C;--line:#E2DCCC;
+  --danger:#B5483B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  background:var(--paper);color:var(--ink);min-height:100vh;
+  background-image:radial-gradient(circle at 90% -10%,rgba(16,185,129,.10) 0%,transparent 45%),
+                   radial-gradient(circle at -10% 110%,rgba(16,185,129,.06) 0%,transparent 50%);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:680px;margin:0 auto;padding:24px 20px 80px}
+.head{
+  background:linear-gradient(135deg,#000 0%,#0A2418 100%);color:#EFE9D8;
+  border-radius:18px;padding:28px 26px;margin-bottom:22px;position:relative;overflow:hidden;
+  border:1px solid rgba(16,185,129,.15);
+}
+.head::before{content:"";position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(16,185,129,.25) 0%,transparent 65%)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:14px;position:relative}
+.brand .ico{width:38px;height:38px;border-radius:11px;background:var(--emerald);color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px;box-shadow:0 0 0 3px rgba(16,185,129,.18)}
+.brand .nm{font-weight:800;font-size:15px}
+.brand .sb{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.7px;margin-top:2px}
+.head .badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;background:rgba(16,185,129,.15);color:var(--emerald-3);padding:4px 10px;border-radius:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;border:1px solid rgba(16,185,129,.3);position:relative}
+.head .badge::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--emerald-3);box-shadow:0 0 6px var(--emerald-3)}
+.head h1{font-size:28px;font-weight:800;letter-spacing:-.6px;line-height:1.15;position:relative;margin-bottom:6px}
+.head h1 .accent{color:var(--emerald-3)}
+.head p{color:rgba(255,255,255,.7);font-size:14px;position:relative;line-height:1.55}
+.head .you{font-weight:700;color:#fff}
+
+.progress{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+.progress .bar{flex:1;height:8px;background:var(--cream);border-radius:4px;overflow:hidden}
+.progress .bar-fill{height:100%;background:var(--emerald);transition:width .3s}
+.progress .num{font-size:14px;font-weight:800;color:var(--emerald-2);letter-spacing:-.3px}
+
+.hint{font-size:13px;color:var(--ink-soft);background:var(--cream);padding:12px 14px;border-radius:10px;margin-bottom:14px;line-height:1.5;border-left:3px solid var(--emerald)}
+.hint b{color:var(--ink)}
+
+.list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.it{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:#fff;border:1px solid var(--line);border-radius:10px;transition:background .15s,border-color .15s;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.it:hover{background:var(--cream);border-color:rgba(16,185,129,.3)}
+.it input[type=checkbox]{width:22px;height:22px;margin-top:1px;flex-shrink:0;accent-color:var(--emerald);cursor:pointer}
+.it label{flex:1;cursor:pointer;font-size:15px;line-height:1.55;color:var(--ink)}
+.it .when{font-size:11px;color:var(--ink-soft);margin-top:3px}
+.it.done{background:rgba(16,185,129,.06);border-color:rgba(16,185,129,.3)}
+.it.done label{text-decoration:line-through;color:var(--ink-soft)}
+
+.cta{
+  background:var(--emerald);color:#fff;border:none;padding:18px 24px;border-radius:14px;
+  font-weight:800;font-size:16px;cursor:pointer;width:100%;letter-spacing:.3px;
+  font-family:inherit;transition:background .15s,transform .05s,box-shadow .15s;
+  box-shadow:0 8px 24px rgba(16,185,129,.3);
+}
+.cta:hover{background:var(--emerald-2);box-shadow:0 12px 30px rgba(16,185,129,.4)}
+.cta:active{transform:translateY(1px)}
+.cta:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.cta-sub{text-align:center;font-size:12px;color:var(--ink-soft);margin-top:10px}
+
+.success{
+  background:linear-gradient(135deg,#000 0%,#0A2418 100%);color:#EFE9D8;
+  border-radius:18px;padding:48px 30px;text-align:center;border:1px solid rgba(16,185,129,.15);
+  position:relative;overflow:hidden;
+}
+.success::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,rgba(16,185,129,.18) 0%,transparent 50%)}
+.success .check{font-size:64px;line-height:1;margin-bottom:18px;color:var(--emerald-3);position:relative;animation:pop .5s ease-out}
+@keyframes pop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+.success h2{font-size:26px;font-weight:800;letter-spacing:-.4px;margin-bottom:10px;position:relative}
+.success p{color:rgba(255,255,255,.75);max-width:440px;margin:0 auto;line-height:1.6;position:relative;font-size:14px}
+
+.error-page{padding:40px 20px;text-align:center;color:var(--ink-soft);max-width:440px;margin:60px auto}
+.error-page h2{color:var(--ink);font-size:22px;font-weight:800;margin-bottom:10px}
+.error-page p{font-size:14px;line-height:1.55}
+
+.footer{margin-top:30px;text-align:center;font-size:11px;color:var(--ink-soft);letter-spacing:.4px;text-transform:uppercase;font-weight:600}
+.footer a{color:var(--emerald-2);text-decoration:none}
+
+#loading{padding:80px 20px;text-align:center;color:var(--ink-soft);font-size:14px}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--emerald);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:24px;font-size:13px;font-weight:600;opacity:0;transition:all .25s;pointer-events:none;z-index:100}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div id="loading"><span class="spinner"></span>Loading your checklist…</div>
+
+<div id="page" style="display:none">
+  <div class="wrap">
+    <div class="head">
+      <div class="brand">
+        <div class="ico">B</div>
+        <div>
+          <div class="nm">RenewMyBlock</div>
+          <div class="sb">BNRI Concierge</div>
+        </div>
+      </div>
+      <span class="badge" id="targetBadge">→ Stage</span>
+      <h1>Hi <span class="you" id="contactName">there</span> —<br>let's <span class="accent" id="ctaLine">advance to the next phase</span>.</h1>
+      <p id="lede">Check each item below as you complete it. Your progress saves automatically. When everything's done, hit the button at the bottom and the BNRI Concierge will be notified.</p>
+    </div>
+
+    <div class="progress">
+      <div class="bar"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+      <div class="num" id="progressNum">0/0</div>
+    </div>
+
+    <div class="hint">
+      <b>Tip:</b> You can come back to this page anytime — bookmark it or save the email. Your check-marks are saved as soon as you tap them.
+    </div>
+
+    <div class="list" id="list"></div>
+
+    <button class="cta" id="cta" disabled>Mark complete &amp; advance →</button>
+    <div class="cta-sub" id="ctaSub">Check every item to enable this button.</div>
+  </div>
+</div>
+
+<div id="success" style="display:none">
+  <div class="wrap">
+    <div class="success">
+      <div class="check">✓</div>
+      <h2>You did it.</h2>
+      <p id="successMsg">The BNRI Concierge has been notified — you're moving to the next phase. We'll be in touch with the next step shortly.</p>
+    </div>
+    <div class="footer">
+      Thank you for renewing the block · <a href="https://renewmyblock.com">RenewMyBlock.com</a>
+    </div>
+  </div>
+</div>
+
+<div id="error" style="display:none" class="error-page">
+  <h2>This link isn't working.</h2>
+  <p id="errorMsg">It may have expired or been used incorrectly. Contact <a href="mailto:mychal@renewmyblock.com" style="color:var(--emerald-2);font-weight:700">mychal@renewmyblock.com</a> to get a fresh link.</p>
+</div>
+
+<div id="toast" class="toast">Saved</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const TOKEN = params.get('token');
+
+const $ = id => document.getElementById(id);
+const show = (id) => {
+  ['loading','page','success','error'].forEach(x => { $(x).style.display = x===id ? 'block' : 'none'; });
+};
+const toast = (msg) => {
+  $('toast').textContent = msg;
+  $('toast').classList.add('show');
+  setTimeout(() => $('toast').classList.remove('show'), 1400);
+};
+
+let _data = null;
+
+async function load(){
+  if (!TOKEN) { showError('No token in URL.'); return; }
+  try {
+    const res = await fetch('/api/checklist?token=' + encodeURIComponent(TOKEN));
+    if (!res.ok) {
+      const e = await res.json().catch(()=>({}));
+      throw new Error(e.error || 'Could not load.');
+    }
+    _data = await res.json();
+    if (_data.complete) { showSuccess(); return; }
+    render();
+    show('page');
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+function render(){
+  const c = _data.contact;
+  $('contactName').textContent = c.name;
+  $('ctaLine').textContent = 'advance to ' + c.targetStageLabel.toLowerCase();
+  $('targetBadge').textContent = '→ ' + c.targetStageLabel.toUpperCase();
+  $('lede').innerHTML = 'Check each item below as you complete it. Your progress saves automatically. When every item is checked, the <b>BNRI Concierge</b> will be notified and your project will move to the <b>' + escape(c.targetStageLabel) + '</b> phase.';
+
+  const list = $('list');
+  list.innerHTML = _data.items.map(it => `
+    <div class="it ${it.done?'done':''}" onclick="toggleItem('${it.id}', this)">
+      <input type="checkbox" ${it.done?'checked':''} onclick="event.stopPropagation();toggleItem('${it.id}',this.parentElement,this.checked)">
+      <div style="flex:1">
+        <label>${escape(it.text)}</label>
+        ${it.done && it.doneAt ? '<div class="when">Checked '+new Date(it.doneAt).toLocaleDateString()+'</div>' : ''}
+      </div>
+    </div>
+  `).join('');
+  updateProgress();
+}
+
+function escape(s){return String(s||'').replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
+
+function updateProgress(){
+  const total = _data.items.length;
+  const done = _data.items.filter(i=>i.done).length;
+  $('progressNum').textContent = done + '/' + total;
+  $('barFill').style.width = (total ? (done/total)*100 : 0) + '%';
+  const ctaBtn = $('cta');
+  ctaBtn.disabled = (done < total);
+  $('ctaSub').textContent = (done < total)
+    ? `Check every item to enable this button (${total-done} left).`
+    : 'All set — tap to advance to the next phase.';
+}
+
+async function toggleItem(itemId, rowEl, explicitDone){
+  const item = _data.items.find(i=>i.id===itemId);
+  if (!item) return;
+  const newDone = (typeof explicitDone === 'boolean') ? explicitDone : !item.done;
+  item.done = newDone;
+  if (newDone) item.doneAt = new Date().toISOString();
+  // Optimistic UI
+  rowEl.classList.toggle('done', newDone);
+  const cb = rowEl.querySelector('input[type=checkbox]');
+  if (cb && cb.checked !== newDone) cb.checked = newDone;
+  updateProgress();
+  try {
+    const res = await fetch('/api/checklist?token=' + encodeURIComponent(TOKEN), {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ itemId, done: newDone })
+    });
+    if (!res.ok) throw 0;
+    toast(newDone ? '✓ Saved' : 'Updated');
+  } catch (e) {
+    toast('Could not save — try again');
+    item.done = !newDone;
+    rowEl.classList.toggle('done', !newDone);
+    if (cb) cb.checked = !newDone;
+    updateProgress();
+  }
+}
+
+document.addEventListener('click', async (e) => {
+  if (e.target && e.target.id === 'cta') {
+    e.target.disabled = true;
+    e.target.textContent = 'Submitting…';
+    try {
+      const res = await fetch('/api/checklist?token=' + encodeURIComponent(TOKEN) + '&action=complete', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:'{}'
+      });
+      if (!res.ok) throw 0;
+      showSuccess();
+    } catch (err) {
+      e.target.disabled = false;
+      e.target.textContent = 'Mark complete & advance →';
+      toast('Could not submit — try again');
+    }
+  }
+});
+
+function showSuccess(){ show('success'); }
+function showError(msg){ if (msg) $('errorMsg').textContent = msg + ' Contact mychal@renewmyblock.com to get a fresh link.'; show('error'); }
+
+load();
+</script>
+
+</body>
+</html>
