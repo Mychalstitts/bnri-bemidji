@@ -1,39 +1,38 @@
-// Storage abstraction. Uses Vercel KV (Upstash Redis) when configured, falls back
-// to in-memory (warning: in-memory loses data on cold start — testing only).
+// Storage layer using Upstash Redis (via Vercel integration)
+// Falls back to in-memory if Redis is not configured.
 //
-// To enable persistent storage:
-//   1. In Vercel project: Storage → Create → Upstash for Redis
-//   2. Connect to project with prefix "KV"
-//   3. Vars KV_REST_API_URL, KV_REST_API_TOKEN auto-inject; redeploy.
-//
-// Note on serialization: @vercel/kv automatically serializes/deserializes JSON.
-// We pass objects directly to lpush/rpush and trust round-trip back to objects.
+// Setup:
+//   Vercel Dashboard → Storage → Create → Upstash for Redis
+//   Connect it to this project. The KV_* env vars will be auto-injected.
 
+import { Redis } from '@upstash/redis';
 import crypto from 'node:crypto';
 
-let kv = null;
-let kvAttempted = false;
+let redis = null;
+let redisAttempted = false;
 
-async function getKv() {
-  if (kvAttempted) return kv;
-  kvAttempted = true;
-  try {
-    if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
-      const mod = await import('@vercel/kv');
-      kv = mod.kv;
+async function getRedis() {
+  if (redisAttempted) return redis;
+  redisAttempted = true;
+
+  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    try {
+      redis = new Redis({
+        url: process.env.KV_REST_API_URL,
+        token: process.env.KV_REST_API_TOKEN,
+      });
+    } catch (e) {
+      console.warn('Failed to initialize Upstash Redis:', e.message);
     }
-  } catch (e) {
-    console.warn('Vercel KV not available — using in-memory fallback.', e.message);
   }
-  return kv;
+  return redis;
 }
 
-// In-memory fallback (per-instance — does not persist across cold starts)
+// In-memory fallback (resets on cold start)
 const mem = { intakes: [] };
 
 const KEY = 'rmb:intakes';
 
-// Normalize: KV may hand us either an object (auto-deserialized) or a string.
 function toRecord(v) {
   if (!v) return null;
   if (typeof v === 'object') return v;
@@ -52,10 +51,9 @@ export async function addIntake(entry) {
     ...entry,
   };
 
-  const store = await getKv();
+  const store = await getRedis();
   if (store) {
-    // @vercel/kv serializes the value automatically — pass the object directly.
-    await store.lpush(KEY, record);
+    await store.lpush(KEY, JSON.stringify(record));
     await store.ltrim(KEY, 0, 999);
   } else {
     mem.intakes.unshift(record);
@@ -65,7 +63,7 @@ export async function addIntake(entry) {
 }
 
 export async function listIntakes(limit = 100) {
-  const store = await getKv();
+  const store = await getRedis();
   if (store) {
     const raw = await store.lrange(KEY, 0, limit - 1);
     return raw.map(toRecord).filter(Boolean);
@@ -74,22 +72,25 @@ export async function listIntakes(limit = 100) {
 }
 
 export async function updateIntake(id, patch) {
-  const store = await getKv();
+  const store = await getRedis();
   if (store) {
     const raw = await store.lrange(KEY, 0, 999);
     const parsed = raw.map(toRecord).filter(Boolean);
     const idx = parsed.findIndex(r => r.id === id);
     if (idx < 0) return null;
+
     const updated = { ...parsed[idx], ...patch, updatedAt: new Date().toISOString() };
     parsed[idx] = updated;
-    // rewrite the list (cheap for our scale)
+
     await store.del(KEY);
     if (parsed.length > 0) {
-      // rpush preserves the original order (we lrange'd from head down).
-      await store.rpush(KEY, ...parsed);
+      const serialized = parsed.map(r => JSON.stringify(r));
+      await store.rpush(KEY, ...serialized);
     }
     return updated;
   }
+
+  // memory fallback
   const idx = mem.intakes.findIndex(r => r.id === id);
   if (idx < 0) return null;
   mem.intakes[idx] = { ...mem.intakes[idx], ...patch, updatedAt: new Date().toISOString() };
@@ -97,17 +98,20 @@ export async function updateIntake(id, patch) {
 }
 
 export async function deleteIntake(id) {
-  const store = await getKv();
+  const store = await getRedis();
   if (store) {
     const raw = await store.lrange(KEY, 0, 999);
     const parsed = raw.map(toRecord).filter(Boolean);
     const remaining = parsed.filter(r => r.id !== id);
+
     await store.del(KEY);
     if (remaining.length > 0) {
-      await store.rpush(KEY, ...remaining);
+      const serialized = remaining.map(r => JSON.stringify(r));
+      await store.rpush(KEY, ...serialized);
     }
     return true;
   }
+
   const idx = mem.intakes.findIndex(r => r.id === id);
   if (idx >= 0) {
     mem.intakes.splice(idx, 1);
