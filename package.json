@@ -8,7 +8,7 @@
     "node": "20.x"
   },
   "dependencies": {
-    "@vercel/kv": "^2.0.0",
+    "@upstash/redis": "^1.34.3",
     "docx": "^9.6.1"
   }
 }
