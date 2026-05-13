@@ -5,7 +5,7 @@
   "description": "BNRI Concierge admin hub for RenewMyBlock.com",
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": "20.x"
   },
   "dependencies": {
     "@vercel/kv": "^2.0.0",
